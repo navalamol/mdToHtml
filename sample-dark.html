@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sample</title>
+  <style>
+  :root {
+    --bg: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-code: #1e2530;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --accent-subtle: #1f3a5f;
+    --blockquote-bg: #1a2332;
+    --blockquote-border: #388bfd;
+    --heading-border: #30363d;
+    --toc-bg: #161b22;
+    --shadow: rgba(0,0,0,0.4);
+    --radius: 8px;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.75;
+    margin: 0;
+    padding: 0;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0,1fr);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    gap: 2rem;
+  }
+
+  @media (min-width: 1100px) {
+    .layout {
+      max-width: 1300px;
+      grid-template-columns: 260px minmax(0,1fr);
+      align-items: start;
+      gap: 3rem;
+    }
+    .toc { position: sticky; top: 2rem; }
+  }
+
+  .page-header {
+    border-bottom: 1px solid var(--heading-border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-title {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    margin: 0 0 0.3rem;
+    color: var(--text);
+  }
+
+  .page-meta {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  /* --- Content typography --- */
+  .content { min-width: 0; }
+
+  .content h1, .content h2, .content h3,
+  .content h4, .content h5, .content h6 {
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text);
+    position: relative;
+  }
+
+  .content h1 { font-size: 2rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--heading-border); }
+  .content h2 { font-size: 1.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--heading-border); }
+  .content h3 { font-size: 1.25rem; }
+  .content h4 { font-size: 1.05rem; }
+
+  .content h1:first-child,
+  .content h2:first-child { margin-top: 0; }
+
+  .anchor {
+    opacity: 0;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85em;
+    margin-left: 0.4em;
+    transition: opacity 0.15s;
+  }
+  h1:hover .anchor, h2:hover .anchor, h3:hover .anchor,
+  h4:hover .anchor, h5:hover .anchor, h6:hover .anchor { opacity: 1; }
+
+  .content p { margin: 0 0 1.1rem; }
+
+  .content a { color: var(--accent); text-decoration: none; }
+  .content a:hover { text-decoration: underline; }
+
+  .content strong { font-weight: 600; }
+  .content em { font-style: italic; }
+
+  .content code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--bg-code);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    color: #ff7b72;
+    border: 1px solid var(--border);
+  }
+
+  /* --- Code blocks --- */
+  .code-block {
+    position: relative;
+    margin: 1.25rem 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-code);
+    overflow: hidden;
+  }
+
+  .code-lang {
+    display: inline-block;
+    position: absolute;
+    top: 0.4rem;
+    left: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: color 0.15s, background 0.15s;
+    z-index: 1;
+  }
+  .copy-btn:hover { color: var(--text); background: var(--border); }
+  .copy-btn.copied { color: #56d364; }
+
+  .code-block pre {
+    margin: 0;
+    padding: 2.2rem 1rem 0.9rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .code-block code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    border-radius: 0;
+  }
+
+  /* --- Blockquote --- */
+  .blockquote {
+    margin: 1.25rem 0;
+    padding: 0.75rem 1.25rem;
+    background: var(--blockquote-bg);
+    border-left: 4px solid var(--blockquote-border);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .blockquote p { margin: 0; }
+
+  /* --- Lists --- */
+  .content ul, .content ol {
+    margin: 0 0 1.1rem;
+    padding-left: 1.75rem;
+  }
+  .content li { margin: 0.25rem 0; }
+  .content li > p { margin: 0.25rem 0; }
+
+  /* --- Tables --- */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1.25rem 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px var(--shadow);
+  }
+
+  .content table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .content thead { background: var(--bg-secondary); }
+  .content th {
+    padding: 0.65rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .content td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .content tr:last-child td { border-bottom: none; }
+  .content tbody tr:hover { background: var(--bg-secondary); }
+
+  /* --- Images --- */
+  .img-figure {
+    margin: 1.5rem 0;
+    text-align: center;
+  }
+  .img-figure img {
+    max-width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  .img-figure figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* --- Horizontal rule --- */
+  .content hr {
+    border: none;
+    border-top: 2px solid var(--heading-border);
+    margin: 2rem 0;
+  }
+
+  /* --- Table of contents --- */
+  .toc {
+    background: var(--toc-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    font-size: 0.875rem;
+    order: -1;
+  }
+
+  @media (min-width: 1100px) { .toc { order: 0; } }
+
+  .toc-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+    border: none;
+  }
+
+  .toc-list, .toc-sub {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .toc-sub { padding-left: 1rem; margin-top: 0.25rem; }
+  .toc-list li { margin: 0.3rem 0; }
+  .toc-list a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+    line-height: 1.4;
+    display: block;
+  }
+  .toc-list a:hover { color: var(--accent); }
+  .toc-list a.active { color: var(--accent); font-weight: 500; }
+
+  /* --- hljs theme overrides --- */
+  .hljs { background: transparent; color: #e6edf3; }
+  .hljs-keyword, .hljs-selector-tag { color: #ff7b72; font-weight: 500; }
+  .hljs-string, .hljs-attr { color: #a5d6ff; }
+  .hljs-title, .hljs-section, .hljs-name { color: #d2a8ff; font-weight: 600; }
+  .hljs-comment, .hljs-quote { color: #8b949e; font-style: italic; }
+  .hljs-number, .hljs-literal, .hljs-symbol { color: #79c0ff; }
+  .hljs-variable, .hljs-template-variable { color: #ffa657; }
+  .hljs-type { color: #ffa657; }
+  .hljs-built_in { color: #ffa657; }
+  .hljs-addition { color: #56d364; background: #1a2b1a; }
+  .hljs-deletion { color: #ffa198; background: #2d0e0e; }
+  .hljs-meta { color: #79c0ff; }
+  .hljs-tag { color: #7ee787; }
+  .hljs-attribute { color: #79c0ff; }
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><h2 class="toc-title">Contents</h2><ol class="toc-list"><li><a href="#heading-code-example-0">Code Example</a></li><li><a href="#heading-table-1">Table</a></li><li><a href="#heading-blockquote-2">Blockquote</a></li><li><a href="#heading-lists-3">Lists</a></li><ol class="toc-sub"><li><a href="#heading-numbered-4">Numbered</a></li></ol><li><a href="#heading-inline-styles-5">Inline Styles</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">sample</h1>
+        <p class="page-meta">Generated from <code>sample.md</code> &mdash; October 28, 2026</p>
+      </header>
+      <p>﻿# Welcome to md2html</p>
+<p>A quick demo of the converter with common Markdown elements.</p>
+<h2 id="heading-code-example-0">Code Example<a class="anchor" href="#heading-code-example-0" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">javascript</span><button class="copy-btn" onclick="copyCode(this)" title="Copy code">Copy</button><pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">greet</span>(<span class="hljs-params">name</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-string">`Hello, <span class="hljs-subst">${name}</span>!`</span>;
+}
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">greet</span>(<span class="hljs-string">&quot;world&quot;</span>));</code></pre></div><div class="code-block"><span class="code-lang">python</span><button class="copy-btn" onclick="copyCode(this)" title="Copy code">Copy</button><pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">factorial</span>(<span class="hljs-params">n</span>):
+    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> <span class="hljs-keyword">if</span> n &lt;= <span class="hljs-number">1</span> <span class="hljs-keyword">else</span> n * factorial(n - <span class="hljs-number">1</span>)</code></pre></div><h2 id="heading-table-1">Table<a class="anchor" href="#heading-table-1" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Feature</th><th>Status</th><th>Notes</th></tr></thead><tbody><tr><td>Syntax hilite</td><td>✓</td><td>190+ languages</td></tr><tr><td>Dark theme</td><td>✓</td><td>`--theme dark`</td></tr><tr><td>TOC sidebar</td><td>✓</td><td>Auto-generated</td></tr><tr><td>Copy button</td><td>✓</td><td>One-click copy</td></tr></tbody></table></div><h2 id="heading-blockquote-2">Blockquote<a class="anchor" href="#heading-blockquote-2" aria-hidden="true">#</a></h2>
+<blockquote class="blockquote">"Any sufficiently advanced technology is indistinguishable from magic."
+— Arthur C. Clarke</blockquote><h2 id="heading-lists-3">Lists<a class="anchor" href="#heading-lists-3" aria-hidden="true">#</a></h2>
+<ul>
+<li>Responsive layout</li>
+<li>Auto table of contents</li>
+<li>Sticky TOC on wide screens</li>
+<li>Active section highlighting</li>
+</ul>
+<h3 id="heading-numbered-4">Numbered<a class="anchor" href="#heading-numbered-4" aria-hidden="true">#</a></h3>
+<ol>
+<li>Run <code>node md2html.js file.md</code></li>
+<li>Open the output HTML</li>
+<li>Done!</li>
+</ol>
+<h2 id="heading-inline-styles-5">Inline Styles<a class="anchor" href="#heading-inline-styles-5" aria-hidden="true">#</a></h2>
+<p>Supports <strong>bold</strong>, <em>italic</em>, <code>inline code</code>, and <a href="https://example.com">links</a>.</p>
+
+    </main>
+  </div>
+
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+
+    // Highlight active TOC item on scroll
+    (function() {
+      const links = document.querySelectorAll('.toc-list a');
+      if (!links.length) return;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          const link = document.querySelector('.toc-list a[href="#' + e.target.id + '"]');
+          if (link) link.classList.toggle('active', e.isIntersecting);
+        });
+      }, { rootMargin: '-10% 0px -80% 0px' });
+      document.querySelectorAll('h1[id],h2[id],h3[id]').forEach(h => observer.observe(h));
+    })();
+  </script>
+</body>
+</html>
