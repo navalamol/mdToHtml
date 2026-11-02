@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>README</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#pxc-retail">pxc-retail</a></li><ol class="toc-sub"><li><a href="#overview">Overview</a></li><li><a href="#repository-structure">Repository Structure</a></li><li><a href="#tech-stack">Tech Stack</a></li><li><a href="#getting-started">Getting Started</a></li><ol class="toc-sub"><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#install">Install</a></li><li><a href="#configure-local-environment">Configure local environment</a></li><li><a href="#development">Development</a></li><li><a href="#build">Build</a></li><li><a href="#other-commands">Other Commands</a></li><li><a href="#filtering">Filtering</a></li></ol><li><a href="#observability">Observability</a></li><ol class="toc-sub"><li><a href="#local-setup">Local setup</a></li><li><a href="#what-you-get">What you get</a></li><li><a href="#deployed-environments">Deployed environments</a></li></ol><li><a href="#submodules">Submodules</a></li><li><a href="#code-style">Code Style</a></li><li><a href="#internationalization-i18n">Internationalization (i18n)</a></li><ol class="toc-sub"><li><a href="#translation-files">Translation Files</a></li><li><a href="#usage">Usage</a></li><li><a href="#guidelines">Guidelines</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">README</h1>
+        <p class="page-meta">From <code>README.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="pxc-retail">pxc-retail<a class="anchor" href="#pxc-retail" aria-hidden="true">#</a></h1>
+<p>Monorepo for Syndigo&#39;s PXC (Product Experience Cloud) retail applications. Built with TypeScript, React, and the TanStack ecosystem.</p>
+<h2 id="overview">Overview<a class="anchor" href="#overview" aria-hidden="true">#</a></h2>
+<p>This monorepo contains the retail-facing PXC applications — the main retail app and a tenant-management app — along with shared packages for the application shell, design system components, type-safe RPC, and developer tooling configuration. A Lovable-generated submodule provides an AI-built retail interface that product integrates with as a push experience for agentic development context.</p>
+<h2 id="repository-structure">Repository Structure<a class="anchor" href="#repository-structure" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">pxc-retail/
+├── apps/
+│   ├── pxc-retail/          # Main retail application (TanStack Start + React 19, port 3000)
+│   └── tenant-management/   # Tenant onboarding + feature-set management (TanStack Start, port 3001)
+├── packages/
+│   ├── app-shell/           # Shared shell, permissions, navigation, i18n (@syndigo/app-shell)
+│   ├── core-contracts/      # oRPC contracts + Zod schemas + inferred types (@repo/core-contracts)
+│   ├── design-system/       # Component library (@syndigo/design-system, shadcn + @base-ui/react)
+│   ├── orpc/                # Type-safe RPC implementations (@syndigo/orpc)
+│   ├── telemetry/           # OTel SDK bootstrap, traces only (@syndigo/telemetry)
+│   └── typescript-config/   # Shared TypeScript configurations (@repo/typescript-config)
+└── submodules/
+    └── loveable/            # Lovable-generated retail UI (git submodule)</code></pre></div><h2 id="tech-stack">Tech Stack<a class="anchor" href="#tech-stack" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Category</th><th>Technology</th></tr></thead><tbody><tr><td>Language</td><td>TypeScript 6</td></tr><tr><td>Runtime</td><td>Node.js &gt;= 24</td></tr><tr><td>Package Manager</td><td>pnpm 11 (pinned 11.10)</td></tr><tr><td>Build Orchestrator</td><td>Turbo</td></tr><tr><td>Bundler</td><td>Vite 8</td></tr><tr><td>Frontend</td><td>React 19, TanStack (Router, Query, Form, Store)</td></tr><tr><td>App shell</td><td>@syndigo/app-shell (shell, permissions, nav, i18n)</td></tr><tr><td>Components</td><td>@syndigo/design-system (shadcn + @base-ui/react)</td></tr><tr><td>Styling</td><td>Tailwind CSS 4 (OKLch color tokens)</td></tr><tr><td>RPC</td><td>oRPC (contract-first, isomorphic)</td></tr><tr><td>Auth</td><td>hybrid RDP OAuth and local dev bearer token</td></tr><tr><td>Validation</td><td>Zod 4</td></tr><tr><td>Testing</td><td>Vitest</td></tr><tr><td>i18n</td><td>i18next (en, es, fr, de)</td></tr><tr><td>Observability</td><td>OpenTelemetry (traces)</td></tr></tbody></table></div><h2 id="getting-started">Getting Started<a class="anchor" href="#getting-started" aria-hidden="true">#</a></h2>
+<h3 id="prerequisites">Prerequisites<a class="anchor" href="#prerequisites" aria-hidden="true">#</a></h3>
+<ul>
+<li>Node.js &gt;= 24</li>
+<li>pnpm 11+ (the repo pins <code>pnpm@11.10.0</code>; run <code>corepack enable</code> to use it)</li>
+</ul>
+<h3 id="install">Install<a class="anchor" href="#install" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm install</code></pre></div><h3 id="configure-local-environment">Configure local environment<a class="anchor" href="#configure-local-environment" aria-hidden="true">#</a></h3>
+<p>Each app reads server config from its own gitignored <code>.env.local</code>. Generate it with the helper script — it pre-fills the dev defaults and prompts for the credentials that can&#39;t be defaulted (ask a teammate if you don&#39;t have them):</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">node apps/pxc-retail/scripts/setup-env.mjs
+node apps/tenant-management/scripts/setup-env.mjs</code></pre></div><p>Re-run any time to update credentials; existing values are preserved when you press Enter. Every supported variable is documented in the committed <code>apps/*/.env.example</code> files, which are the reference if you&#39;d rather write <code>.env.local</code> by hand.</p>
+<h3 id="development">Development<a class="anchor" href="#development" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm dev</code></pre></div><p>Starts all apps and packages in development mode via Turbo.</p>
+<h3 id="build">Build<a class="anchor" href="#build" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm build</code></pre></div><h3 id="other-commands">Other Commands<a class="anchor" href="#other-commands" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm lint        <span class="hljs-comment"># Lint all packages</span>
+pnpm format      <span class="hljs-comment"># Format all files with Oxfmt</span>
+pnpm typecheck   <span class="hljs-comment"># Type-check all packages</span></code></pre></div><h3 id="filtering">Filtering<a class="anchor" href="#filtering" aria-hidden="true">#</a></h3>
+<p>Run commands for a specific workspace:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm dev --filter=pxc-retail
+pnpm dev --filter=tenant-management
+pnpm build --filter=@syndigo/design-system</code></pre></div><h2 id="observability">Observability<a class="anchor" href="#observability" aria-hidden="true">#</a></h2>
+<p>Both apps export <strong>traces</strong> over OTLP/HTTP. Metrics and logs are intentionally not wired up — the shared wiring in <code>@syndigo/telemetry</code> registers a trace exporter and nothing else, and each app&#39;s <code>instrumentation.mjs</code> is a thin wrapper that names the service. Prerequisite: Podman Desktop or other docker/podman installation.</p>
+<h3 id="local-setup">Local setup<a class="anchor" href="#local-setup" aria-hidden="true">#</a></h3>
+<p>Tracing is off unless you point it at a collector, so a plain <code>pnpm dev</code> never tries to export anything.</p>
+<p><strong>1. Start the local backend.</strong> <code>docker-compose.observability.yml</code> runs Grafana&#39;s LGTM image, which bundles an OTel Collector and Tempo behind a pre-provisioned Grafana:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">docker compose -f docker-compose.observability.yml up -d
+
+<span class="hljs-comment"># Podman</span>
+podman compose -f docker-compose.observability.yml up -d
+
+<span class="hljs-comment"># Podman works too; neither `docker compose` nor podman-compose is required:</span>
+podman run -d --name pxc-otel-lgtm \
+  -p 3100:3000 -p 4317:4317 -p 4318:4318 \
+  -e GF_AUTH_ANONYMOUS_ENABLED=<span class="hljs-literal">true</span> -e GF_AUTH_ANONYMOUS_ORG_ROLE=Admin \
+  docker.io/grafana/otel-lgtm:0.30.2   <span class="hljs-comment"># keep in sync with the compose file</span></code></pre></div><p>First start takes a minute or two. It&#39;s ready when the logs say <code>The OpenTelemetry collector and the Grafana LGTM stack are up and running</code>.</p>
+<p><strong>2. Point the app at it</strong> in <code>apps/&lt;app&gt;/.env.local</code>:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+ALLOW_DEV_FALLBACK_USER=<span class="hljs-literal">true</span>        <span class="hljs-comment"># see below — required for the built server</span></code></pre></div><p><code>ALLOW_DEV_FALLBACK_USER</code> is what lets the app stand in for the platform
+<code>auth-session</code> cookie, which isn&#39;t present locally. <code>pnpm dev</code> infers that from
+<code>NODE_ENV=development</code>, but the built server runs as <code>production</code> even on your
+laptop, so without this flag every request fails with <code>&#39;auth-session&#39; cookie not found</code> — rendered as a 500 page. Never set it in a deployed environment; a real
+session is required there.</p>
+<p><strong>3. Run the built server.</strong> Instrumentation is loaded via <code>node --import</code>, which only happens in the production server — <strong><code>pnpm dev</code> produces no traces</strong>:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm build --filter=pxc-retail
+pnpm --filter=pxc-retail start:<span class="hljs-built_in">local</span></code></pre></div><p><strong>4. Browse <a href="http://localhost:3100">http://localhost:3100</a></strong> and go to Explore → Tempo.</p>
+<h3 id="what-you-get">What you get<a class="anchor" href="#what-you-get" aria-hidden="true">#</a></h3>
+<p>HTTP server and outbound fetch/undici spans, plus one span per oRPC procedure named after it (<code>vendorCentral.vendor.list</code>). Authed spans carry <code>enduser.id</code> + <code>app.tenant_id</code> from <code>spanAttributesMiddleware</code>.</p>
+<p>Errors are attached to the span rather than to a log line. <code>errorRecordingMiddleware</code> records each escaping error once — <code>recordException</code>, <code>setStatus(ERROR)</code>, and <code>error.code</code> / <code>error.key</code> attributes — and <code>recordValidationError</code> adds <code>validation.*</code> attributes when a contract schema rejects a payload, which is the usual signature of upstream drift. The same trace ID is returned to the client in <code>ErrorPayload</code>, so a support ticket links straight to the trace.</p>
+<p>There is no structured logger in the repo; server code that needs to print something uses <code>console.*</code>. If logs or metrics are wanted later, they are separate signals to add back to <code>startTelemetry</code> — not something to bolt onto the tracing path.</p>
+<h3 id="deployed-environments">Deployed environments<a class="anchor" href="#deployed-environments" aria-hidden="true">#</a></h3>
+<p><code>OTEL_EXPORTER_OTLP_ENDPOINT</code> (or <code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code>) must be injected per environment via Argo CD / Kubernetes config in <code>global-devops-infra</code>. Nothing is hardcoded in this repo, and with no endpoint set the SDK never starts — so a missing value shows up as silence, not as errors. <code>OTEL_SDK_DISABLED=true</code> is the kill switch if tracing needs turning off without a rebuild.</p>
+<h2 id="submodules">Submodules<a class="anchor" href="#submodules" aria-hidden="true">#</a></h2>
+<p>The <code>submodules/loveable/</code> directory is a git submodule pointing to <a href="https://github.com/syndigo/retail-pxcloud">syndigo/retail-pxcloud</a>. This is a Lovable-generated retail interface that product uses as a push experience context for agentic development.</p>
+<p>To initialize the submodule after cloning:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">git submodule update --init --recursive</code></pre></div><h2 id="code-style">Code Style<a class="anchor" href="#code-style" aria-hidden="true">#</a></h2>
+<ul>
+<li>No semicolons</li>
+<li>Single quotes</li>
+<li>Trailing commas</li>
+<li>Oxfmt + Oxlint enforced across all packages</li>
+</ul>
+<h2 id="internationalization-i18n">Internationalization (i18n)<a class="anchor" href="#internationalization-i18n" aria-hidden="true">#</a></h2>
+<p>All user-facing text must use i18next translations. The application supports four languages:</p>
+<ul>
+<li><strong>English</strong> (en) - primary language</li>
+<li><strong>Spanish</strong> (es)</li>
+<li><strong>French</strong> (fr)</li>
+<li><strong>German</strong> (de)</li>
+</ul>
+<h3 id="translation-files">Translation Files<a class="anchor" href="#translation-files" aria-hidden="true">#</a></h3>
+<p>Located at <code>apps/pxc-retail/src/locales/{lang}/translation.ts</code></p>
+<h3 id="usage">Usage<a class="anchor" href="#usage" aria-hidden="true">#</a></h3>
+<p><strong>Frontend Components:</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-keyword">import</span> { useTranslation } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;#/hooks/use-translation&quot;</span>;
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">MyComponent</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> { t } = <span class="hljs-title function_">useTranslation</span>();
+  <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{t(($) =&gt; $.errors.not_found)}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>;
+}</code></pre></div><p>Translation keys are written as selector callbacks (<code>t($ =&gt; $.path.to.key)</code>), which i18next&#39;s <code>enableSelector: &#39;optimize&#39;</code> mode checks at compile time. For keys that must be computed at runtime, use <code>dynamicSelector(&#39;foo.bar.baz&#39;)</code> from <code>#/integrations/i18n/config</code>.</p>
+<p><strong>With Interpolation:</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;p&gt;{<span class="hljs-title function_">t</span>(<span class="hljs-function">(<span class="hljs-params">$</span>) =&gt;</span> $.vendor.<span class="hljs-property">display</span>.<span class="hljs-property">employees_count</span>, { <span class="hljs-attr">count</span>: <span class="hljs-number">5</span> })}&lt;/p&gt;</code></pre></div><p><strong>With Number Formatting:</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-comment">// In translation file: &quot;{{count, number}} employees&quot;</span>
+&lt;p&gt;{<span class="hljs-title function_">t</span>(<span class="hljs-function">(<span class="hljs-params">$</span>) =&gt;</span> $.path.<span class="hljs-property">to</span>.<span class="hljs-property">key</span>, { <span class="hljs-attr">count</span>: <span class="hljs-number">1000</span> })}&lt;<span class="hljs-regexp">/p&gt; /</span>/ <span class="hljs-string">&quot;1,000 employees&quot;</span></code></pre></div><p><strong>Pluralization:</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-comment">// Define both forms in translation files:</span>
+<span class="hljs-comment">// &quot;key&quot;: &quot;{{count, number}} items&quot;        // plural/default form</span>
+<span class="hljs-comment">// &quot;key_one&quot;: &quot;{{count, number}} item&quot;     // singular form</span>
+&lt;p&gt;{<span class="hljs-title function_">t</span>(<span class="hljs-function">(<span class="hljs-params">$</span>) =&gt;</span> $.path.<span class="hljs-property">to</span>.<span class="hljs-property">key</span>, { <span class="hljs-attr">count</span>: items.<span class="hljs-property">length</span> })}&lt;/p&gt;</code></pre></div><h3 id="guidelines">Guidelines<a class="anchor" href="#guidelines" aria-hidden="true">#</a></h3>
+<ul>
+<li>✅ Always use translation keys for user-facing text</li>
+<li>✅ Use interpolation for dynamic values</li>
+<li>✅ Use <code>{{variable, number}}</code> for numeric values</li>
+<li>✅ Define plural forms with <code>_one</code> suffix (singular), default key is plural</li>
+<li>❌ Never hard-code text strings in components</li>
+<li>❌ Never hard-code error messages in ORPC procedures</li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

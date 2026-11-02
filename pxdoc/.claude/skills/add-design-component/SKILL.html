@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKILL</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#name-add-design-component-description-add-a-component-to-syndigodesign-system-following-the-projects-cva-tailwind-css-4-base-uireact-conventions-covers-shadcn-scaffolding-no-barrel-imports-oklch-tokens-and-the-cn-merge-pattern">name: add-design-component
+description: Add a component to @syndigo/design-system following the project&#39;s CVA + Tailwind CSS 4 + @base-ui/react conventions. Covers shadcn scaffolding, no-barrel imports, OKLch tokens, and the cn() merge pattern.</a></li></ol><li><a href="#add-design-system-component">Add Design System Component</a></li><ol class="toc-sub"><li><a href="#when-to-use">When to use</a></li><li><a href="#stack">Stack</a></li><li><a href="#required-inputs-ask-if-not-provided">Required inputs (ask if not provided)</a></li><li><a href="#file-layout">File layout</a></li><li><a href="#try-shadcn-first">Try shadcn first</a></li><li><a href="#pattern-a-primitive-wrapper-with-cva-variants">Pattern A — Primitive wrapper with CVA variants</a></li><li><a href="#pattern-b-composite-component-no-primitive-composable-subparts">Pattern B — Composite component (no primitive, composable subparts)</a></li><li><a href="#pattern-c-polymorphic-via-userender-mirrors-badgetsx">Pattern C — Polymorphic via useRender (mirrors badge.tsx)</a></li><li><a href="#styling-rules">Styling rules</a></li><li><a href="#common-semantic-tokens-defined-in-globalscss">Common semantic tokens (defined in globals.css)</a></li><li><a href="#adding-a-new-design-token">Adding a new design token</a></li><li><a href="#verify">Verify</a></li><li><a href="#checklist">Checklist</a></li><li><a href="#common-mistakes">Common mistakes</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">SKILL</h1>
+        <p class="page-meta">From <code>SKILL.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <hr>
+<h2 id="name-add-design-component-description-add-a-component-to-syndigodesign-system-following-the-projects-cva-tailwind-css-4-base-uireact-conventions-covers-shadcn-scaffolding-no-barrel-imports-oklch-tokens-and-the-cn-merge-pattern">name: add-design-component
+description: Add a component to @syndigo/design-system following the project&#39;s CVA + Tailwind CSS 4 + @base-ui/react conventions. Covers shadcn scaffolding, no-barrel imports, OKLch tokens, and the cn() merge pattern.<a class="anchor" href="#name-add-design-component-description-add-a-component-to-syndigodesign-system-following-the-projects-cva-tailwind-css-4-base-uireact-conventions-covers-shadcn-scaffolding-no-barrel-imports-oklch-tokens-and-the-cn-merge-pattern" aria-hidden="true">#</a></h2>
+<h1 id="add-design-system-component">Add Design System Component<a class="anchor" href="#add-design-system-component" aria-hidden="true">#</a></h1>
+<p>Add a new component to <code>packages/design-system/</code> following the project&#39;s conventions. The codebase already has 44 components — match their style; this is not a place for stylistic experiments.</p>
+<h2 id="when-to-use">When to use<a class="anchor" href="#when-to-use" aria-hidden="true">#</a></h2>
+<ul>
+<li>Adding a new reusable UI primitive (<code>@syndigo/design-system/components/&lt;name&gt;</code>).</li>
+<li>Adding a CVA variant set to an existing or new component.</li>
+<li>Wrapping a <code>@base-ui/react</code> primitive with project-styled defaults.</li>
+</ul>
+<p><strong>Do NOT use</strong> for app-level components (page sections, business logic). Those live in <code>apps/pxc-retail/src/components/</code> and don&#39;t need to follow these rules.</p>
+<h2 id="stack">Stack<a class="anchor" href="#stack" aria-hidden="true">#</a></h2>
+<ul>
+<li><strong>Primitive layer</strong>: <code>@base-ui/react</code> (accessible foundations) — <code>import { Button as ButtonPrimitive } from &#39;@base-ui/react/button&#39;</code></li>
+<li><strong>Variants</strong>: <code>class-variance-authority</code> (<code>cva</code>, <code>VariantProps</code>)</li>
+<li><strong>Styles</strong>: Tailwind CSS 4 with <code>@theme inline</code> OKLch tokens (defined in <code>src/styles/globals.css</code>)</li>
+<li><strong>Class merging</strong>: <code>cn()</code> from <code>@syndigo/design-system/lib/utils</code> (<code>twMerge(clsx(...))</code>)</li>
+<li><strong>Icons</strong>: <code>lucide-react</code></li>
+<li><strong>Scaffold</strong>: shadcn CLI with <code>base-nova</code> preset (<code>components.json</code>)</li>
+</ul>
+<h2 id="required-inputs-ask-if-not-provided">Required inputs (ask if not provided)<a class="anchor" href="#required-inputs-ask-if-not-provided" aria-hidden="true">#</a></h2>
+<ol>
+<li><strong>Component name</strong> — kebab-case filename, PascalCase export. E.g. <code>tag-input.tsx</code> exports <code>TagInput</code>.</li>
+<li><strong>Base primitive</strong> — <code>@base-ui/react/&lt;primitive&gt;</code> if applicable, or <code>&#39;span&#39;</code>/<code>&#39;div&#39;</code>/etc.</li>
+<li><strong>Variants</strong> — does it need CVA variants (color/size)? List them.</li>
+<li><strong>Existing pattern</strong> — is there a similar component to mirror? (e.g. mirroring <code>Button</code> for an interactive primitive)</li>
+</ol>
+<h2 id="file-layout">File layout<a class="anchor" href="#file-layout" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">packages/design-system/src/
+├── components/&lt;name&gt;.tsx       # the component (single file, no folder)
+├── lib/utils.ts                # cn() helper — already exists, import only
+├── styles/globals.css          # design tokens — extend here for new tokens
+└── hooks/&lt;name&gt;.ts             # only if the component needs a hook</code></pre></div><p>One file per component. No <code>index.ts</code> barrels — consumers import individually:</p>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-comment">// ✅ Good</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Button</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/components/button&#x27;</span>
+
+<span class="hljs-comment">// ❌ Bad</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Button</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/components&#x27;</span></code></pre></div><p>This is enforced by <code>package.json</code> <code>exports</code>:</p>
+<div class="code-block"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-json"><span class="hljs-attr">&quot;./components/*&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;./src/components/*.tsx&quot;</span></code></pre></div><h2 id="try-shadcn-first">Try shadcn first<a class="anchor" href="#try-shadcn-first" aria-hidden="true">#</a></h2>
+<p>For anything that has a shadcn equivalent under the <code>base-nova</code> preset, scaffold it instead of hand-writing:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-built_in">cd</span> packages/design-system
+npx shadcn@latest add &lt;component-name&gt;</code></pre></div><p>The CLI writes to <code>src/components/&lt;name&gt;.tsx</code> using the project&#39;s <code>components.json</code> aliases (<code>@syndigo/design-system/components</code>, <code>@syndigo/design-system/lib/utils</code>). If it lands and works, you&#39;re done — just verify imports and exports.</p>
+<p>For project-specific components without a shadcn equivalent, hand-write following the patterns below.</p>
+<h2 id="pattern-a-primitive-wrapper-with-cva-variants">Pattern A — Primitive wrapper with CVA variants<a class="anchor" href="#pattern-a-primitive-wrapper-with-cva-variants" aria-hidden="true">#</a></h2>
+<p>Use for interactive elements where a <code>@base-ui/react</code> primitive does the heavy lifting (accessibility, keyboard, ARIA). Mirror <code>button.tsx</code>:</p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-keyword">import</span> { <span class="hljs-title class_">Button</span> <span class="hljs-keyword">as</span> <span class="hljs-title class_">ButtonPrimitive</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@base-ui/react/button&#x27;</span>
+<span class="hljs-keyword">import</span> { cva } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;class-variance-authority&#x27;</span>
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { <span class="hljs-title class_">VariantProps</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;class-variance-authority&#x27;</span>
+
+<span class="hljs-keyword">import</span> { cn } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/lib/utils&#x27;</span>
+
+<span class="hljs-keyword">const</span> myVariants = <span class="hljs-title function_">cva</span>(
+  <span class="hljs-string">&#x27;base classes that apply to every variant&#x27;</span>,
+  {
+    <span class="hljs-attr">variants</span>: {
+      <span class="hljs-attr">variant</span>: {
+        <span class="hljs-attr">default</span>: <span class="hljs-string">&#x27;bg-primary text-primary-foreground&#x27;</span>,
+        <span class="hljs-attr">secondary</span>: <span class="hljs-string">&#x27;bg-secondary text-secondary-foreground&#x27;</span>,
+      },
+      <span class="hljs-attr">size</span>: {
+        <span class="hljs-attr">sm</span>: <span class="hljs-string">&#x27;h-7 px-2 text-xs&#x27;</span>,
+        <span class="hljs-attr">default</span>: <span class="hljs-string">&#x27;h-8 px-2.5 text-sm&#x27;</span>,
+      },
+    },
+    <span class="hljs-attr">defaultVariants</span>: {
+      <span class="hljs-attr">variant</span>: <span class="hljs-string">&#x27;default&#x27;</span>,
+      <span class="hljs-attr">size</span>: <span class="hljs-string">&#x27;default&#x27;</span>,
+    },
+  },
+)
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">MyComponent</span>(<span class="hljs-params">{
+  className,
+  variant = <span class="hljs-string">&#x27;default&#x27;</span>,
+  size = <span class="hljs-string">&#x27;default&#x27;</span>,
+  ...props
+}: <span class="hljs-title class_">ButtonPrimitive</span>.<span class="hljs-title class_">Props</span> &amp; <span class="hljs-title class_">VariantProps</span>&lt;<span class="hljs-keyword">typeof</span> myVariants&gt;</span>) {
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ButtonPrimitive</span>
+      <span class="hljs-attr">data-slot</span>=<span class="hljs-string">&quot;my-component&quot;</span>
+      <span class="hljs-attr">className</span>=<span class="hljs-string">{cn(myVariants({</span> <span class="hljs-attr">variant</span>, <span class="hljs-attr">size</span>, <span class="hljs-attr">className</span> }))}
+      {<span class="hljs-attr">...props</span>}
+    /&gt;</span></span>
+  )
+}
+
+<span class="hljs-keyword">export</span> { <span class="hljs-title class_">MyComponent</span>, myVariants }</code></pre></div><h2 id="pattern-b-composite-component-no-primitive-composable-subparts">Pattern B — Composite component (no primitive, composable subparts)<a class="anchor" href="#pattern-b-composite-component-no-primitive-composable-subparts" aria-hidden="true">#</a></h2>
+<p>Use when the component is a layout primitive — like <code>card.tsx</code> — with named subcomponents:</p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> <span class="hljs-title class_">React</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
+<span class="hljs-keyword">import</span> { cn } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/lib/utils&#x27;</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Card</span>(<span class="hljs-params">{ className, ...props }: <span class="hljs-title class_">React</span>.<span class="hljs-title class_">ComponentProps</span>&lt;<span class="hljs-string">&#x27;div&#x27;</span>&gt;</span>) {
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>
+      <span class="hljs-attr">data-slot</span>=<span class="hljs-string">&quot;card&quot;</span>
+      <span class="hljs-attr">className</span>=<span class="hljs-string">{cn(</span>&#x27;<span class="hljs-attr">group</span>/<span class="hljs-attr">card</span> <span class="hljs-attr">flex</span> <span class="hljs-attr">flex-col</span> <span class="hljs-attr">gap-4</span> <span class="hljs-attr">rounded-xl</span> <span class="hljs-attr">bg-card</span>&#x27;, <span class="hljs-attr">className</span>)}
+      {<span class="hljs-attr">...props</span>}
+    /&gt;</span></span>
+  )
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">CardHeader</span>(<span class="hljs-params">{ className, ...props }: <span class="hljs-title class_">React</span>.<span class="hljs-title class_">ComponentProps</span>&lt;<span class="hljs-string">&#x27;div&#x27;</span>&gt;</span>) {
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>
+      <span class="hljs-attr">data-slot</span>=<span class="hljs-string">&quot;card-header&quot;</span>
+      <span class="hljs-attr">className</span>=<span class="hljs-string">{cn(</span>&#x27;<span class="hljs-attr">px-4</span>&#x27;, <span class="hljs-attr">className</span>)}
+      {<span class="hljs-attr">...props</span>}
+    /&gt;</span></span>
+  )
+}
+
+<span class="hljs-keyword">export</span> { <span class="hljs-title class_">Card</span>, <span class="hljs-title class_">CardHeader</span> }</code></pre></div><h2 id="pattern-c-polymorphic-via-userender-mirrors-badgetsx">Pattern C — Polymorphic via <code>useRender</code> (mirrors <code>badge.tsx</code>)<a class="anchor" href="#pattern-c-polymorphic-via-userender-mirrors-badgetsx" aria-hidden="true">#</a></h2>
+<p>Use when the component should be rendered as a different tag based on a <code>render</code> prop:</p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-keyword">import</span> { mergeProps } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@base-ui/react/merge-props&#x27;</span>
+<span class="hljs-keyword">import</span> { useRender } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@base-ui/react/use-render&#x27;</span>
+<span class="hljs-comment">// ... + cva, VariantProps, cn</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Badge</span>(<span class="hljs-params">{ className, variant = <span class="hljs-string">&#x27;default&#x27;</span>, render, ...props }: useRender.<span class="hljs-title class_">ComponentProps</span>&lt;<span class="hljs-string">&#x27;span&#x27;</span>&gt; &amp; <span class="hljs-title class_">VariantProps</span>&lt;<span class="hljs-keyword">typeof</span> badgeVariants&gt;</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">useRender</span>({
+    <span class="hljs-attr">defaultTagName</span>: <span class="hljs-string">&#x27;span&#x27;</span>,
+    <span class="hljs-attr">props</span>: mergeProps&lt;<span class="hljs-string">&#x27;span&#x27;</span>&gt;(
+      { <span class="hljs-attr">className</span>: <span class="hljs-title function_">cn</span>(<span class="hljs-title function_">badgeVariants</span>({ variant }), className) },
+      props,
+    ),
+    render,
+    <span class="hljs-attr">state</span>: { <span class="hljs-attr">slot</span>: <span class="hljs-string">&#x27;badge&#x27;</span>, variant },
+  })
+}</code></pre></div><h2 id="styling-rules">Styling rules<a class="anchor" href="#styling-rules" aria-hidden="true">#</a></h2>
+<ul>
+<li><strong>Always merge with <code>cn(...)</code></strong>. Every component accepts <code>className</code> as the last (or named) class merge slot so consumers can override.</li>
+<li><strong>Use semantic tokens, not raw colors</strong>. <code>bg-primary</code> / <code>text-foreground</code> / <code>border-border</code> — NOT <code>bg-blue-500</code>. The tokens are OKLch and switch with dark mode automatically.</li>
+<li><strong>Data attributes for variants</strong>: <code>data-slot=&quot;&lt;name&gt;&quot;</code> on the root element. Used by ancestor selectors elsewhere in the system (e.g. <code>has-data-[slot=card-footer]:pb-0</code>). Match the convention.</li>
+<li><strong>Container queries</strong> are encouraged (Tailwind 4 supports them natively): <code>@container/card-header</code>.</li>
+<li><strong>Dark mode</strong> is automatic via the <code>dark</code> custom variant in <code>globals.css</code> — write classes like <code>dark:bg-input/30</code>, no <code>@media</code> blocks needed.</li>
+<li><strong>No inline styles</strong> unless variable-driven; use Tailwind classes.</li>
+</ul>
+<h2 id="common-semantic-tokens-defined-in-globalscss">Common semantic tokens (defined in <code>globals.css</code>)<a class="anchor" href="#common-semantic-tokens-defined-in-globalscss" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">bg-background / text-foreground
+bg-card / text-card-foreground
+bg-primary / text-primary-foreground
+bg-secondary / text-secondary-foreground
+bg-muted / text-muted-foreground
+bg-accent / text-accent-foreground
+bg-destructive / text-destructive (also: text-destructive-foreground)
+border-border / border-input / ring-ring
+bg-popover / text-popover-foreground</code></pre></div><p>Sidebar tokens (<code>bg-sidebar</code>, <code>text-sidebar-foreground</code>, etc.) and chart tokens (<code>text-chart-1</code> … <code>chart-5</code>) exist too — use only inside their respective component families.</p>
+<h2 id="adding-a-new-design-token">Adding a new design token<a class="anchor" href="#adding-a-new-design-token" aria-hidden="true">#</a></h2>
+<p>If a component genuinely needs a new color slot:</p>
+<ol>
+<li>Add a CSS variable to the <code>:root</code> (and <code>.dark</code>) blocks of <code>src/styles/globals.css</code> — keep it OKLch.</li>
+<li>Wire it into the <code>@theme inline</code> block: <code>--color-&lt;name&gt;: var(--&lt;name&gt;)</code>.</li>
+<li>Use <code>bg-&lt;name&gt;</code> / <code>text-&lt;name&gt;</code> in your component.</li>
+</ol>
+<p>Don&#39;t introduce a new token for a one-off color — fall back to existing semantic tokens or pass <code>className</code> from the consumer.</p>
+<h2 id="verify">Verify<a class="anchor" href="#verify" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm typecheck --filter=@syndigo/design-system
+pnpm format
+pnpm build --filter=@syndigo/design-system</code></pre></div><p>For visual verification, run the consumer app:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm dev --filter=pxc-retail</code></pre></div><p>…and exercise the component in a real page. Hot-reload picks up design-system changes automatically.</p>
+<h2 id="checklist">Checklist<a class="anchor" href="#checklist" aria-hidden="true">#</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"> File at <code>packages/design-system/src/components/&lt;name&gt;.tsx</code> (single file, no folder)</li>
+<li><input disabled="" type="checkbox"> <code>cn(...)</code> used to merge <code>className</code> prop</li>
+<li><input disabled="" type="checkbox"> <code>data-slot=&quot;&lt;name&gt;&quot;</code> attribute on the root element</li>
+<li><input disabled="" type="checkbox"> CVA used for any 2+ visual variants</li>
+<li><input disabled="" type="checkbox"> Imports use the package-qualified paths (<code>@syndigo/design-system/lib/utils</code>, <code>@base-ui/react/&lt;primitive&gt;</code>)</li>
+<li><input disabled="" type="checkbox"> Named exports — no <code>default export</code></li>
+<li><input disabled="" type="checkbox"> No barrel file changes (consumer imports <code>@syndigo/design-system/components/&lt;name&gt;</code> directly)</li>
+<li><input disabled="" type="checkbox"> Semantic tokens used (not raw colors)</li>
+<li><input disabled="" type="checkbox"> Dark mode works (<code>dark:</code> variants where needed)</li>
+<li><input disabled="" type="checkbox"> <code>pnpm typecheck</code> + <code>pnpm format</code> pass</li>
+</ul>
+<h2 id="common-mistakes">Common mistakes<a class="anchor" href="#common-mistakes" aria-hidden="true">#</a></h2>
+<ul>
+<li><strong>Default exports</strong> — every component in this codebase uses <code>export { Name }</code>. Don&#39;t break the pattern.</li>
+<li><strong>Barrel files</strong> — never create <code>components/index.ts</code>. The package <code>exports</code> only resolves <code>./components/*</code> to individual files.</li>
+<li><strong>Raw color classes</strong> (<code>bg-blue-500</code>) — they don&#39;t theme, don&#39;t dark-mode, and signal a missing token discussion.</li>
+<li><strong>Forgetting <code>cn(...)</code></strong> — string concatenation defeats <code>tailwind-merge</code>&#39;s conflict resolution. Consumers can&#39;t override your defaults.</li>
+<li><strong>Importing from <code>react</code> for hooks then forgetting <code>import * as React from &#39;react&#39;</code></strong> — match the existing pattern in each file (some use named, some use namespace).</li>
+<li><strong>Skipping <code>data-slot</code></strong> — ancestor selectors elsewhere in the system rely on it. Without it, container-query and <code>has-data-[slot=...]</code> patterns break silently.</li>
+<li><strong>Putting app-specific components here</strong> — page sections, business components, anything with oRPC or i18n hooks belongs in <code>apps/pxc-retail/src/components/</code>. The design system is presentation only.</li>
+<li><strong>Hand-writing what shadcn could scaffold</strong> — saves time and stays consistent with the <code>base-nova</code> preset.</li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

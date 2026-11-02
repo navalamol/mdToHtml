@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CODEBASE-INTERNALS</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#codebase-internals">Codebase Internals</a></li><ol class="toc-sub"><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#folder-map">Folder Map</a></li><li><a href="#the-stack">The Stack</a></li><li><a href="#rpc-not-rest">RPC, Not REST</a></li><li><a href="#isomorphic-client">Isomorphic Client</a></li><ol class="toc-sub"><li><a href="#server-path-ssr">Server path (SSR)</a></li><li><a href="#browser-path">Browser path</a></li><li><a href="#the-orpc-export">The orpc export</a></li><li><a href="#what-differs-between-environments">What differs between environments</a></li></ol><li><a href="#end-to-end-request-lifecycle">End-to-End Request Lifecycle</a></li><ol class="toc-sub"><li><a href="#first-page-load-ssr">First Page Load (SSR)</a></li><li><a href="#subsequent-browser-navigation">Subsequent Browser Navigation</a></li><li><a href="#error-path">Error Path</a></li></ol><li><a href="#contract-chain">Contract Chain</a></li><li><a href="#permissions-system">Permissions System</a></li><ol class="toc-sub"><li><a href="#layer-1-pure-logic-vocabulary-agnostic">Layer 1: Pure Logic (vocabulary-agnostic)</a></li><li><a href="#layer-2-typed-context-factory">Layer 2: Typed Context Factory</a></li><li><a href="#layer-3-per-app-binding">Layer 3: Per-App Binding</a></li><li><a href="#how-session-permissions-flows">How session → permissions flows</a></li><li><a href="#navigation-filtering">Navigation filtering</a></li></ol><li><a href="#routing">Routing</a></li><ol class="toc-sub"><li><a href="#route-file-anatomy">Route File Anatomy</a></li><li><a href="#route-context">Route Context</a></li><li><a href="#search-params-as-state">Search Params as State</a></li></ol><li><a href="#design-system">Design System</a></li><ol class="toc-sub"><li><a href="#import-rule">Import Rule</a></li><li><a href="#technology">Technology</a></li><li><a href="#datatable-pattern">DataTable Pattern</a></li><li><a href="#key-components-quick-reference">Key Components Quick Reference</a></li></ol><li><a href="#i18n">i18n</a></li><ol class="toc-sub"><li><a href="#selector-callbacks-not-string-keys">Selector Callbacks (not string keys)</a></li><li><a href="#errorkey-flow">ErrorKey Flow</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">CODEBASE-INTERNALS</h1>
+        <p class="page-meta">From <code>CODEBASE-INTERNALS.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="codebase-internals">Codebase Internals<a class="anchor" href="#codebase-internals" aria-hidden="true">#</a></h1>
+<p>A deep-dive reference for developers who need to understand <em>how</em> things wire together, not just <em>what</em> exists. Read <code>ARCHITECTURE.md</code> first for the high-level picture, then come here for the mechanics.</p>
+<hr>
+<h2 id="table-of-contents">Table of Contents<a class="anchor" href="#table-of-contents" aria-hidden="true">#</a></h2>
+<ol>
+<li><a href="#folder-map">Folder Map — Every Directory and Its Job</a></li>
+<li><a href="#the-stack">The Stack in One Picture</a></li>
+<li><a href="#rpc-not-rest">RPC, Not REST — What That Means</a></li>
+<li><a href="#isomorphic-client">The Isomorphic Client — How SSR and Browser Share One API</a></li>
+<li><a href="#end-to-end-lifecycle">End-to-End Request Lifecycle</a></li>
+<li><a href="#contract-chain">Contract → Implementation → Client Type Chain</a></li>
+<li><a href="#permissions-system">Permissions System — Three Layers</a></li>
+<li><a href="#routing">Routing — File-Based, Pathless Layouts, Guards</a></li>
+<li><a href="#design-system">Design System — Import Rules and Component Patterns</a></li>
+<li><a href="#i18n">i18n — Selector Callbacks and ErrorKey Flow</a></li>
+</ol>
+<hr>
+<h2 id="folder-map">Folder Map<a class="anchor" href="#folder-map" aria-hidden="true">#</a></h2>
+<p>Every significant directory with its single responsibility. <code>node_modules</code>, <code>.turbo</code>, <code>dist</code>, and <code>build</code> are omitted.</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">retail-pxc/
+│
+├── apps/
+│   ├── pxc-retail/                     Main retail app (Nitro SSR, port 3000)
+│   │   └── src/
+│   │       ├── routes/                 File system = URL tree (TanStack Router)
+│   │       │   ├── __root.tsx          Global providers: QueryClient, i18next, Toaster, devtools
+│   │       │   ├── _shell.tsx          Pathless auth layout: loads session, mounts ShellChrome + PermissionsProvider
+│   │       │   ├── _shell/             Every authenticated page lives here
+│   │       │   │   ├── vendor-central/ Domain routes: vendor list, detail, contacts, documents
+│   │       │   │   ├── merchandising/  Domain routes: assortment, commerce, promotions, product catalog
+│   │       │   │   ├── insights/       Domain routes: analytics &amp; reporting
+│   │       │   │   └── system-admin/   Domain routes: users, roles, integrations, UI config, branding
+│   │       │   ├── no-access.tsx       Redirect target when requireModuleAccess() fails
+│   │       │   ├── rpc/$.ts            Server route: hands POST /rpc to oRPC RPCHandler
+│   │       │   └── openapi/$.ts        Server route: serves auto-generated OpenAPI spec at /openapi
+│   │       ├── integrations/
+│   │       │   ├── orpc/               Isomorphic client, queryOptions, session query, server prefix util
+│   │       │   ├── i18n/               i18next config, dynamicSelector utility
+│   │       │   └── tanstack-query/     QueryClient factory, MutationCache (error toast wiring), devtools
+│   │       ├── lib/
+│   │       │   ├── permissions/        App-specific RBAC binding: Module/Action union types, typed helpers
+│   │       │   ├── navigation-config.ts menuGroups[] + moduleSubTabs definitions for nav filtering
+│   │       │   ├── vendor/             Vendor domain utilities (mapping, sorting, display logic)
+│   │       │   └── mock/               Dev-time stub data for missing API endpoints (NOT production)
+│   │       ├── components/             App-specific UI — domain subdirectories (vendor/, admin/, etc.)
+│   │       ├── hooks/                  useTranslation re-export, useSession, useFormatDate
+│   │       ├── locales/                {en,es,fr,de}/translation.ts — all user-visible text
+│   │       └── env/
+│   │           ├── server.ts           T3 Env server-side vars (OTEL endpoints, auth flags)
+│   │           └── client.ts           T3 Env client-side vars (VITE_APP_TITLE, VITE_BASE)
+│   │
+│   └── tenant-management/              Admin app (Nitro SSR, port 3001) — same structure
+│       └── src/
+│           ├── routes/_shell/          onboard, tenant.$tenantId, features, feature-set.*, feature-definition.*
+│           ├── lib/permissions/        Narrowed vocab local to tenant-management (NOT from core-contracts)
+│           └── components/             Features, onboarding, tenant config, entitlements
+│
+├── packages/
+│   ├── core-contracts/                 @repo/core-contracts — single API source of truth
+│   │   └── src/
+│   │       ├── &lt;domain&gt;/contracts/     oRPC contract definitions (input schema + output schema)
+│   │       ├── schemas/                Zod schemas (runtime validators + TypeScript type sources)
+│   │       ├── types/                  z.infer&lt;&gt; derived types, ErrorKey union — never hand-written
+│   │       ├── masking/                Pure utils: maskName, maskEmail, maskPhone, maskLast4
+│   │       └── vendor-central/         Pure utils: address-rules, banking-rules, contact-masking
+│   │
+│   ├── orpc/                           @syndigo/orpc — server-side BFF implementation
+│   │   └── src/
+│   │       ├── router.ts               Assembles all procedures into one exported router object
+│   │       ├── builder.ts              os (base builder) and authed (builder + full middleware chain)
+│   │       ├── context.ts              Context, AuthedContext, ApiClientContext types
+│   │       ├── errors.ts               throwError, recordErrorOnSpan, recordValidationError
+│   │       ├── upstream-error.ts       mapUpstreamError, unwrap (converts openapi-fetch → ORPCError)
+│   │       ├── auth-session.ts         parseAuthSessionUser, devFallbackUser
+│   │       ├── middleware/
+│   │       │   ├── auth.ts             authMiddleware: resolves user + permissions
+│   │       │   ├── api-client.ts       apiClientMiddleware: creates vendorApi, mdmApi, cslApi clients
+│   │       │   ├── error-recording.ts  errorRecordingMiddleware: OTel span exception + status
+│   │       │   ├── span-attributes.ts  spanAttributesMiddleware: sets enduser.id, tenant_id on span
+│   │       │   └── validation-error.ts validationErrorMiddleware: rewraps Zod errors as ORPCErrors
+│   │       ├── procedures/&lt;domain&gt;/    One file per domain; one exported function per procedure
+│   │       │   └── *.mock.ts           Deterministic stub generators (gated on context.stubsEnabled)
+│   │       ├── clients/                openapi-fetch typed clients for each upstream service
+│   │       │   ├── vendor-api.ts       Riversand Vendor API client factory
+│   │       │   ├── mdm-api.ts          MDM API client factory
+│   │       │   ├── csl-entity-service.ts
+│   │       │   └── csl-onboarding-service.ts
+│   │       └── generated/             Auto-generated TypeScript types from upstream OpenAPI specs
+│   │           ├── vendor-api.d.ts     (type-only — .d.ts, no runtime code)
+│   │           ├── mdm-api.d.ts
+│   │           ├── csl-entity-service.d.ts
+│   │           └── csl-onboarding-service.d.ts
+│   │
+│   ├── app-shell/                      @syndigo/app-shell — shared chrome, RBAC, i18n, error utils
+│   │   └── src/
+│   │       ├── shell/                  ShellChrome component (sidebar, header, nav rendering)
+│   │       ├── permissions/            Pure RBAC math + createPermissionsContext&lt;M,A&gt;() factory
+│   │       ├── navigation/             MenuGroup, SubTabItem types, buildSubTabResolver
+│   │       ├── i18n/                   i18next config base, useTranslation hook
+│   │       ├── hooks/                  use-timezone, use-theme, use-translation
+│   │       ├── query/error-cache.ts    makeMutationCache (MutationCache.onError → toast)
+│   │       └── components/UnsavedChangesGuard.tsx
+│   │
+│   ├── design-system/                  @syndigo/design-system — 44 styled components
+│   │   └── src/
+│   │       ├── components/             One file per component (no barrel). Button, Badge, DataTable…
+│   │       ├── lib/utils.ts            cn() — clsx + tailwind-merge
+│   │       └── styles/globals.css      OKLch color tokens, dark mode, base resets
+│   │
+│   └── telemetry/                      @syndigo/telemetry — OTel bootstrap only
+│       └── src/instrumentation.ts      startTelemetry({ serviceName, instrumentations })
+│
+├── submodules/loveable/                READ-ONLY UX reference mockups — visual spec, not shipped
+└── .claude/
+    ├── knowledge/                      Curated KB consumed by AI agents; start at INDEX.md
+    └── skills/                         Task playbooks (add-orpc-procedure, add-route, error-key…)</code></pre></div><hr>
+<h2 id="the-stack">The Stack<a class="anchor" href="#the-stack" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">┌─────────────────────────────────────────────────────────────────┐
+│                        Browser / SSR                            │
+│                                                                 │
+│  React 19  +  TanStack Router (file-based)                      │
+│  TanStack Query (React Query) — caches all RPC results          │
+│  @syndigo/design-system (CVA + Tailwind 4 + @base-ui/react)     │
+│  i18next (selector-callback translation keys)                   │
+│                                                                 │
+│  src/integrations/orpc/client.ts                                │
+│       ↕  isomorphic — same call, different transport            │
+├─────────────────────────────────────────────────────────────────┤
+│                  TanStack Start (Nitro SSR)                      │
+│                                                                 │
+│  src/routes/rpc/$.ts ← RPCHandler ← @syndigo/orpc/router        │
+│                                                                 │
+│  Middleware chain (every authed procedure):                     │
+│  errorRecording → validationError → auth → spanAttributes       │
+│                → apiClient → requirePermission → handler        │
+│                                                                 │
+│  openapi-fetch clients → upstream REST APIs                     │
+├─────────────────────────────────────────────────────────────────┤
+│            Upstream Services (external, REST)                   │
+│                                                                 │
+│  Riversand Vendor API  ·  MDM API                               │
+│  CSL Entity Service    ·  CSL Onboarding Service                │
+└─────────────────────────────────────────────────────────────────┘</code></pre></div><hr>
+<h2 id="rpc-not-rest">RPC, Not REST<a class="anchor" href="#rpc-not-rest" aria-hidden="true">#</a></h2>
+<p><strong>The app uses oRPC (JSON-RPC style), not REST.</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Concern</th><th>REST</th><th>This app</th></tr></thead><tbody><tr><td>Transport</td><td>Multiple URLs, HTTP verbs</td><td>Single <code>POST /rpc</code></td></tr><tr><td>Procedure address</td><td>URL path + verb</td><td>Procedure name in body</td></tr><tr><td>Type safety</td><td>OpenAPI → codegen</td><td>Zod schemas → inferred TypeScript</td></tr><tr><td>Error shape</td><td>Status codes + ad-hoc bodies</td><td>Typed <code>ORPCError</code> with <code>errorKey</code></td></tr></tbody></table></div><p><strong>What <code>/rpc</code> actually looks like on the wire:</strong></p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">POST /rpc/vendorCentral.tenantVendor.list
+Content-Type: application/json
+
+{ &quot;input&quot;: { &quot;limit&quot;: 12, &quot;vendorStatus&quot;: &quot;active&quot; } }</code></pre></div><p>The procedure path is encoded in the URL <em>suffix</em> (after <code>/rpc/</code>), but it is still a single handler — <code>RPCHandler</code> in <code>src/routes/rpc/$.ts</code> routes by the path, not by HTTP verb.</p>
+<p><strong>OpenAPI at <code>/openapi</code> is documentation only.</strong> The frontend never calls REST endpoints. It exists to auto-generate a REST-style spec from the oRPC contracts for tooling and consumers.</p>
+<p><strong>Upstream services ARE REST.</strong> The BFF communicates with Riversand, MDM, CSL via standard HTTP using <code>openapi-fetch</code> typed clients. The <code>unwrap()</code> utility converts these REST responses into the oRPC type system.</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">Browser ──POST /rpc──→ BFF (oRPC)
+BFF ──GET/POST /v1/...──→ Upstream REST APIs</code></pre></div><hr>
+<h2 id="isomorphic-client">Isomorphic Client<a class="anchor" href="#isomorphic-client" aria-hidden="true">#</a></h2>
+<p><strong>File:</strong> <code>apps/pxc-retail/src/integrations/orpc/client.ts</code></p>
+<p>The isomorphic client gives components one API call that works identically during SSR and in the browser, without double-fetching.</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">const</span> getORPCClient = <span class="hljs-title function_">createIsomorphicFn</span>()
+  .<span class="hljs-title function_">server</span>(<span class="hljs-function">() =&gt;</span>
+    <span class="hljs-comment">// SSR path: direct in-process call — NO network, NO serialization</span>
+    <span class="hljs-title function_">createRouterClient</span>(router, {
+      <span class="hljs-attr">context</span>: getOrpcContext,  <span class="hljs-comment">// reads cookies/headers from the live Nitro request</span>
+    })
+  )
+  .<span class="hljs-title function_">client</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-comment">// Browser path: HTTP POST to /rpc</span>
+    <span class="hljs-keyword">const</span> link = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RPCLink</span>({
+      <span class="hljs-attr">url</span>: <span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">window</span>.location.origin}</span><span class="hljs-subst">${getOrpcServerPrefix(<span class="hljs-string">&#x27;/rpc&#x27;</span>)}</span>`</span>,
+    })
+    <span class="hljs-keyword">return</span> createORPCClient&lt;<span class="hljs-title class_">Client</span>&gt;(link)
+  })
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> client = <span class="hljs-title function_">getORPCClient</span>()
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> orpc = <span class="hljs-title function_">createTanstackQueryUtils</span>(client)</code></pre></div><h3 id="server-path-ssr">Server path (SSR)<a class="anchor" href="#server-path-ssr" aria-hidden="true">#</a></h3>
+<ul>
+<li><code>createRouterClient(router, { context })</code> calls the router object directly in-process</li>
+<li>No HTTP round-trip, no JSON serialization</li>
+<li><code>getOrpcContext</code> is called fresh per invocation; reads <code>getCookie()</code>, <code>getRequestHeader()</code>, <code>getRequest()</code> from <code>@tanstack/react-start/server</code> — these primitives read the <em>current</em> incoming Nitro request</li>
+<li>The full middleware chain (auth, validation, span recording) still runs</li>
+<li>Data is returned as typed objects, never serialized</li>
+</ul>
+<h3 id="browser-path">Browser path<a class="anchor" href="#browser-path" aria-hidden="true">#</a></h3>
+<ul>
+<li><code>RPCLink</code> serializes every call to <code>POST /rpc/...</code> over HTTP</li>
+<li><code>getOrpcServerPrefix(&#39;/rpc&#39;)</code> computes the correct URL; in production the app is served at <code>/pxc/</code>, so the endpoint is <code>/pxc/rpc</code> — never hardcode <code>/rpc</code></li>
+<li><code>createORPCClient&lt;Client&gt;</code> infers all input/output types from the same <code>Router</code> type used server-side — the TypeScript types are identical</li>
+</ul>
+<h3 id="the-orpc-export">The <code>orpc</code> export<a class="anchor" href="#the-orpc-export" aria-hidden="true">#</a></h3>
+<p><code>createTanstackQueryUtils(client)</code> wraps every procedure with React Query helpers:</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// In a component:</span>
+<span class="hljs-keyword">const</span> data = <span class="hljs-title function_">useSuspenseQuery</span>(
+  orpc.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">tenantVendor</span>.<span class="hljs-property">list</span>.<span class="hljs-title function_">queryOptions</span>({ <span class="hljs-attr">input</span>: { <span class="hljs-attr">limit</span>: <span class="hljs-number">12</span> } })
+)
+
+<span class="hljs-comment">// Infinite scroll:</span>
+<span class="hljs-keyword">const</span> data = <span class="hljs-title function_">useSuspenseInfiniteQuery</span>(
+  orpc.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">tenantVendor</span>.<span class="hljs-property">list</span>.<span class="hljs-title function_">infiniteOptions</span>({
+    <span class="hljs-attr">input</span>: { <span class="hljs-attr">limit</span>: <span class="hljs-number">12</span> },
+    <span class="hljs-attr">getNextPageParam</span>: <span class="hljs-function">(<span class="hljs-params">page</span>) =&gt;</span> page.<span class="hljs-property">nextCursor</span>,
+  })
+)
+
+<span class="hljs-comment">// Mutation:</span>
+<span class="hljs-keyword">const</span> mutation = <span class="hljs-title function_">useMutation</span>(
+  orpc.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">tenantVendor</span>.<span class="hljs-property">update</span>.<span class="hljs-title function_">mutationOptions</span>()
+)</code></pre></div><p>The stable cache key is derived from the procedure path + input. The same key is used on server and client, which is why TanStack Start can hydrate the cache from SSR data.</p>
+<h3 id="what-differs-between-environments">What differs between environments<a class="anchor" href="#what-differs-between-environments" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th></th><th>Server (SSR)</th><th>Browser</th></tr></thead><tbody><tr><td>Transport</td><td>In-process function call</td><td>HTTP POST</td></tr><tr><td>Request context</td><td>Read from Nitro request primitives</td><td>Cookies forwarded automatically</td></tr><tr><td>Performance</td><td>Zero network latency</td><td>One round-trip per cache miss</td></tr><tr><td>TypeScript types</td><td>Identical — same <code>Router</code> type</td><td>Identical</td></tr><tr><td>Middleware chain</td><td>Runs fully</td><td>Runs fully on server</td></tr></tbody></table></div><hr>
+<h2 id="end-to-end-request-lifecycle">End-to-End Request Lifecycle<a class="anchor" href="#end-to-end-request-lifecycle" aria-hidden="true">#</a></h2>
+<p>This traces a real feature: the vendor list page in <code>pxc-retail</code>. Follow this to understand the complete wiring.</p>
+<h3 id="first-page-load-ssr">First Page Load (SSR)<a class="anchor" href="#first-page-load-ssr" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">GET /vendor-central/vendor-management/vendors?sort=name</code></pre></div><p><strong>1. Nitro receives request → TanStack Start matches route</strong></p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">src/routes/_shell/vendor-central/vendor-management/vendors.tsx</code></pre></div><p><strong>2. <code>_shell.tsx</code> <code>beforeLoad</code> runs first (pathless parent)</strong></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// _shell.tsx</span>
+<span class="hljs-keyword">const</span> session = <span class="hljs-keyword">await</span> queryClient.<span class="hljs-title function_">fetchQuery</span>(<span class="hljs-title function_">sessionQueryOptions</span>())
+<span class="hljs-comment">// sessionQueryOptions calls orpc.users.session.queryOptions()</span>
+<span class="hljs-comment">// isomorphic client (server path): createRouterClient.users.session()</span>
+<span class="hljs-comment">// users.session procedure uses os (base builder — no auth middleware)</span>
+<span class="hljs-comment">// Returns { user, tenantId, permissions: string[] }</span>
+
+<span class="hljs-keyword">const</span> resolvedPermissions = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>(session.<span class="hljs-property">permissions</span>)
+<span class="hljs-keyword">return</span> { user, tenantId, resolvedPermissions }
+<span class="hljs-comment">// This is injected into all child route contexts</span></code></pre></div><p><strong>3. <code>vendors.tsx</code> <code>beforeLoad</code> runs</strong></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-attr">beforeLoad</span>: <span class="hljs-function">(<span class="hljs-params">{ context }</span>) =&gt;</span> {
+  <span class="hljs-title function_">requireModuleAccess</span>(context.<span class="hljs-property">resolvedPermissions</span>, <span class="hljs-string">&#x27;vendor-management&#x27;</span>)
+  <span class="hljs-comment">// checks permissions.has(&#x27;vendor-management:read&#x27;)</span>
+  <span class="hljs-comment">// if missing: throw redirect({ to: &#x27;/no-access&#x27; })</span>
+}</code></pre></div><p><strong>4. <code>vendors.tsx</code> <code>validateSearch</code> runs</strong></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-attr">validateSearch</span>: <span class="hljs-function">(<span class="hljs-params">search</span>) =&gt;</span> vendorPortalSearchSchema.<span class="hljs-title function_">parse</span>(search)
+<span class="hljs-comment">// Zod parses + provides defaults: view=&#x27;grid&#x27;, sort=&#x27;name&#x27;</span>
+<span class="hljs-comment">// Available in component as: Route.useSearch()</span></code></pre></div><p><strong>5. React renders — <code>&lt;Suspense&gt;</code> boundary activates</strong></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// VendorPortalPage renders immediately (filter bar, layout)</span>
+<span class="hljs-comment">// &lt;Suspense fallback={&lt;VendorListSkeleton /&gt;}&gt;</span>
+<span class="hljs-comment">//   &lt;VendorContent /&gt;</span>
+<span class="hljs-comment">// &lt;/Suspense&gt;</span></code></pre></div><p><strong>6. <code>VendorContent</code> calls <code>useSuspenseInfiniteQuery</code></strong></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-title function_">useSuspenseInfiniteQuery</span>(
+  orpc.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">tenantVendor</span>.<span class="hljs-property">list</span>.<span class="hljs-title function_">infiniteOptions</span>({
+    <span class="hljs-attr">input</span>: { <span class="hljs-attr">limit</span>: <span class="hljs-number">12</span>, sort, vendorStatus },
+    <span class="hljs-attr">getNextPageParam</span>: <span class="hljs-function">(<span class="hljs-params">page</span>) =&gt;</span> page.<span class="hljs-property">nextCursor</span>,
+  })
+)
+<span class="hljs-comment">// isomorphic client (server path): calls router directly</span></code></pre></div><p><strong>7. Middleware chain runs (in order, outermost first)</strong></p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">a. errorRecordingMiddleware
+   → wraps everything; catches any escaping ORPCError
+   → recordException(err) + setStatus(ERROR) on OTel span
+   → re-throws
+
+b. validationErrorMiddleware
+   → Zod validates input schema
+   → on failure: rewraps as ORPCError { code: &#x27;BAD_REQUEST&#x27;, errorKey: &#x27;upstream.validation&#x27; }
+
+c. authMiddleware
+   → reads context.currentUser (from cookie via getOrpcContext)
+   → if no userId: throwError({ code: &#x27;UNAUTHORIZED&#x27;, errorKey: &#x27;auth.unauthenticated&#x27; })
+   → resolveUserRoles(context) [currently stubs to DEFAULT_ROLES — see known issues]
+   → resolveStoredRolePermissions(roles) → string[] of &quot;module:action&quot;
+   → getTenantEnabledModules(tenantId) → intersects with tenant&#x27;s enabled modules
+   → merges AuthedContext { userId, tenantId, permissions: ReadonlySet&lt;Permission&gt; }
+
+d. spanAttributesMiddleware
+   → sets enduser.id, app.tenant_id on active OTel span
+
+e. apiClientMiddleware
+   → creates VendorApiClient(baseUrl, headers)
+   → creates MdmApiClient, CslApiClient, CslOnboardingApiClient
+   → merges { vendorApi, mdmApi, cslApi, cslOnboardingApi } into context
+
+f. requirePermission(&#x27;vendor-management&#x27;, &#x27;read&#x27;)  [per-procedure .use()]
+   → context.permissions.has(&#x27;vendor-management:read&#x27;)
+   → missing: throwError({ code: &#x27;FORBIDDEN&#x27;, errorKey: &#x27;auth.permission_denied&#x27; })
+
+g. listTenantVendors handler executes
+   → unwrap(context.vendorApi.GET(&#x27;/v1/vendors&#x27;, { params: { query: { ... } } }))
+   → unwrap: if !response.ok → mapUpstreamError(status, body) → throw ORPCError
+   → if ok: maps response with mapTenantVendorFromApi
+   → if context.stubsEnabled: merges mockVendorCardFields (from *.mock.ts sibling)
+   → returns { items: TenantVendor[], nextCursor?: string }
+
+h. Zod validates return value against output schema
+   → if invalid: validationErrorMiddleware logs [orpc:validation], rewraps as ORPCError</code></pre></div><p><strong>8. Data flows back through middleware (no mutations on success path)</strong></p>
+<p><strong>9. Nitro serializes HTML + dehydrated React Query cache → browser</strong></p>
+<p>Browser receives fully-rendered page. React Query cache is hydrated. No second fetch needed.</p>
+<hr>
+<h3 id="subsequent-browser-navigation">Subsequent Browser Navigation<a class="anchor" href="#subsequent-browser-navigation" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">User applies filter → URL updates → React Query sees new cache key</code></pre></div><div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// browser-side fetch:</span>
+<span class="hljs-title class_">RPCLink</span>.<span class="hljs-title function_">call</span>([<span class="hljs-string">&#x27;vendorCentral&#x27;</span>,<span class="hljs-string">&#x27;tenantVendor&#x27;</span>,<span class="hljs-string">&#x27;list&#x27;</span>], { <span class="hljs-attr">vendorStatus</span>: <span class="hljs-string">&#x27;active&#x27;</span>, <span class="hljs-attr">limit</span>: <span class="hljs-number">12</span> })
+<span class="hljs-comment">// → HTTP POST /pxc/rpc (production) or /rpc (local)</span>
+<span class="hljs-comment">// body: { input: { vendorStatus: &#x27;active&#x27;, limit: 12 } }</span>
+<span class="hljs-comment">// → Nitro routes to RPCHandler → same middleware chain → JSON response</span></code></pre></div><hr>
+<h3 id="error-path">Error Path<a class="anchor" href="#error-path" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// Inside any procedure:</span>
+<span class="hljs-title function_">throwError</span>({ <span class="hljs-attr">code</span>: <span class="hljs-string">&#x27;NOT_FOUND&#x27;</span>, <span class="hljs-attr">errorKey</span>: <span class="hljs-string">&#x27;vendor.not_found&#x27;</span>, <span class="hljs-attr">params</span>: { id } })</code></pre></div><div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">errorRecordingMiddleware catches ORPCError
+→ recordException(err) on OTel span
+→ setStatus({ code: ERROR })
+→ re-throws
+
+RPCHandler serializes:
+{ error: { code: &#x27;NOT_FOUND&#x27;, data: { errorKey: &#x27;vendor.not_found&#x27;, traceId, spanId } } }
+
+On browser (mutation):
+  MutationCache.onError
+  → parseErrorPayload(error.data) → { errorKey: &#x27;vendor.not_found&#x27; }
+  → dynamicSelector(&#x27;errors.vendor.not_found&#x27;)
+  → toast.error(t(selector)) → shows &quot;Vendor not found&quot;
+
+On browser (page/query):
+  RouteErrorComponent receives error
+  → code === &#x27;UNAUTHORIZED&#x27; / &#x27;FORBIDDEN&#x27; → access-denied page
+  → code === &#x27;NOT_FOUND&#x27; → 404 page
+  → else → generic error page with traceId for support</code></pre></div><hr>
+<h2 id="contract-chain">Contract Chain<a class="anchor" href="#contract-chain" aria-hidden="true">#</a></h2>
+<p>Three layers, all in <code>@repo/core-contracts</code>. Types flow automatically — never written by hand.</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">Layer 1: Zod Schema (src/schemas/)
+         Runtime validator + TypeScript type source
+         ↓ z.infer&lt;typeof MySchema&gt;
+Layer 2: TypeScript Type (src/types/)
+         Inferred — never declare by hand
+         ↑ imported by both BFF procedures AND frontend components
+
+Layer 3: Contract Definition (src/&lt;domain&gt;/contracts/)
+         oc.input(InputSchema).output(OutputSchema).route({ summary })
+         ↓ implement(contract)
+         BFF Procedure (packages/orpc/src/procedures/)
+         TypeScript compiler enforces: return type must match output schema
+         ↓ router.ts assembles into router
+         Client Types (client.ts: RouterClient&lt;typeof router&gt;)
+         orpc.domain.procedure.queryOptions({ input: ... })
+         input/output types inferred from contract — zero annotation in components</code></pre></div><p><strong>If a contract output schema changes</strong>: build fails everywhere that uses the old shape — the handler, the component, the test fixtures. This is intentional.</p>
+<p><strong><code>oc</code> vs <code>os</code>:</strong></p>
+<ul>
+<li><code>oc</code> = <code>ocBase.errors(standardErrors)</code> — the contract builder. Adds <code>UNAUTHORIZED</code>, <code>NOT_FOUND</code>, <code>INTERNAL_SERVER_ERROR</code> as typed error variants to every procedure automatically.</li>
+<li><code>os</code> = the oRPC <em>server</em> builder from <code>builder.ts</code>. <code>authed</code> extends it with the full middleware chain.</li>
+<li><code>os</code> is only used in the BFF; <code>oc</code> is only used in core-contracts.</li>
+</ul>
+<hr>
+<h2 id="permissions-system">Permissions System<a class="anchor" href="#permissions-system" aria-hidden="true">#</a></h2>
+<p>Three layers: pure logic → typed factory → per-app binding.</p>
+<h3 id="layer-1-pure-logic-vocabulary-agnostic">Layer 1: Pure Logic (vocabulary-agnostic)<a class="anchor" href="#layer-1-pure-logic-vocabulary-agnostic" aria-hidden="true">#</a></h3>
+<p><code>packages/app-shell/src/permissions/logic.ts</code></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">ACTION_HIERARCHY</span> = {
+  <span class="hljs-attr">admin</span>: [<span class="hljs-string">&#x27;read&#x27;</span>, <span class="hljs-string">&#x27;write&#x27;</span>, <span class="hljs-string">&#x27;delete&#x27;</span>],
+  <span class="hljs-attr">delete</span>: [<span class="hljs-string">&#x27;read&#x27;</span>, <span class="hljs-string">&#x27;write&#x27;</span>],
+  <span class="hljs-attr">write</span>: [<span class="hljs-string">&#x27;read&#x27;</span>],
+  <span class="hljs-attr">read</span>: [],
+}
+
+<span class="hljs-comment">// &quot;vendor-management:admin&quot; → expands to:</span>
+<span class="hljs-comment">// { &quot;vendor-management:admin&quot;, &quot;vendor-management:read&quot;,</span>
+<span class="hljs-comment">//   &quot;vendor-management:write&quot;, &quot;vendor-management:delete&quot; }</span>
+<span class="hljs-title function_">resolvePermissions</span>(permissions, <span class="hljs-variable constant_">ACTION_HIERARCHY</span>)
+
+<span class="hljs-title function_">hasPermission</span>(permissions, <span class="hljs-string">&#x27;vendor-management&#x27;</span>, <span class="hljs-string">&#x27;write&#x27;</span>)
+<span class="hljs-comment">// → checks permissions.has(&#x27;vendor-management:write&#x27;)</span>
+
+<span class="hljs-title function_">hasModuleAccess</span>(permissions, <span class="hljs-string">&#x27;vendor-management&#x27;</span>)
+<span class="hljs-comment">// → checks permissions.has(&#x27;vendor-management:read&#x27;)</span>
+<span class="hljs-comment">// true for ANY granted action (admin implies read)</span></code></pre></div><h3 id="layer-2-typed-context-factory">Layer 2: Typed Context Factory<a class="anchor" href="#layer-2-typed-context-factory" aria-hidden="true">#</a></h3>
+<p><code>packages/app-shell/src/permissions/index.ts</code></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript">createPermissionsContext&lt;<span class="hljs-title class_">Module</span>, <span class="hljs-title class_">Action</span>&gt;()
+<span class="hljs-comment">// Returns:</span>
+<span class="hljs-comment">// PermissionsProvider — wraps the React tree, injects the resolved Set</span>
+<span class="hljs-comment">// useResolvedPermissions() — returns the Set</span>
+<span class="hljs-comment">// useHasPermission(module, action) — boolean hook</span>
+<span class="hljs-comment">// useHasModuleAccess(module) — boolean hook</span></code></pre></div><h3 id="layer-3-per-app-binding">Layer 3: Per-App Binding<a class="anchor" href="#layer-3-per-app-binding" aria-hidden="true">#</a></h3>
+<p><code>apps/pxc-retail/src/lib/permissions/index.ts</code></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// Calls the factory with retail-specific types:</span>
+<span class="hljs-keyword">const</span> {
+  <span class="hljs-title class_">PermissionsProvider</span>,
+  useHasModuleAccess,
+  <span class="hljs-comment">// ...</span>
+} = createPermissionsContext&lt;<span class="hljs-title class_">Module</span>, <span class="hljs-title class_">Action</span>&gt;()
+
+<span class="hljs-comment">// Exports typed helpers that already know about menuGroups:</span>
+<span class="hljs-keyword">export</span> { requireModuleAccess, filterMenuGroups, resolveLandingRoute,
+         useFilteredMenuGroups, useFilteredSubTabs }</code></pre></div><h3 id="how-session-permissions-flows">How session → permissions flows<a class="anchor" href="#how-session-permissions-flows" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">_shell.tsx beforeLoad
+  → orpc.users.session (no auth middleware on this procedure)
+  → handler: parseAuthSessionUser(cookie) → currentUser
+  → resolveUserRoles(userId, tenantId) [stubs to DEFAULT_ROLES today]
+  → resolveStoredRolePermissions(roles) → string[]
+  → returns session.permissions as string[] (already hierarchy-expanded)
+  → _shell.tsx: new Set(session.permissions) → PermissionsProvider</code></pre></div><p><strong>Server-side defense in depth:</strong>
+The same permission check runs inside the authed middleware chain on every BFF procedure, independent of the client-side guard. Failing <code>requireModuleAccess</code> in <code>beforeLoad</code> prevents the page from rendering; failing <code>requirePermission</code> in the BFF returns a <code>FORBIDDEN</code> ORPCError. Both must pass.</p>
+<h3 id="navigation-filtering">Navigation filtering<a class="anchor" href="#navigation-filtering" aria-hidden="true">#</a></h3>
+<p><code>filterMenuGroups(resolved)</code> drops <code>MenuGroup</code> items where <code>hasModuleAccess</code> returns false. This powers both the live nav and the &quot;live preview&quot; inside the Roles &amp; Permissions admin panel.</p>
+<p><code>resolveLandingRoute(resolved)</code> returns the first accessible <code>href</code> — used in the root index route redirect to send users to their first allowed page.</p>
+<hr>
+<h2 id="routing">Routing<a class="anchor" href="#routing" aria-hidden="true">#</a></h2>
+<p>File system path = URL path. Rules:</p>
+<div class="table-wrap"><table><thead><tr><th>Pattern</th><th>Meaning</th></tr></thead><tbody><tr><td><code>__root.tsx</code></td><td>Global root layout (no URL segment)</td></tr><tr><td><code>_shell.tsx</code></td><td>Pathless layout (adds no URL segment, wraps children)</td></tr><tr><td><code>_shell/</code></td><td>Directory for children of the pathless layout</td></tr><tr><td><code>vendors.tsx</code></td><td>Page at that path</td></tr><tr><td><code>$vendorId.tsx</code></td><td>Dynamic segment <code>:vendorId</code></td></tr><tr><td><code>routeTree.gen.ts</code></td><td>Auto-generated — never edit</td></tr></tbody></table></div><h3 id="route-file-anatomy">Route File Anatomy<a class="anchor" href="#route-file-anatomy" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">Route</span> = <span class="hljs-title function_">createFileRoute</span>(<span class="hljs-string">&#x27;/_shell/vendor-central/vendor-management/vendors&#x27;</span>)({
+  <span class="hljs-comment">// 1. Parse + default URL search params</span>
+  <span class="hljs-attr">validateSearch</span>: <span class="hljs-function">(<span class="hljs-params">search</span>) =&gt;</span> vendorSearchSchema.<span class="hljs-title function_">parse</span>(search),
+
+  <span class="hljs-comment">// 2. Guard + data prefetch (runs before component mounts)</span>
+  <span class="hljs-attr">beforeLoad</span>: <span class="hljs-function">(<span class="hljs-params">{ context }</span>) =&gt;</span> {
+    <span class="hljs-title function_">requireModuleAccess</span>(context.<span class="hljs-property">resolvedPermissions</span>, <span class="hljs-string">&#x27;vendor-management&#x27;</span>)
+    <span class="hljs-comment">// if fails: throw redirect({ to: &#x27;/no-access&#x27; })</span>
+  },
+
+  <span class="hljs-comment">// 3. Page component</span>
+  <span class="hljs-attr">component</span>: <span class="hljs-title class_">VendorPortalPage</span>,
+
+  <span class="hljs-comment">// 4. Error boundary scoped to this route</span>
+  <span class="hljs-attr">errorComponent</span>: <span class="hljs-title class_">RouteErrorComponent</span>,
+})</code></pre></div><h3 id="route-context">Route Context<a class="anchor" href="#route-context" aria-hidden="true">#</a></h3>
+<p>TanStack Router propagates context down the tree. The root route defines <code>{ queryClient, i18n, timezone }</code>. <code>_shell.tsx</code> <code>beforeLoad</code> extends it with <code>{ user, tenantId, resolvedPermissions }</code>. Every child route accesses context via <code>Route.useRouteContext()</code> or receives it in its own <code>beforeLoad({ context })</code>.</p>
+<h3 id="search-params-as-state">Search Params as State<a class="anchor" href="#search-params-as-state" aria-hidden="true">#</a></h3>
+<p>Search params are the source of truth for all filterable/sortable page state — they are bookmarkable, shareable, and SSR-compatible.</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// Navigate to update filter state:</span>
+<span class="hljs-title function_">navigate</span>({ <span class="hljs-attr">search</span>: <span class="hljs-function">(<span class="hljs-params">prev</span>) =&gt;</span> ({ ...prev, <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;active&#x27;</span> }) })
+
+<span class="hljs-comment">// Read in component:</span>
+<span class="hljs-keyword">const</span> { sort, status, view } = <span class="hljs-title class_">Route</span>.<span class="hljs-title function_">useSearch</span>()</code></pre></div><p><strong>Do not store filter state in local React state.</strong> Put it in the URL via <code>validateSearch</code>.</p>
+<hr>
+<h2 id="design-system">Design System<a class="anchor" href="#design-system" aria-hidden="true">#</a></h2>
+<h3 id="import-rule">Import Rule<a class="anchor" href="#import-rule" aria-hidden="true">#</a></h3>
+<p>No barrel. Every component is its own file.</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// CORRECT:</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Button</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/components/button&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">DataTable</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/components/data-table&#x27;</span>
+<span class="hljs-keyword">import</span> { cn } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/lib/utils&#x27;</span>
+
+<span class="hljs-comment">// WRONG — no barrel export at package root:</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Button</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system&#x27;</span></code></pre></div><h3 id="technology">Technology<a class="anchor" href="#technology" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>Tailwind CSS 4</strong> — OKLch color tokens in <code>globals.css</code>; imported once at <code>__root.tsx</code> via <code>appCss</code></li>
+<li><strong>CVA (Class Variance Authority)</strong> — variants on every component</li>
+<li><strong>@base-ui/react</strong> — accessible primitives (Dialog, Select, Tooltip, etc.) — shadcn <code>base-nova</code> preset</li>
+<li><strong><code>cn()</code></strong> — always use this for merging class names (clsx + tailwind-merge)</li>
+</ul>
+<h3 id="datatable-pattern">DataTable Pattern<a class="anchor" href="#datatable-pattern" aria-hidden="true">#</a></h3>
+<p>The design system renders a TanStack Table instance — it does not own table state.</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// App owns state and columns:</span>
+<span class="hljs-keyword">const</span> table = <span class="hljs-title function_">useTable</span>({
+  <span class="hljs-attr">features</span>: <span class="hljs-title function_">tableFeatures</span>({ columnVisibilityFeature }),
+  <span class="hljs-attr">data</span>: vendors,
+  <span class="hljs-attr">columns</span>: vendorColumns,
+})
+
+<span class="hljs-comment">// Design system owns rendering:</span>
+&lt;<span class="hljs-title class_">DataTable</span>
+  table={table}
+  onRowClick={<span class="hljs-function">(<span class="hljs-params">row</span>) =&gt;</span> <span class="hljs-title function_">navigate</span>({ <span class="hljs-attr">to</span>: <span class="hljs-string">&#x27;/$vendorId&#x27;</span>, <span class="hljs-attr">params</span>: { <span class="hljs-attr">vendorId</span>: row.<span class="hljs-property">id</span> } })}
+  emptyState={<span class="hljs-title function_">t</span>($ =&gt; $.vendor.<span class="hljs-property">empty_state</span>)}
+/&gt;</code></pre></div><h3 id="key-components-quick-reference">Key Components Quick Reference<a class="anchor" href="#key-components-quick-reference" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>Component</th><th>Import suffix</th><th>Notes</th></tr></thead><tbody><tr><td><code>Button</code></td><td><code>components/button</code></td><td>Also exports <code>buttonVariants</code></td></tr><tr><td><code>Badge</code></td><td><code>components/badge</code></td><td>CVA: default, secondary, destructive, outline</td></tr><tr><td><code>DataTable</code></td><td><code>components/data-table</code></td><td>Consumes TanStack Table instance</td></tr><tr><td><code>DataTablePagination</code></td><td><code>components/data-table-pagination</code></td><td>Prev/Next cursor pager</td></tr><tr><td><code>Dialog</code></td><td><code>components/dialog</code></td><td>Modal</td></tr><tr><td><code>Drawer</code></td><td><code>components/drawer</code></td><td>Side panel/sheet</td></tr><tr><td><code>Field</code></td><td><code>components/field</code></td><td>Form field wrapper (label + error)</td></tr><tr><td><code>Skeleton</code></td><td><code>components/skeleton</code></td><td>Loading placeholder</td></tr><tr><td><code>Spinner</code></td><td><code>components/spinner</code></td><td>Loading indicator</td></tr><tr><td><code>Toaster</code></td><td><code>components/sonner</code></td><td>Toast root (mounted in <code>__root.tsx</code>)</td></tr><tr><td><code>Combobox</code></td><td><code>components/combobox</code></td><td>Dropdown with filtering</td></tr></tbody></table></div><hr>
+<h2 id="i18n">i18n<a class="anchor" href="#i18n" aria-hidden="true">#</a></h2>
+<h3 id="selector-callbacks-not-string-keys">Selector Callbacks (not string keys)<a class="anchor" href="#selector-callbacks-not-string-keys" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">const</span> { t } = <span class="hljs-title function_">useTranslation</span>()
+
+<span class="hljs-comment">// Static key:</span>
+<span class="hljs-title function_">t</span>($ =&gt; $.vendor.<span class="hljs-property">table_headers</span>.<span class="hljs-property">name</span>)
+
+<span class="hljs-comment">// Interpolation:</span>
+<span class="hljs-title function_">t</span>($ =&gt; $.vendor.<span class="hljs-property">employees_count</span>, { <span class="hljs-attr">count</span>: <span class="hljs-number">5</span> })
+
+<span class="hljs-comment">// Pluralization (define both `key` and `key_one` in locale files):</span>
+<span class="hljs-title function_">t</span>($ =&gt; $.items, { <span class="hljs-attr">count</span>: <span class="hljs-number">1</span> })  <span class="hljs-comment">// → &quot;1 item&quot;</span>
+<span class="hljs-title function_">t</span>($ =&gt; $.items, { <span class="hljs-attr">count</span>: <span class="hljs-number">5</span> })  <span class="hljs-comment">// → &quot;5 items&quot;</span>
+
+<span class="hljs-comment">// Closed union → Record map (preferred over dynamicSelector):</span>
+<span class="hljs-keyword">const</span> <span class="hljs-attr">STATUS_LABELS</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-title class_">VendorStatus</span>, <span class="hljs-title class_">TranslationSelector</span>&gt; = {
+  <span class="hljs-attr">active</span>:  $ =&gt; $.vendor.<span class="hljs-property">status</span>.<span class="hljs-property">active</span>,
+  <span class="hljs-attr">pending</span>: $ =&gt; $.vendor.<span class="hljs-property">status</span>.<span class="hljs-property">pending</span>,
+}
+<span class="hljs-title function_">t</span>(<span class="hljs-variable constant_">STATUS_LABELS</span>[vendor.<span class="hljs-property">vendorStatus</span>])
+
+<span class="hljs-comment">// Runtime-computed key (only when union is open/unknown):</span>
+<span class="hljs-title function_">t</span>(<span class="hljs-title function_">dynamicSelector</span>(<span class="hljs-string">`errors.<span class="hljs-subst">${errorKey}</span>`</span>))</code></pre></div><p><strong>Never use string keys</strong> (<code>t(&#39;vendor.name&#39;)</code>). The selector callback pattern gives compile-time type safety and IDE autocomplete.</p>
+<h3 id="errorkey-flow">ErrorKey Flow<a class="anchor" href="#errorkey-flow" aria-hidden="true">#</a></h3>
+<p>The <code>ErrorKey</code> union in <code>@repo/core-contracts/src/types/error-key.ts</code> is the typed vocabulary of all user-facing error strings.</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">BFF: throwError({ code: &#x27;NOT_FOUND&#x27;, errorKey: &#x27;vendor.not_found&#x27; })
+     TypeScript rejects any errorKey not in the union
+
+Response: { error: { data: { errorKey: &#x27;vendor.not_found&#x27;, traceId } } }
+
+Client: MutationCache.onError
+  → parseErrorPayload → { errorKey: &#x27;vendor.not_found&#x27; }
+  → dynamicSelector(&#x27;errors.vendor.not_found&#x27;)
+  → t(selector) → &quot;Vendor not found&quot; (from locale file errors.vendor_not_found)
+  → toast.error(...)</code></pre></div><p><strong>Adding a new error key:</strong></p>
+<ol>
+<li>Add string literal to <code>ErrorKey</code> union in <code>core-contracts/src/types/error-key.ts</code></li>
+<li>Add <code>errors.&lt;key&gt;</code> entry to all four locale files in every app that surfaces it</li>
+<li>Use <code>throwError({ ..., errorKey: &#39;your.new.key&#39; })</code> in the BFF</li>
+</ol>
+<p>Locale files must have matching key structure across all four languages. Missing key in any locale = <code>pnpm typecheck</code> fails.</p>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

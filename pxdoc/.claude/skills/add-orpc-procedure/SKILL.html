@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKILL</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#name-add-orpc-procedure-description-scaffold-a-new-orpc-procedure-end-to-end-zod-schemas-in-repocore-contracts-contract-definition-syndigoorpc-implementation-error-keys-locale-strings-and-router-wiring-use-when-adding-any-new-server-endpoint">name: add-orpc-procedure
+description: Scaffold a new oRPC procedure end-to-end — Zod schemas in @repo/core-contracts, contract definition, @syndigo/orpc implementation, error keys, locale strings, and router wiring. Use when adding any new server endpoint.</a></li></ol><li><a href="#add-orpc-procedure">Add oRPC Procedure</a></li><ol class="toc-sub"><li><a href="#when-to-use">When to use</a></li><li><a href="#required-inputs-ask-if-not-provided">Required inputs (ask if not provided)</a></li><li><a href="#architecture-map">Architecture map</a></li><li><a href="#step-by-step">Step-by-step</a></li><ol class="toc-sub"><li><a href="#1-schemas-packagescore-contractssrcschemas-schemats">1. Schemas (packages/core-contracts/src/schemas/&lt;service&gt;-schema.ts)</a></li><li><a href="#2-contract-packagescore-contractssrccontractsts">2. Contract (packages/core-contracts/src/&lt;domain&gt;/contracts/&lt;service&gt;.ts)</a></li><li><a href="#3-domain-group-packagescore-contractssrcts">3. Domain group (packages/core-contracts/src/&lt;domain&gt;/&lt;domain&gt;.ts)</a></li><li><a href="#4-top-level-wiring-packagescore-contractssrcindexts">4. Top-level wiring (packages/core-contracts/src/index.ts)</a></li><li><a href="#5-procedure-implementation-packagesorpcsrcprocedurests">5. Procedure implementation (packages/orpc/src/procedures/&lt;domain&gt;/&lt;service&gt;.ts)</a></li><li><a href="#6-router-packagesorpcsrcrouterts">6. Router (packages/orpc/src/router.ts)</a></li><li><a href="#7-error-keys-if-introducing-any">7. Error keys (if introducing any)</a></li><li><a href="#8-test-packagesorpcsrcteststestts">8. Test (packages/orpc/src/__tests__/&lt;service&gt;.test.ts)</a></li><li><a href="#9-verify">9. Verify</a></li></ol><li><a href="#client-usage-for-reference">Client usage (for reference)</a></li><li><a href="#checklist">Checklist</a></li><li><a href="#common-mistakes">Common mistakes</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">SKILL</h1>
+        <p class="page-meta">From <code>SKILL.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <hr>
+<h2 id="name-add-orpc-procedure-description-scaffold-a-new-orpc-procedure-end-to-end-zod-schemas-in-repocore-contracts-contract-definition-syndigoorpc-implementation-error-keys-locale-strings-and-router-wiring-use-when-adding-any-new-server-endpoint">name: add-orpc-procedure
+description: Scaffold a new oRPC procedure end-to-end — Zod schemas in @repo/core-contracts, contract definition, @syndigo/orpc implementation, error keys, locale strings, and router wiring. Use when adding any new server endpoint.<a class="anchor" href="#name-add-orpc-procedure-description-scaffold-a-new-orpc-procedure-end-to-end-zod-schemas-in-repocore-contracts-contract-definition-syndigoorpc-implementation-error-keys-locale-strings-and-router-wiring-use-when-adding-any-new-server-endpoint" aria-hidden="true">#</a></h2>
+<h1 id="add-orpc-procedure">Add oRPC Procedure<a class="anchor" href="#add-orpc-procedure" aria-hidden="true">#</a></h1>
+<p>Contract-first vertical slice for a new BFF endpoint. The procedure spans three packages — missing any step breaks the build.</p>
+<h2 id="when-to-use">When to use<a class="anchor" href="#when-to-use" aria-hidden="true">#</a></h2>
+<ul>
+<li>Adding a new endpoint (any HTTP verb).</li>
+<li>Adding a new domain or service group.</li>
+<li>Adding a new action to an existing service (e.g. <code>vendorCentral.tenantVendor.archive</code>).</li>
+</ul>
+<h2 id="required-inputs-ask-if-not-provided">Required inputs (ask if not provided)<a class="anchor" href="#required-inputs-ask-if-not-provided" aria-hidden="true">#</a></h2>
+<ol>
+<li><strong>Domain</strong> — top-level router key. Existing: <code>users</code>, <code>permissions</code>, <code>vendorCentral</code>, <code>attributeManager</code>. New domains require a new contract group.</li>
+<li><strong>Service</strong> — second-level key (e.g. <code>tenantVendor</code>). Existing services live in <code>packages/core-contracts/src/&lt;domain&gt;/contracts/</code>.</li>
+<li><strong>Action</strong> — <code>list</code> / <code>find</code> / <code>findDetails</code> / <code>create</code> / <code>update</code> / <code>delete</code> / custom verb.</li>
+<li><strong>Permission</strong> — <code>&lt;module&gt;:&lt;action&gt;</code> (e.g. <code>vendor-management:read</code>). Public procedures (session, health) skip this.</li>
+<li><strong>Upstream call</strong> — the <code>context.api.GET/POST/PATCH/DELETE</code> path and any field-name remapping needed.</li>
+</ol>
+<h2 id="architecture-map">Architecture map<a class="anchor" href="#architecture-map" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">@repo/core-contracts/src/&lt;domain&gt;/contracts/&lt;service&gt;.ts    # contract (input/output Zod + .route metadata)
+@repo/core-contracts/src/&lt;domain&gt;/&lt;domain&gt;.ts               # group barrel — re-exports the contract object
+@repo/core-contracts/src/index.ts                           # top-level `contract` map — domain wired here
+@repo/core-contracts/src/schemas/&lt;service&gt;-schema.ts        # Zod input/output schemas
+@repo/core-contracts/src/types/&lt;service&gt;-types.ts           # OPTIONAL — inferred types when reused
+
+@syndigo/orpc/src/procedures/&lt;domain&gt;/&lt;service&gt;.ts          # handler(s) — one export per action
+@syndigo/orpc/src/router.ts                                 # router wires named handler exports
+
+apps/pxc-retail — no app-side changes needed for the procedure itself; the
+isomorphic client picks new procedures up automatically through the router type.</code></pre></div><h2 id="step-by-step">Step-by-step<a class="anchor" href="#step-by-step" aria-hidden="true">#</a></h2>
+<h3 id="1-schemas-packagescore-contractssrcschemas-schemats">1. Schemas (<code>packages/core-contracts/src/schemas/&lt;service&gt;-schema.ts</code>)<a class="anchor" href="#1-schemas-packagescore-contractssrcschemas-schemats" aria-hidden="true">#</a></h3>
+<p>Define Zod schemas for the wire shape. Conventions:</p>
+<ul>
+<li><code>&lt;Entity&gt;Schema</code> — full row.</li>
+<li><code>&lt;Entity&gt;CreateSchema</code> — typically <code>.omit({ id: true, createdAt: true, updatedAt: true })</code> from the full schema.</li>
+<li><code>&lt;Entity&gt;DetailSchema</code> — <code>.extend(...)</code> adding optional sub-entity arrays.</li>
+<li>Use Zod v4 syntax: <code>z.iso.datetime()</code>, <code>z.email()</code>, <code>z.url()</code>, <code>z.record(z.string(), ...)</code>.</li>
+</ul>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">WidgetSchema</span> = z.<span class="hljs-title function_">object</span>({
+  <span class="hljs-attr">id</span>: z.<span class="hljs-title function_">string</span>(),
+  <span class="hljs-attr">tenantId</span>: z.<span class="hljs-title function_">string</span>(),
+  <span class="hljs-attr">name</span>: z.<span class="hljs-title function_">string</span>(),
+  <span class="hljs-attr">createdAt</span>: z.<span class="hljs-property">iso</span>.<span class="hljs-title function_">datetime</span>().<span class="hljs-title function_">optional</span>(),
+  <span class="hljs-attr">updatedAt</span>: z.<span class="hljs-property">iso</span>.<span class="hljs-title function_">datetime</span>().<span class="hljs-title function_">optional</span>(),
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">WidgetCreateSchema</span> = <span class="hljs-title class_">WidgetSchema</span>.<span class="hljs-title function_">omit</span>({
+  <span class="hljs-attr">id</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">createdAt</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">updatedAt</span>: <span class="hljs-literal">true</span>,
+})</code></pre></div><h3 id="2-contract-packagescore-contractssrccontractsts">2. Contract (<code>packages/core-contracts/src/&lt;domain&gt;/contracts/&lt;service&gt;.ts</code>)<a class="anchor" href="#2-contract-packagescore-contractssrccontractsts" aria-hidden="true">#</a></h3>
+<p>Import <code>oc</code> from <code>../../schemas/standard-errors</code> (NOT from <code>@orpc/contract</code> — <code>oc</code> is pre-applied with the 9 standard error codes). Every action becomes a builder chain.</p>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
+<span class="hljs-keyword">import</span> { oc } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../../schemas/standard-errors&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">WidgetSchema</span>, <span class="hljs-title class_">WidgetCreateSchema</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../../schemas/widget-schema&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> widgetContract = {
+  <span class="hljs-attr">list</span>: oc
+    .<span class="hljs-title function_">input</span>(
+      z.<span class="hljs-title function_">object</span>({
+        <span class="hljs-attr">cursor</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">optional</span>(),
+        <span class="hljs-attr">limit</span>: z.<span class="hljs-title function_">number</span>().<span class="hljs-title function_">int</span>().<span class="hljs-title function_">min</span>(<span class="hljs-number">1</span>).<span class="hljs-title function_">max</span>(<span class="hljs-number">100</span>).<span class="hljs-title function_">optional</span>(),
+      }),
+    )
+    .<span class="hljs-title function_">output</span>(
+      z.<span class="hljs-title function_">object</span>({
+        <span class="hljs-attr">items</span>: z.<span class="hljs-title function_">array</span>(<span class="hljs-title class_">WidgetSchema</span>),
+        <span class="hljs-attr">nextCursor</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">optional</span>(),
+      }),
+    )
+    .<span class="hljs-title function_">route</span>({
+      <span class="hljs-attr">summary</span>: <span class="hljs-string">&#x27;List Widgets&#x27;</span>,
+      <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;Paginated widget list.&#x27;</span>,
+      <span class="hljs-attr">tags</span>: [<span class="hljs-string">&#x27;Widget&#x27;</span>],
+    }),
+
+  <span class="hljs-attr">find</span>: oc
+    .<span class="hljs-title function_">input</span>(z.<span class="hljs-title function_">object</span>({ <span class="hljs-attr">id</span>: z.<span class="hljs-title function_">string</span>() }))
+    .<span class="hljs-title function_">output</span>(<span class="hljs-title class_">WidgetSchema</span>)
+    .<span class="hljs-title function_">route</span>({
+      <span class="hljs-attr">summary</span>: <span class="hljs-string">&#x27;Get Widget&#x27;</span>,
+      <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;Retrieve a single widget by ID.&#x27;</span>,
+      <span class="hljs-attr">tags</span>: [<span class="hljs-string">&#x27;Widget&#x27;</span>],
+    }),
+
+  <span class="hljs-attr">create</span>: oc
+    .<span class="hljs-title function_">input</span>(<span class="hljs-title class_">WidgetCreateSchema</span>)
+    .<span class="hljs-title function_">output</span>(<span class="hljs-title class_">WidgetSchema</span>)
+    .<span class="hljs-title function_">route</span>({
+      <span class="hljs-attr">summary</span>: <span class="hljs-string">&#x27;Create Widget&#x27;</span>,
+      <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;Create a new widget.&#x27;</span>,
+      <span class="hljs-attr">tags</span>: [<span class="hljs-string">&#x27;Widget&#x27;</span>],
+    }),
+
+  <span class="hljs-attr">update</span>: oc
+    .<span class="hljs-title function_">input</span>(
+      <span class="hljs-title class_">WidgetSchema</span>.<span class="hljs-title function_">omit</span>({ <span class="hljs-attr">createdAt</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">updatedAt</span>: <span class="hljs-literal">true</span> })
+        .<span class="hljs-title function_">partial</span>()
+        .<span class="hljs-title function_">required</span>({ <span class="hljs-attr">id</span>: <span class="hljs-literal">true</span> }),
+    )
+    .<span class="hljs-title function_">output</span>(<span class="hljs-title class_">WidgetSchema</span>)
+    .<span class="hljs-title function_">route</span>({ <span class="hljs-attr">summary</span>: <span class="hljs-string">&#x27;Update Widget&#x27;</span>, <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;...&#x27;</span>, <span class="hljs-attr">tags</span>: [<span class="hljs-string">&#x27;Widget&#x27;</span>] }),
+
+  <span class="hljs-attr">delete</span>: oc
+    .<span class="hljs-title function_">input</span>(z.<span class="hljs-title function_">object</span>({ <span class="hljs-attr">id</span>: z.<span class="hljs-title function_">string</span>() }))
+    .<span class="hljs-title function_">output</span>(z.<span class="hljs-title function_">object</span>({ <span class="hljs-attr">id</span>: z.<span class="hljs-title function_">string</span>() }))
+    .<span class="hljs-title function_">route</span>({ <span class="hljs-attr">summary</span>: <span class="hljs-string">&#x27;Delete Widget&#x27;</span>, <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;...&#x27;</span>, <span class="hljs-attr">tags</span>: [<span class="hljs-string">&#x27;Widget&#x27;</span>] }),
+}</code></pre></div><h3 id="3-domain-group-packagescore-contractssrcts">3. Domain group (<code>packages/core-contracts/src/&lt;domain&gt;/&lt;domain&gt;.ts</code>)<a class="anchor" href="#3-domain-group-packagescore-contractssrcts" aria-hidden="true">#</a></h3>
+<p>For new domains, create a barrel object. For existing domains, add the import + key.</p>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> { widgetContract } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./contracts/widget&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> widgetCentralContract = {
+  <span class="hljs-attr">widget</span>: widgetContract,
+}</code></pre></div><h3 id="4-top-level-wiring-packagescore-contractssrcindexts">4. Top-level wiring (<code>packages/core-contracts/src/index.ts</code>)<a class="anchor" href="#4-top-level-wiring-packagescore-contractssrcindexts" aria-hidden="true">#</a></h3>
+<p>New domains only — append to the <code>contract</code> map:</p>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> { widgetCentralContract } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./widget-central/widget-central&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> contract = {
+  <span class="hljs-comment">// ...existing</span>
+  <span class="hljs-attr">widgetCentral</span>: widgetCentralContract,
+}</code></pre></div><h3 id="5-procedure-implementation-packagesorpcsrcprocedurests">5. Procedure implementation (<code>packages/orpc/src/procedures/&lt;domain&gt;/&lt;service&gt;.ts</code>)<a class="anchor" href="#5-procedure-implementation-packagesorpcsrcprocedurests" aria-hidden="true">#</a></h3>
+<p>Each contract action gets a named export. Use <code>authed</code> (NOT <code>os</code>) for any procedure that needs the upstream API client or auth — <code>os</code> is for public procedures only (session, health).</p>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> { authed } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../../builder&#x27;</span>
+<span class="hljs-keyword">import</span> { unwrap } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../../upstream-error&#x27;</span>
+<span class="hljs-keyword">import</span> { throwError } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../../errors&#x27;</span>
+<span class="hljs-keyword">import</span> { requirePermission } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../../middleware/auth&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> listWidgets = authed.<span class="hljs-property">widgetCentral</span>.<span class="hljs-property">widget</span>.<span class="hljs-property">list</span>
+  .<span class="hljs-title function_">use</span>(<span class="hljs-title function_">requirePermission</span>(<span class="hljs-string">&#x27;widget-management&#x27;</span>, <span class="hljs-string">&#x27;read&#x27;</span>))
+  .<span class="hljs-title function_">handler</span>(<span class="hljs-title function_">async</span> ({ input, context, signal }) =&gt; {
+    <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> <span class="hljs-title function_">unwrap</span>(
+      context.<span class="hljs-property">api</span>.<span class="hljs-title function_">GET</span>(<span class="hljs-string">&#x27;/v1/widgets&#x27;</span>, {
+        signal,
+        <span class="hljs-attr">params</span>: { <span class="hljs-attr">query</span>: { <span class="hljs-attr">limit</span>: input.<span class="hljs-property">limit</span> } },
+      }),
+    )
+
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-attr">items</span>: data.<span class="hljs-property">widgets</span> ?? [],
+      <span class="hljs-attr">nextCursor</span>: <span class="hljs-literal">undefined</span>, <span class="hljs-comment">// wire pagination per upstream</span>
+    }
+  })
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> findWidget = authed.<span class="hljs-property">widgetCentral</span>.<span class="hljs-property">widget</span>.<span class="hljs-property">find</span>
+  .<span class="hljs-title function_">use</span>(<span class="hljs-title function_">requirePermission</span>(<span class="hljs-string">&#x27;widget-management&#x27;</span>, <span class="hljs-string">&#x27;read&#x27;</span>))
+  .<span class="hljs-title function_">handler</span>(<span class="hljs-title function_">async</span> ({ input, context, signal }) =&gt; {
+    <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> <span class="hljs-title function_">unwrap</span>(
+      context.<span class="hljs-property">api</span>.<span class="hljs-title function_">GET</span>(<span class="hljs-string">&#x27;/v1/widgets/{widgetId}&#x27;</span>, {
+        signal,
+        <span class="hljs-attr">params</span>: { <span class="hljs-attr">path</span>: { <span class="hljs-attr">widgetId</span>: input.<span class="hljs-property">id</span> } },
+      }),
+    )
+
+    <span class="hljs-keyword">if</span> (!data.<span class="hljs-property">widget</span>) {
+      <span class="hljs-title function_">throwError</span>({
+        <span class="hljs-attr">code</span>: <span class="hljs-string">&#x27;NOT_FOUND&#x27;</span>,
+        <span class="hljs-attr">errorKey</span>: <span class="hljs-string">&#x27;widget.not_found&#x27;</span>,
+        <span class="hljs-attr">params</span>: { <span class="hljs-attr">id</span>: input.<span class="hljs-property">id</span> },
+        <span class="hljs-attr">message</span>: <span class="hljs-string">`Widget <span class="hljs-subst">${input.id}</span> not found`</span>,
+      })
+    }
+
+    <span class="hljs-keyword">return</span> data.<span class="hljs-property">widget</span>
+  })</code></pre></div><p><strong>Mandatory rules:</strong></p>
+<ul>
+<li><strong>Always</strong> wrap upstream calls in <code>unwrap(...)</code> — it converts HTTP errors into typed <code>ORPCError</code>s with <code>errorKey: &#39;upstream.*&#39;</code> and records <code>upstream.*</code> span attributes.</li>
+<li><strong>Always</strong> use <code>throwError({ code, errorKey, params?, message? })</code> for BFF-originated errors. Never construct <code>ORPCError</code> directly. Never hard-code English message strings the client will render — the client translates from <code>errorKey</code>.</li>
+<li><strong>Always</strong> pass <code>signal</code> through to <code>context.api.*</code> so client aborts cancel upstream requests.</li>
+<li>Field-name remapping (e.g. upstream <code>rpxname</code> → contract <code>name</code>) belongs in <code>utils/&lt;service&gt;-mappers.ts</code> — keep handlers slim.</li>
+</ul>
+<h3 id="6-router-packagesorpcsrcrouterts">6. Router (<code>packages/orpc/src/router.ts</code>)<a class="anchor" href="#6-router-packagesorpcsrcrouterts" aria-hidden="true">#</a></h3>
+<p>Import every named handler and wire it under the matching domain/service/action path. The router shape <strong>must</strong> mirror the contract shape exactly — TypeScript enforces this.</p>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> {
+  listWidgets,
+  findWidget,
+  createWidget,
+  updateWidget,
+  deleteWidget,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./procedures/widget-central/widgets&#x27;</span>
+
+<span class="hljs-keyword">const</span> router = os.<span class="hljs-title function_">router</span>({
+  <span class="hljs-comment">// ...existing</span>
+  <span class="hljs-attr">widgetCentral</span>: {
+    <span class="hljs-attr">widget</span>: {
+      <span class="hljs-attr">list</span>: listWidgets,
+      <span class="hljs-attr">find</span>: findWidget,
+      <span class="hljs-attr">create</span>: createWidget,
+      <span class="hljs-attr">update</span>: updateWidget,
+      <span class="hljs-attr">delete</span>: deleteWidget,
+    },
+  },
+})</code></pre></div><h3 id="7-error-keys-if-introducing-any">7. Error keys (if introducing any)<a class="anchor" href="#7-error-keys-if-introducing-any" aria-hidden="true">#</a></h3>
+<p>Any <code>errorKey</code> used in <code>throwError(...)</code> that is NOT already in <code>ErrorKey</code> requires:</p>
+<ol>
+<li>Add literal to <code>@repo/core-contracts/src/types/error-key.ts</code>.</li>
+<li>Add <code>errors.&lt;key&gt;: &#39;&lt;message&gt;&#39;</code> to <strong>all four</strong> locale files (<code>en</code>, <code>es</code>, <code>fr</code>, <code>de</code>).</li>
+</ol>
+<p>Skip step 2 → the toast renders <code>errors.&lt;domain&gt;.&lt;key&gt;</code> literally at runtime (the path is built via <code>dynamicSelector()</code> and not compile-time-checked).</p>
+<p>Use the <code>error-key</code> skill for this step.</p>
+<h3 id="8-test-packagesorpcsrcteststestts">8. Test (<code>packages/orpc/src/__tests__/&lt;service&gt;.test.ts</code>)<a class="anchor" href="#8-test-packagesorpcsrcteststestts" aria-hidden="true">#</a></h3>
+<p>Use <code>createTestClient()</code> to exercise the procedure through the router. MSW handlers in <code>__tests__/msw/handlers.ts</code> mock the upstream API — extend them for new endpoints.</p>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> { describe, expect, it } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vitest&#x27;</span>
+<span class="hljs-keyword">import</span> { createTestClient } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./helpers/create-test-client&#x27;</span>
+
+<span class="hljs-keyword">const</span> client = <span class="hljs-title function_">createTestClient</span>()
+
+<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#x27;widgetCentral.widget&#x27;</span>, <span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-title function_">it</span>(<span class="hljs-string">&#x27;lists widgets&#x27;</span>, <span class="hljs-title function_">async</span> () =&gt; {
+    <span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> client.<span class="hljs-property">widgetCentral</span>.<span class="hljs-property">widget</span>.<span class="hljs-title function_">list</span>({})
+    <span class="hljs-title function_">expect</span>(result.<span class="hljs-property">items</span>).<span class="hljs-title function_">toBeDefined</span>()
+  })
+})</code></pre></div><h3 id="9-verify">9. Verify<a class="anchor" href="#9-verify" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm typecheck
+pnpm <span class="hljs-built_in">test</span> --filter=@syndigo/orpc
+pnpm build --filter=@repo/core-contracts --filter=@syndigo/orpc</code></pre></div><p>If <code>pnpm dev --filter=pxc-retail</code> is running, the TanStack Router route tree only regenerates when route files change — procedures don&#39;t trigger codegen.</p>
+<h2 id="client-usage-for-reference">Client usage (for reference)<a class="anchor" href="#client-usage-for-reference" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-keyword">import</span> { orpc } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;#/integrations/orpc/client&#x27;</span>
+<span class="hljs-keyword">import</span> { useSuspenseQuery } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@tanstack/react-query&#x27;</span>
+
+<span class="hljs-keyword">const</span> { data } = <span class="hljs-title function_">useSuspenseQuery</span>(
+  orpc.<span class="hljs-property">widgetCentral</span>.<span class="hljs-property">widget</span>.<span class="hljs-property">list</span>.<span class="hljs-title function_">queryOptions</span>({ <span class="hljs-attr">input</span>: {} }),
+)</code></pre></div><h2 id="checklist">Checklist<a class="anchor" href="#checklist" aria-hidden="true">#</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"> Schemas in <code>core-contracts/src/schemas/</code></li>
+<li><input disabled="" type="checkbox"> Contract file in <code>core-contracts/src/&lt;domain&gt;/contracts/</code></li>
+<li><input disabled="" type="checkbox"> Domain group barrel updated (new domain → also <code>core-contracts/src/index.ts</code>)</li>
+<li><input disabled="" type="checkbox"> Handler file in <code>orpc/src/procedures/&lt;domain&gt;/</code></li>
+<li><input disabled="" type="checkbox"> <code>throwError</code> used for every BFF error; <code>unwrap</code> wraps every <code>context.api.*</code> call</li>
+<li><input disabled="" type="checkbox"> Permission middleware applied (unless intentionally public)</li>
+<li><input disabled="" type="checkbox"> Router wired in <code>orpc/src/router.ts</code></li>
+<li><input disabled="" type="checkbox"> Any new error keys added to <code>error-key.ts</code> + all 4 locale files</li>
+<li><input disabled="" type="checkbox"> Vitest test added; <code>pnpm typecheck</code> + <code>pnpm test --filter=@syndigo/orpc</code> pass</li>
+<li><input disabled="" type="checkbox"> No hard-coded user-facing strings; no <code>ORPCError</code> constructed directly</li>
+</ul>
+<h2 id="common-mistakes">Common mistakes<a class="anchor" href="#common-mistakes" aria-hidden="true">#</a></h2>
+<ul>
+<li>Importing <code>oc</code> from <code>@orpc/contract</code> instead of <code>../../schemas/standard-errors</code> (strips the standard error map).</li>
+<li>Using <code>os.&lt;domain&gt;...</code> for an authed procedure — <code>context.api</code> won&#39;t exist; use <code>authed</code>.</li>
+<li>Forgetting <code>signal</code> on <code>context.api.*</code> calls (breaks request cancellation).</li>
+<li>Adding an <code>errorKey</code> literal without locale entries (build fails).</li>
+<li>Mismatched router shape vs. contract shape (TS error is verbose but root cause is path divergence).</li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

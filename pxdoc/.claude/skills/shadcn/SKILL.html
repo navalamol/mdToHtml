@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKILL</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#name-shadcn-description-manages-shadcn-components-and-projects-adding-searching-fixing-debugging-styling-and-composing-ui-provides-project-context-component-docs-and-usage-examples-applies-when-working-with-shadcnui-component-registries-presets-preset-codes-or-any-project-with-a-componentsjson-file-also-triggers-for-shadcn-init-create-an-app-with-preset-or-switch-to-preset-user-invocable-false-allowed-tools-bashnpx-shadcnlatest-bashpnpm-dlx-shadcnlatest-bashbunx-bun-shadcnlatest">name: shadcn
+description: Manages shadcn components and projects — adding, searching, fixing, debugging, styling, and composing UI. Provides project context, component docs, and usage examples. Applies when working with shadcn/ui, component registries, presets, --preset codes, or any project with a components.json file. Also triggers for &quot;shadcn init&quot;, &quot;create an app with --preset&quot;, or &quot;switch to --preset&quot;.
+user-invocable: false
+allowed-tools: Bash(npx shadcn@latest *), Bash(pnpm dlx shadcn@latest *), Bash(bunx --bun shadcn@latest *)</a></li></ol><li><a href="#shadcnui">shadcn/ui</a></li><ol class="toc-sub"><li><a href="#current-project-context">Current Project Context</a></li><li><a href="#principles">Principles</a></li><li><a href="#critical-rules">Critical Rules</a></li><ol class="toc-sub"><li><a href="#styling-tailwind-stylingmd">Styling &amp; Tailwind → styling.md</a></li><li><a href="#forms-inputs-formsmd">Forms &amp; Inputs → forms.md</a></li><li><a href="#component-structure-compositionmd">Component Structure → composition.md</a></li><li><a href="#use-components-not-custom-markup-compositionmd">Use Components, Not Custom Markup → composition.md</a></li><li><a href="#icons-iconsmd">Icons → icons.md</a></li><li><a href="#cli">CLI</a></li></ol><li><a href="#key-patterns">Key Patterns</a></li><li><a href="#component-selection">Component Selection</a></li><li><a href="#key-fields">Key Fields</a></li><li><a href="#component-docs-examples-and-usage">Component Docs, Examples, and Usage</a></li><li><a href="#workflow">Workflow</a></li><li><a href="#updating-components">Updating Components</a></li><li><a href="#quick-reference">Quick Reference</a></li><li><a href="#detailed-references">Detailed References</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">SKILL</h1>
+        <p class="page-meta">From <code>SKILL.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <hr>
+<h2 id="name-shadcn-description-manages-shadcn-components-and-projects-adding-searching-fixing-debugging-styling-and-composing-ui-provides-project-context-component-docs-and-usage-examples-applies-when-working-with-shadcnui-component-registries-presets-preset-codes-or-any-project-with-a-componentsjson-file-also-triggers-for-shadcn-init-create-an-app-with-preset-or-switch-to-preset-user-invocable-false-allowed-tools-bashnpx-shadcnlatest-bashpnpm-dlx-shadcnlatest-bashbunx-bun-shadcnlatest">name: shadcn
+description: Manages shadcn components and projects — adding, searching, fixing, debugging, styling, and composing UI. Provides project context, component docs, and usage examples. Applies when working with shadcn/ui, component registries, presets, --preset codes, or any project with a components.json file. Also triggers for &quot;shadcn init&quot;, &quot;create an app with --preset&quot;, or &quot;switch to --preset&quot;.
+user-invocable: false
+allowed-tools: Bash(npx shadcn@latest *), Bash(pnpm dlx shadcn@latest *), Bash(bunx --bun shadcn@latest *)<a class="anchor" href="#name-shadcn-description-manages-shadcn-components-and-projects-adding-searching-fixing-debugging-styling-and-composing-ui-provides-project-context-component-docs-and-usage-examples-applies-when-working-with-shadcnui-component-registries-presets-preset-codes-or-any-project-with-a-componentsjson-file-also-triggers-for-shadcn-init-create-an-app-with-preset-or-switch-to-preset-user-invocable-false-allowed-tools-bashnpx-shadcnlatest-bashpnpm-dlx-shadcnlatest-bashbunx-bun-shadcnlatest" aria-hidden="true">#</a></h2>
+<h1 id="shadcnui">shadcn/ui<a class="anchor" href="#shadcnui" aria-hidden="true">#</a></h1>
+<p>A framework for building ui, components and design systems. Components are added as source code to the user&#39;s project via the CLI.</p>
+<blockquote class="blockquote"><p><strong>IMPORTANT:</strong> Run all CLI commands using the project&#39;s package runner: <code>npx shadcn@latest</code>, <code>pnpm dlx shadcn@latest</code>, or <code>bunx --bun shadcn@latest</code> — based on the project&#39;s <code>packageManager</code>. Examples below use <code>npx shadcn@latest</code> but substitute the correct runner for the project.</p>
+</blockquote><h2 id="current-project-context">Current Project Context<a class="anchor" href="#current-project-context" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-json">!`npx shadcn@latest info --json`</code></pre></div><p>The JSON above contains the project config and installed components. Use <code>npx shadcn@latest docs &lt;component&gt;</code> to get documentation and example URLs for any component.</p>
+<h2 id="principles">Principles<a class="anchor" href="#principles" aria-hidden="true">#</a></h2>
+<ol>
+<li><strong>Use existing components first.</strong> Use <code>npx shadcn@latest search</code> to check registries before writing custom UI. Check community registries too.</li>
+<li><strong>Compose, don&#39;t reinvent.</strong> Settings page = Tabs + Card + form controls. Dashboard = Sidebar + Card + Chart + Table.</li>
+<li><strong>Use built-in variants before custom styles.</strong> <code>variant=&quot;outline&quot;</code>, <code>size=&quot;sm&quot;</code>, etc.</li>
+<li><strong>Use semantic colors.</strong> <code>bg-primary</code>, <code>text-muted-foreground</code> — never raw values like <code>bg-blue-500</code>.</li>
+</ol>
+<h2 id="critical-rules">Critical Rules<a class="anchor" href="#critical-rules" aria-hidden="true">#</a></h2>
+<p>These rules are <strong>always enforced</strong>. Each links to a file with Incorrect/Correct code pairs.</p>
+<h3 id="styling-tailwind-stylingmd">Styling &amp; Tailwind → <a href="./rules/styling.md">styling.md</a><a class="anchor" href="#styling-tailwind-stylingmd" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong><code>className</code> for layout, not styling.</strong> Never override component colors or typography.</li>
+<li><strong>No <code>space-x-*</code> or <code>space-y-*</code>.</strong> Use <code>flex</code> with <code>gap-*</code>. For vertical stacks, <code>flex flex-col gap-*</code>.</li>
+<li><strong>Use <code>size-*</code> when width and height are equal.</strong> <code>size-10</code> not <code>w-10 h-10</code>.</li>
+<li><strong>Use <code>truncate</code> shorthand.</strong> Not <code>overflow-hidden text-ellipsis whitespace-nowrap</code>.</li>
+<li><strong>No manual <code>dark:</code> color overrides.</strong> Use semantic tokens (<code>bg-background</code>, <code>text-muted-foreground</code>).</li>
+<li><strong>Use <code>cn()</code> for conditional classes.</strong> Don&#39;t write manual template literal ternaries.</li>
+<li><strong>No manual <code>z-index</code> on overlay components.</strong> Dialog, Sheet, Popover, etc. handle their own stacking.</li>
+</ul>
+<h3 id="forms-inputs-formsmd">Forms &amp; Inputs → <a href="./rules/forms.md">forms.md</a><a class="anchor" href="#forms-inputs-formsmd" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>Forms use <code>FieldGroup</code> + <code>Field</code>.</strong> Never use raw <code>div</code> with <code>space-y-*</code> or <code>grid gap-*</code> for form layout.</li>
+<li><strong><code>InputGroup</code> uses <code>InputGroupInput</code>/<code>InputGroupTextarea</code>.</strong> Never raw <code>Input</code>/<code>Textarea</code> inside <code>InputGroup</code>.</li>
+<li><strong>Buttons inside inputs use <code>InputGroup</code> + <code>InputGroupAddon</code>.</strong></li>
+<li><strong>Option sets (2–7 choices) use <code>ToggleGroup</code>.</strong> Don&#39;t loop <code>Button</code> with manual active state.</li>
+<li><strong><code>FieldSet</code> + <code>FieldLegend</code> for grouping related checkboxes/radios.</strong> Don&#39;t use a <code>div</code> with a heading.</li>
+<li><strong>Field validation uses <code>data-invalid</code> + <code>aria-invalid</code>.</strong> <code>data-invalid</code> on <code>Field</code>, <code>aria-invalid</code> on the control. For disabled: <code>data-disabled</code> on <code>Field</code>, <code>disabled</code> on the control.</li>
+</ul>
+<h3 id="component-structure-compositionmd">Component Structure → <a href="./rules/composition.md">composition.md</a><a class="anchor" href="#component-structure-compositionmd" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>Items always inside their Group.</strong> <code>SelectItem</code> → <code>SelectGroup</code>. <code>DropdownMenuItem</code> → <code>DropdownMenuGroup</code>. <code>CommandItem</code> → <code>CommandGroup</code>.</li>
+<li><strong>Use <code>asChild</code> (radix) or <code>render</code> (base) for custom triggers.</strong> Check <code>base</code> field from <code>npx shadcn@latest info</code>. → <a href="./rules/base-vs-radix.md">base-vs-radix.md</a></li>
+<li><strong>Dialog, Sheet, and Drawer always need a Title.</strong> <code>DialogTitle</code>, <code>SheetTitle</code>, <code>DrawerTitle</code> required for accessibility. Use <code>className=&quot;sr-only&quot;</code> if visually hidden.</li>
+<li><strong>Use full Card composition.</strong> <code>CardHeader</code>/<code>CardTitle</code>/<code>CardDescription</code>/<code>CardContent</code>/<code>CardFooter</code>. Don&#39;t dump everything in <code>CardContent</code>.</li>
+<li><strong>Button has no <code>isPending</code>/<code>isLoading</code>.</strong> Compose with <code>Spinner</code> + <code>data-icon</code> + <code>disabled</code>.</li>
+<li><strong><code>TabsTrigger</code> must be inside <code>TabsList</code>.</strong> Never render triggers directly in <code>Tabs</code>.</li>
+<li><strong><code>Avatar</code> always needs <code>AvatarFallback</code>.</strong> For when the image fails to load.</li>
+</ul>
+<h3 id="use-components-not-custom-markup-compositionmd">Use Components, Not Custom Markup → <a href="./rules/composition.md">composition.md</a><a class="anchor" href="#use-components-not-custom-markup-compositionmd" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>Use existing components before custom markup.</strong> Check if a component exists before writing a styled <code>div</code>.</li>
+<li><strong>Callouts use <code>Alert</code>.</strong> Don&#39;t build custom styled divs.</li>
+<li><strong>Empty states use <code>Empty</code>.</strong> Don&#39;t build custom empty state markup.</li>
+<li><strong>Toast via <code>sonner</code>.</strong> Use <code>toast()</code> from <code>sonner</code>.</li>
+<li><strong>Use <code>Separator</code></strong> instead of <code>&lt;hr&gt;</code> or <code>&lt;div className=&quot;border-t&quot;&gt;</code>.</li>
+<li><strong>Use <code>Skeleton</code></strong> for loading placeholders. No custom <code>animate-pulse</code> divs.</li>
+<li><strong>Use <code>Badge</code></strong> instead of custom styled spans.</li>
+</ul>
+<h3 id="icons-iconsmd">Icons → <a href="./rules/icons.md">icons.md</a><a class="anchor" href="#icons-iconsmd" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>Icons in <code>Button</code> use <code>data-icon</code>.</strong> <code>data-icon=&quot;inline-start&quot;</code> or <code>data-icon=&quot;inline-end&quot;</code> on the icon.</li>
+<li><strong>No sizing classes on icons inside components.</strong> Components handle icon sizing via CSS. No <code>size-4</code> or <code>w-4 h-4</code>.</li>
+<li><strong>Pass icons as objects, not string keys.</strong> <code>icon={CheckIcon}</code>, not a string lookup.</li>
+</ul>
+<h3 id="cli">CLI<a class="anchor" href="#cli" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>Never decode or fetch preset codes manually.</strong> Pass them directly to <code>npx shadcn@latest init --preset &lt;code&gt;</code>.</li>
+</ul>
+<h2 id="key-patterns">Key Patterns<a class="anchor" href="#key-patterns" aria-hidden="true">#</a></h2>
+<p>These are the most common patterns that differentiate correct shadcn/ui code. For edge cases, see the linked rule files above.</p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-comment">// Form layout: FieldGroup + Field, not div + Label.</span>
+&lt;<span class="hljs-title class_">FieldGroup</span>&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Field</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">FieldLabel</span> <span class="hljs-attr">htmlFor</span>=<span class="hljs-string">&quot;email&quot;</span>&gt;</span>Email<span class="hljs-tag">&lt;/<span class="hljs-name">FieldLabel</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Input</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;email&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Field</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">FieldGroup</span>&gt;
+
+<span class="hljs-comment">// Validation: data-invalid on Field, aria-invalid on the control.</span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Field</span> <span class="hljs-attr">data-invalid</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">FieldLabel</span>&gt;</span>Email<span class="hljs-tag">&lt;/<span class="hljs-name">FieldLabel</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">Input</span> <span class="hljs-attr">aria-invalid</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">FieldDescription</span>&gt;</span>Invalid email.<span class="hljs-tag">&lt;/<span class="hljs-name">FieldDescription</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">Field</span>&gt;</span></span>
+
+<span class="hljs-comment">// Icons in buttons: data-icon, no sizing classes.</span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Button</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">SearchIcon</span> <span class="hljs-attr">data-icon</span>=<span class="hljs-string">&quot;inline-start&quot;</span> /&gt;</span>
+  Search
+<span class="hljs-tag">&lt;/<span class="hljs-name">Button</span>&gt;</span></span>
+
+<span class="hljs-comment">// Spacing: gap-*, not space-y-*.</span>
+&lt;div className=&quot;flex flex-col gap-4&quot;&gt;  // correct
+&lt;div className=&quot;space-y-4&quot;&gt;           // wrong
+
+// Equal dimensions: size-*, not w-* h-*.
+&lt;Avatar className=&quot;size-10&quot;&gt;   // correct
+&lt;Avatar className=&quot;w-10 h-10&quot;&gt; // wrong
+
+// Status colors: Badge variants or semantic tokens, not raw colors.
+&lt;Badge variant=&quot;secondary&quot;&gt;+20.1%&lt;/Badge&gt;    // correct
+&lt;span className=&quot;text-emerald-600&quot;&gt;+20.1%&lt;/span&gt; // wrong</code></pre></div><h2 id="component-selection">Component Selection<a class="anchor" href="#component-selection" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Need</th><th>Use</th></tr></thead><tbody><tr><td>Button/action</td><td><code>Button</code> with appropriate variant</td></tr><tr><td>Form inputs</td><td><code>Input</code>, <code>Select</code>, <code>Combobox</code>, <code>Switch</code>, <code>Checkbox</code>, <code>RadioGroup</code>, <code>Textarea</code>, <code>InputOTP</code>, <code>Slider</code></td></tr><tr><td>Toggle between 2–5 options</td><td><code>ToggleGroup</code> + <code>ToggleGroupItem</code></td></tr><tr><td>Data display</td><td><code>Table</code>, <code>Card</code>, <code>Badge</code>, <code>Avatar</code></td></tr><tr><td>Navigation</td><td><code>Sidebar</code>, <code>NavigationMenu</code>, <code>Breadcrumb</code>, <code>Tabs</code>, <code>Pagination</code></td></tr><tr><td>Overlays</td><td><code>Dialog</code> (modal), <code>Sheet</code> (side panel), <code>Drawer</code> (bottom sheet), <code>AlertDialog</code> (confirmation)</td></tr><tr><td>Feedback</td><td><code>sonner</code> (toast), <code>Alert</code>, <code>Progress</code>, <code>Skeleton</code>, <code>Spinner</code></td></tr><tr><td>Command palette</td><td><code>Command</code> inside <code>Dialog</code></td></tr><tr><td>Charts</td><td><code>Chart</code> (wraps Recharts)</td></tr><tr><td>Layout</td><td><code>Card</code>, <code>Separator</code>, <code>Resizable</code>, <code>ScrollArea</code>, <code>Accordion</code>, <code>Collapsible</code></td></tr><tr><td>Empty states</td><td><code>Empty</code></td></tr><tr><td>Menus</td><td><code>DropdownMenu</code>, <code>ContextMenu</code>, <code>Menubar</code></td></tr><tr><td>Tooltips/info</td><td><code>Tooltip</code>, <code>HoverCard</code>, <code>Popover</code></td></tr></tbody></table></div><h2 id="key-fields">Key Fields<a class="anchor" href="#key-fields" aria-hidden="true">#</a></h2>
+<p>The injected project context contains these key fields:</p>
+<ul>
+<li><strong><code>aliases</code></strong> → use the actual alias prefix for imports (e.g. <code>@/</code>, <code>~/</code>), never hardcode.</li>
+<li><strong><code>isRSC</code></strong> → when <code>true</code>, components using <code>useState</code>, <code>useEffect</code>, event handlers, or browser APIs need <code>&quot;use client&quot;</code> at the top of the file. Always reference this field when advising on the directive.</li>
+<li><strong><code>tailwindVersion</code></strong> → <code>&quot;v4&quot;</code> uses <code>@theme inline</code> blocks; <code>&quot;v3&quot;</code> uses <code>tailwind.config.js</code>.</li>
+<li><strong><code>tailwindCssFile</code></strong> → the global CSS file where custom CSS variables are defined. Always edit this file, never create a new one.</li>
+<li><strong><code>style</code></strong> → component visual treatment (e.g. <code>nova</code>, <code>vega</code>).</li>
+<li><strong><code>base</code></strong> → primitive library (<code>radix</code> or <code>base</code>). Affects component APIs and available props.</li>
+<li><strong><code>iconLibrary</code></strong> → determines icon imports. Use <code>lucide-react</code> for <code>lucide</code>, <code>@tabler/icons-react</code> for <code>tabler</code>, etc. Never assume <code>lucide-react</code>.</li>
+<li><strong><code>resolvedPaths</code></strong> → exact file-system destinations for components, utils, hooks, etc.</li>
+<li><strong><code>framework</code></strong> → routing and file conventions (e.g. Next.js App Router vs Vite SPA).</li>
+<li><strong><code>packageManager</code></strong> → use this for any non-shadcn dependency installs (e.g. <code>pnpm add date-fns</code> vs <code>npm install date-fns</code>).</li>
+</ul>
+<p>See <a href="./cli.md">cli.md — <code>info</code> command</a> for the full field reference.</p>
+<h2 id="component-docs-examples-and-usage">Component Docs, Examples, and Usage<a class="anchor" href="#component-docs-examples-and-usage" aria-hidden="true">#</a></h2>
+<p>Run <code>npx shadcn@latest docs &lt;component&gt;</code> to get the URLs for a component&#39;s documentation, examples, and API reference. Fetch these URLs to get the actual content.</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">npx shadcn@latest docs button dialog <span class="hljs-keyword">select</span></code></pre></div><p><strong>When creating, fixing, debugging, or using a component, always run <code>npx shadcn@latest docs</code> and fetch the URLs first.</strong> This ensures you&#39;re working with the correct API and usage patterns rather than guessing.</p>
+<h2 id="workflow">Workflow<a class="anchor" href="#workflow" aria-hidden="true">#</a></h2>
+<ol>
+<li><strong>Get project context</strong> — already injected above. Run <code>npx shadcn@latest info</code> again if you need to refresh.</li>
+<li><strong>Check installed components first</strong> — before running <code>add</code>, always check the <code>components</code> list from project context or list the <code>resolvedPaths.ui</code> directory. Don&#39;t import components that haven&#39;t been added, and don&#39;t re-add ones already installed.</li>
+<li><strong>Find components</strong> — <code>npx shadcn@latest search</code>.</li>
+<li><strong>Get docs and examples</strong> — run <code>npx shadcn@latest docs &lt;component&gt;</code> to get URLs, then fetch them. Use <code>npx shadcn@latest view</code> to browse registry items you haven&#39;t installed. To preview changes to installed components, use <code>npx shadcn@latest add --diff</code>.</li>
+<li><strong>Install or update</strong> — <code>npx shadcn@latest add</code>. When updating existing components, use <code>--dry-run</code> and <code>--diff</code> to preview changes first (see <a href="#updating-components">Updating Components</a> below).</li>
+<li><strong>Fix imports in third-party components</strong> — After adding components from community registries (e.g. <code>@bundui</code>, <code>@magicui</code>), check the added non-UI files for hardcoded import paths like <code>@/components/ui/...</code>. These won&#39;t match the project&#39;s actual aliases. Use <code>npx shadcn@latest info</code> to get the correct <code>ui</code> alias (e.g. <code>@workspace/ui/components</code>) and rewrite the imports accordingly. The CLI rewrites imports for its own UI files, but third-party registry components may use default paths that don&#39;t match the project.</li>
+<li><strong>Review added components</strong> — After adding a component or block from any registry, <strong>always read the added files and verify they are correct</strong>. Check for missing sub-components (e.g. <code>SelectItem</code> without <code>SelectGroup</code>), missing imports, incorrect composition, or violations of the <a href="#critical-rules">Critical Rules</a>. Also replace any icon imports with the project&#39;s <code>iconLibrary</code> from the project context (e.g. if the registry item uses <code>lucide-react</code> but the project uses <code>hugeicons</code>, swap the imports and icon names accordingly). Fix all issues before moving on.</li>
+<li><strong>Registry must be explicit</strong> — When the user asks to add a block or component, <strong>do not guess the registry</strong>. If no registry is specified (e.g. user says &quot;add a login block&quot; without specifying <code>@shadcn</code>, <code>@tailark</code>, etc.), ask which registry to use. Never default to a registry on behalf of the user.</li>
+<li><strong>Switching presets</strong> — Ask the user first: <strong>reinstall</strong>, <strong>merge</strong>, or <strong>skip</strong>?<ul>
+<li><strong>Reinstall</strong>: <code>npx shadcn@latest init --preset &lt;code&gt; --force --reinstall</code>. Overwrites all components.</li>
+<li><strong>Merge</strong>: <code>npx shadcn@latest init --preset &lt;code&gt; --force --no-reinstall</code>, then run <code>npx shadcn@latest info</code> to list installed components, then for each installed component use <code>--dry-run</code> and <code>--diff</code> to <a href="#updating-components">smart merge</a> it individually.</li>
+<li><strong>Skip</strong>: <code>npx shadcn@latest init --preset &lt;code&gt; --force --no-reinstall</code>. Only updates config and CSS, leaves components as-is.</li>
+<li><strong>Important</strong>: Always run preset commands inside the user&#39;s project directory. The CLI automatically preserves the current base (<code>base</code> vs <code>radix</code>) from <code>components.json</code>. If you must use a scratch/temp directory (e.g. for <code>--dry-run</code> comparisons), pass <code>--base &lt;current-base&gt;</code> explicitly — preset codes do not encode the base.</li>
+</ul>
+</li>
+</ol>
+<h2 id="updating-components">Updating Components<a class="anchor" href="#updating-components" aria-hidden="true">#</a></h2>
+<p>When the user asks to update a component from upstream while keeping their local changes, use <code>--dry-run</code> and <code>--diff</code> to intelligently merge. <strong>NEVER fetch raw files from GitHub manually — always use the CLI.</strong></p>
+<ol>
+<li>Run <code>npx shadcn@latest add &lt;component&gt; --dry-run</code> to see all files that would be affected.</li>
+<li>For each file, run <code>npx shadcn@latest add &lt;component&gt; --diff &lt;file&gt;</code> to see what changed upstream vs local.</li>
+<li>Decide per file based on the diff:<ul>
+<li>No local changes → safe to overwrite.</li>
+<li>Has local changes → read the local file, analyze the diff, and apply upstream updates while preserving local modifications.</li>
+<li>User says &quot;just update everything&quot; → use <code>--overwrite</code>, but confirm first.</li>
+</ul>
+</li>
+<li><strong>Never use <code>--overwrite</code> without the user&#39;s explicit approval.</strong></li>
+</ol>
+<h2 id="quick-reference">Quick Reference<a class="anchor" href="#quick-reference" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># Create a new project.</span>
+npx shadcn@latest init --name my-app --preset base-nova
+npx shadcn@latest init --name my-app --preset a2r6bw --template vite
+
+<span class="hljs-comment"># Create a monorepo project.</span>
+npx shadcn@latest init --name my-app --preset base-nova --monorepo
+npx shadcn@latest init --name my-app --preset base-nova --template next --monorepo
+
+<span class="hljs-comment"># Initialize existing project.</span>
+npx shadcn@latest init --preset base-nova
+npx shadcn@latest init --defaults  <span class="hljs-comment"># shortcut: --template=next --preset=base-nova</span>
+
+<span class="hljs-comment"># Add components.</span>
+npx shadcn@latest add button card dialog
+npx shadcn@latest add @magicui/shimmer-button
+npx shadcn@latest add --all
+
+<span class="hljs-comment"># Preview changes before adding/updating.</span>
+npx shadcn@latest add button --dry-run
+npx shadcn@latest add button --diff button.tsx
+npx shadcn@latest add @acme/form --view button.tsx
+
+<span class="hljs-comment"># Search registries.</span>
+npx shadcn@latest search @shadcn -q <span class="hljs-string">&quot;sidebar&quot;</span>
+npx shadcn@latest search @tailark -q <span class="hljs-string">&quot;stats&quot;</span>
+
+<span class="hljs-comment"># Get component docs and example URLs.</span>
+npx shadcn@latest docs button dialog <span class="hljs-keyword">select</span>
+
+<span class="hljs-comment"># View registry item details (for items not yet installed).</span>
+npx shadcn@latest view @shadcn/button</code></pre></div><p><strong>Named presets:</strong> <code>base-nova</code>, <code>radix-nova</code>
+<strong>Templates:</strong> <code>next</code>, <code>vite</code>, <code>start</code>, <code>react-router</code>, <code>astro</code> (all support <code>--monorepo</code>) and <code>laravel</code> (not supported for monorepo)
+<strong>Preset codes:</strong> Base62 strings starting with <code>a</code> (e.g. <code>a2r6bw</code>), from <a href="https://ui.shadcn.com">ui.shadcn.com</a>.</p>
+<h2 id="detailed-references">Detailed References<a class="anchor" href="#detailed-references" aria-hidden="true">#</a></h2>
+<ul>
+<li><a href="./rules/forms.md">rules/forms.md</a> — FieldGroup, Field, InputGroup, ToggleGroup, FieldSet, validation states</li>
+<li><a href="./rules/composition.md">rules/composition.md</a> — Groups, overlays, Card, Tabs, Avatar, Alert, Empty, Toast, Separator, Skeleton, Badge, Button loading</li>
+<li><a href="./rules/icons.md">rules/icons.md</a> — data-icon, icon sizing, passing icons as objects</li>
+<li><a href="./rules/styling.md">rules/styling.md</a> — Semantic colors, variants, className, spacing, size, truncate, dark mode, cn(), z-index</li>
+<li><a href="./rules/base-vs-radix.md">rules/base-vs-radix.md</a> — asChild vs render, Select, ToggleGroup, Slider, Accordion</li>
+<li><a href="./cli.md">cli.md</a> — Commands, flags, presets, templates</li>
+<li><a href="./customization.md">customization.md</a> — Theming, CSS variables, extending components</li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

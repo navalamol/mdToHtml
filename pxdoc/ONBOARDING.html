@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONBOARDING</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#engineering-onboarding">Engineering Onboarding</a></li><ol class="toc-sub"><li><a href="#1-the-mental-model">1. The mental model</a></li><li><a href="#2-what-lives-where">2. What lives where</a></li><ol class="toc-sub"><li><a href="#apps-apps">Apps (apps/)</a></li><li><a href="#packages-packages">Packages (packages/)</a></li><li><a href="#submodule-submodulesloveable">Submodule (submodules/loveable/)</a></li></ol><li><a href="#3-prerequisites">3. Prerequisites</a></li><li><a href="#4-first-time-setup">4. First-time setup</a></li><li><a href="#5-everyday-commands">5. Everyday commands</a></li><li><a href="#6-how-a-request-actually-works-contract-first">6. How a request actually works (contract-first)</a></li><ol class="toc-sub"><li><a href="#errors-never-leak">Errors never leak</a></li><li><a href="#upstream-specs-are-the-source-of-truth">Upstream specs are the source of truth</a></li></ol><li><a href="#7-routing-the-generated-route-tree">7. Routing &amp; the generated route tree</a></li><li><a href="#8-internationalization-never-hard-code-text">8. Internationalization (never hard-code text)</a></li><li><a href="#9-making-your-first-change-worked-examples">9. Making your first change — worked examples</a></li><ol class="toc-sub"><li><a href="#the-pre-pr-checklist">The pre-PR checklist</a></li></ol><li><a href="#10-skills-the-repos-built-in-playbooks">10. Skills — the repo&#39;s built-in playbooks</a></li><li><a href="#11-glossary-for-newcomers">11. Glossary for newcomers</a></li><li><a href="#12-where-to-get-unstuck">12. Where to get unstuck</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">ONBOARDING</h1>
+        <p class="page-meta">From <code>ONBOARDING.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="engineering-onboarding">Engineering Onboarding<a class="anchor" href="#engineering-onboarding" aria-hidden="true">#</a></h1>
+<p>Welcome to <strong>pxc-retail</strong> — the monorepo behind Syndigo&#39;s PXC (Product Experience Cloud) retail applications. This guide takes you from a fresh clone to your first meaningful change. It assumes no prior knowledge of this repo; skim the parts you already know.</p>
+<p>If you only read one thing: this is a <strong>pnpm + Turbo monorepo</strong> of TypeScript/React apps sharing a <strong>contract-first oRPC API</strong> and a common <strong>application shell</strong>. Everything below expands on that sentence.</p>
+<hr>
+<h2 id="1-the-mental-model">1. The mental model<a class="anchor" href="#1-the-mental-model" aria-hidden="true">#</a></h2>
+<p>There are two user-facing apps and a set of shared packages they both build on.</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">                 ┌─────────────────┐     ┌──────────────────────┐
+   Browser  ───► │  apps/pxc-retail │     │ apps/tenant-management│
+                 │   (port 3000)    │     │      (port 3001)      │
+                 └────────┬─────────┘     └───────────┬──────────┘
+                          │       both apps consume…  │
+          ┌───────────────┴───────────────┬───────────┴────────────────┐
+          ▼                               ▼                             ▼
+  @syndigo/app-shell            @syndigo/design-system          @syndigo/orpc
+  (shell chrome, permissions,   (UI components, Tailwind,       (RPC implementations
+   navigation, i18n, toasts)     OKLch tokens)                   + the router)
+                                                                       │
+                                                             @repo/core-contracts
+                                                        (Zod schemas + oRPC contracts
+                                                         + inferred TypeScript types)</code></pre></div><p><strong>The golden rule of this repo: types flow in one direction.</strong> Contracts and schemas are
+defined once in <code>@repo/core-contracts</code>, implemented in <code>@syndigo/orpc</code>, and consumed by the
+apps. When you change an endpoint you start at the contract and let the type system push the
+change outward. You never redefine a shape in the app that the contract already owns.</p>
+<hr>
+<h2 id="2-what-lives-where">2. What lives where<a class="anchor" href="#2-what-lives-where" aria-hidden="true">#</a></h2>
+<h3 id="apps-apps">Apps (<code>apps/</code>)<a class="anchor" href="#apps-apps" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>App</th><th>Port</th><th>What it does</th></tr></thead><tbody><tr><td><strong><code>pxc-retail</code></strong></td><td>3000</td><td>The main retail app: merchandising, vendor central, insights, system admin.</td></tr><tr><td><strong><code>tenant-management</code></strong></td><td>3001</td><td>Tenant onboarding and feature-set / feature-definition management.</td></tr></tbody></table></div><p>Both apps are <strong>TanStack Start</strong> (SSR framework running on Nitro) + <strong>React 19</strong>, use <strong>file-based
+routing</strong> via TanStack Router, and share almost all of their plumbing through <code>@syndigo/app-shell</code>.
+Their structure is nearly identical:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">apps/&lt;app&gt;/src/
+├── routes/              # File-based routes. Path = URL. `_shell/` is the authenticated layout.
+│   ├── __root.tsx       # Root document (html/head/body, providers). Hand-written.
+│   ├── _shell.tsx       # Authenticated shell layout wrapper.
+│   ├── _shell/          # Pages that live inside the shell chrome.
+│   ├── rpc/$.ts         # oRPC JSON-RPC handler mounted at /rpc
+│   ├── openapi/$.ts     # OpenAPI handler mounted at /openapi
+│   └── routeTree.gen.ts # AUTO-GENERATED — never edit by hand (see §7)
+├── lib/
+│   ├── navigation-config.ts   # This app&#x27;s menu groups + sub-tabs
+│   └── permissions/index.ts   # Binds app-shell&#x27;s generic permission engine to this app&#x27;s Modules
+├── integrations/        # orpc client, tanstack-query setup, i18n config
+├── locales/{en,es,fr,de}/translation.ts   # All user-facing strings
+├── env/{server,client}.ts   # T3 Env-validated environment variables
+└── components/          # App-specific components</code></pre></div><h3 id="packages-packages">Packages (<code>packages/</code>)<a class="anchor" href="#packages-packages" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>Package</th><th>Import as</th><th>Purpose</th></tr></thead><tbody><tr><td><strong><code>core-contracts</code></strong></td><td><code>@repo/core-contracts</code></td><td>Zod schemas, oRPC contract definitions, and inferred TS types. The single source of API shapes.</td></tr><tr><td><strong><code>orpc</code></strong></td><td><code>@syndigo/orpc</code></td><td>Procedure implementations + the router. Talks to upstream services; maps their responses/errors.</td></tr><tr><td><strong><code>app-shell</code></strong></td><td><code>@syndigo/app-shell</code></td><td>Shared shell chrome, permissions engine, navigation types, i18n, error toasts, theme/timezone hooks.</td></tr><tr><td><strong><code>design-system</code></strong></td><td><code>@syndigo/design-system</code></td><td>Component library (shadcn preset <code>base-nova</code> + @base-ui/react + Tailwind 4 / OKLch tokens).</td></tr><tr><td><strong><code>typescript-config</code></strong></td><td><code>@repo/typescript-config</code></td><td>Shared strict tsconfig bases.</td></tr></tbody></table></div><blockquote class="blockquote"><p><strong>No barrel files.</strong> Import the exact subpath, e.g.
+<code>@syndigo/design-system/components/button</code>, <code>@syndigo/app-shell/permissions</code>. Look at a
+package&#39;s <code>package.json</code> <code>exports</code> field to see what&#39;s available.</p>
+</blockquote><h3 id="submodule-submodulesloveable">Submodule (<code>submodules/loveable/</code>)<a class="anchor" href="#submodule-submodulesloveable" aria-hidden="true">#</a></h3>
+<p>A git submodule (<a href="https://github.com/syndigo/retail-pxcloud">syndigo/retail-pxcloud</a>) holding a
+Lovable-generated retail UI. Product uses it as a <strong>UX reference / push experience</strong> for agentic
+development — it is <em>not</em> shipped. You generally don&#39;t touch it; run
+<code>git submodule update --init --recursive</code> after cloning if you need it.</p>
+<hr>
+<h2 id="3-prerequisites">3. Prerequisites<a class="anchor" href="#3-prerequisites" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Tool</th><th>Version</th><th>Notes</th></tr></thead><tbody><tr><td>Node.js</td><td><strong>&gt;= 24</strong></td><td>Check <code>.nvmrc</code> if present; <code>node -v</code>.</td></tr><tr><td>pnpm</td><td><strong>11.x</strong></td><td>Enable via <code>corepack enable</code> (the repo pins <code>pnpm@11.10.0</code>).</td></tr><tr><td>Git</td><td>any recent</td><td>Submodule support needed for the loveable reference.</td></tr></tbody></table></div><p>We use <strong>pnpm workspaces</strong> (not npm/yarn) and <strong>Turbo</strong> as the task orchestrator. You almost
+always run scripts from the <strong>repo root</strong>; Turbo fans them out to the right packages in dependency
+order and caches results.</p>
+<hr>
+<h2 id="4-first-time-setup">4. First-time setup<a class="anchor" href="#4-first-time-setup" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># 1. Clone and enter</span>
+git <span class="hljs-built_in">clone</span> &lt;repo-url&gt; pxc-retail &amp;&amp; <span class="hljs-built_in">cd</span> pxc-retail
+git submodule update --init --recursive        <span class="hljs-comment"># optional: pulls the loveable reference</span>
+
+<span class="hljs-comment"># 2. Enable the pinned package manager</span>
+corepack <span class="hljs-built_in">enable</span>
+
+<span class="hljs-comment"># 3. Install everything (all workspaces)</span>
+pnpm install
+
+<span class="hljs-comment"># 4. Generate local env files (prompts for the Auth client id/secret — ask a teammate)</span>
+node apps/pxc-retail/scripts/setup-env.mjs
+node apps/tenant-management/scripts/setup-env.mjs</code></pre></div><p>Each app reads server config from its own <code>apps/&lt;app&gt;/.env.local</code>. The <code>setup-env.mjs</code> scripts
+pre-fill sensible dev defaults and prompt only for the credentials you can&#39;t guess. Re-run them any
+time to update credentials. Env vars are validated at boot by <strong>T3 Env</strong> (<code>src/env/server.ts</code> and
+<code>src/env/client.ts</code>) — a missing required var fails fast with a clear message rather than a
+mysterious runtime error.</p>
+<hr>
+<h2 id="5-everyday-commands">5. Everyday commands<a class="anchor" href="#5-everyday-commands" aria-hidden="true">#</a></h2>
+<p>All run from the repo root:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm dev          <span class="hljs-comment"># Start every app + package in watch mode (Turbo TUI)</span>
+pnpm build        <span class="hljs-comment"># Build everything</span>
+pnpm lint         <span class="hljs-comment"># Oxlint across all packages</span>
+pnpm format       <span class="hljs-comment"># Oxfmt (formatter) across all files</span>
+pnpm typecheck    <span class="hljs-comment"># Type-check everything (tsgo)</span>
+pnpm <span class="hljs-built_in">test</span>         <span class="hljs-comment"># Run all test suites (Vitest)</span></code></pre></div><p>Scope to one workspace with <code>--filter</code>:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm dev --filter=pxc-retail            <span class="hljs-comment"># just the retail app → http://localhost:3000</span>
+pnpm dev --filter=tenant-management     <span class="hljs-comment"># just tenant-management → http://localhost:3001</span>
+pnpm <span class="hljs-built_in">test</span> --filter=pxc-retail           <span class="hljs-comment"># only this app&#x27;s Vitest suite</span>
+pnpm build --filter=@syndigo/design-system</code></pre></div><p><strong>Tooling note:</strong> we use <strong>Oxlint</strong> (linter) and <strong>Oxfmt</strong> (formatter), not ESLint/Prettier.
+Code style is: no semicolons, single quotes, trailing commas — all enforced automatically, so let
+the tools do it rather than hand-formatting.</p>
+<hr>
+<h2 id="6-how-a-request-actually-works-contract-first">6. How a request actually works (contract-first)<a class="anchor" href="#6-how-a-request-actually-works-contract-first" aria-hidden="true">#</a></h2>
+<p>This is the most important concept in the codebase. Follow the flow for a hypothetical
+<code>vendor.list</code> endpoint:</p>
+<ol>
+<li><p><strong>Schema + contract</strong> live in <code>@repo/core-contracts</code> — a Zod schema for input/output and an
+oRPC contract that declares the shape and the standard error codes.</p>
+</li>
+<li><p><strong>Implementation</strong> lives in <code>@syndigo/orpc</code> (<code>src/procedures/…</code>). It <code>implement(contract)</code>s the
+procedure, calls the real upstream service, and returns typed data. It is wired into
+<code>src/router.ts</code>.</p>
+</li>
+<li><p><strong>The app</strong> calls it through an <strong>isomorphic client</strong> (<code>src/integrations/orpc/client.ts</code>): on
+the server it invokes the router directly; in the browser it goes over HTTP to <code>/rpc</code>.</p>
+</li>
+<li><p><strong>React</strong> consumes it via TanStack Query utils:</p>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> { orpc } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;#/integrations/orpc/client&quot;</span>;
+<span class="hljs-keyword">import</span> { useSuspenseQuery } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@tanstack/react-query&quot;</span>;
+
+<span class="hljs-keyword">const</span> { data } = <span class="hljs-title function_">useSuspenseQuery</span>(
+  orpc.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">vendor</span>.<span class="hljs-property">list</span>.<span class="hljs-title function_">queryOptions</span>({ <span class="hljs-attr">input</span>: {} }),
+);</code></pre></div></li>
+</ol>
+<h3 id="errors-never-leak">Errors never leak<a class="anchor" href="#errors-never-leak" aria-hidden="true">#</a></h3>
+<p>The BFF never sends raw upstream errors to the browser. Server code throws with
+<code>throwError({ code, errorKey, params })</code> where <code>errorKey</code> is a typed union like
+<code>vendor.not_found</code>. The client turns <code>errorKey</code> into a localized message
+(<code>errors.${errorKey}</code>) and shows a toast (mutations) or an error page (queries/loads). To add a
+new error you must (1) add the literal to <code>ErrorKey</code> in <code>@repo/core-contracts</code> <strong>and</strong> (2) add
+<code>errors.&lt;key&gt;</code> to all four locale files — skip step 2 and <code>tsc</code> fails.</p>
+<h3 id="upstream-specs-are-the-source-of-truth">Upstream specs are the source of truth<a class="anchor" href="#upstream-specs-are-the-source-of-truth" aria-hidden="true">#</a></h3>
+<p>The upstream service OpenAPI specs live in <code>packages/orpc/specs/</code>. The BFF&#39;s Zod schemas,
+contracts, handlers, and tests are derived <strong>from</strong> those specs (there&#39;s a <code>generate</code> Turbo task
+and a dedicated <code>absorb-openapi-changes</code> skill for propagating spec drift). When an upstream API
+changes, you start at the spec, not at the app.</p>
+<hr>
+<h2 id="7-routing-the-generated-route-tree">7. Routing &amp; the generated route tree<a class="anchor" href="#7-routing-the-generated-route-tree" aria-hidden="true">#</a></h2>
+<p>Routes are files under <code>src/routes/</code>. The filename maps to the URL; <code>_shell/</code> is the authenticated
+layout, and pages under it render inside the shared shell chrome. Access is guarded in a route&#39;s
+<code>beforeLoad</code> with <code>requireModuleAccess(...)</code>, and the nav is filtered with
+<code>useFilteredMenuGroups</code> / <code>useFilteredSubTabs</code> (both from the app&#39;s <code>#/lib/permissions</code>, which wrap
+<code>@syndigo/app-shell</code>). Unauthorized users are redirected to <code>/no-access</code>.</p>
+<p><strong><code>src/routeTree.gen.ts</code> is auto-generated. Do not edit it.</strong> After adding, removing, or renaming a
+route file, regenerate it by running that app&#39;s dev server once:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm dev --filter=pxc-retail          <span class="hljs-comment"># or --filter=tenant-management</span></code></pre></div><p>You&#39;ll see this file show up as &quot;modified&quot; in git fairly often; that&#39;s expected.</p>
+<hr>
+<h2 id="8-internationalization-never-hard-code-text">8. Internationalization (never hard-code text)<a class="anchor" href="#8-internationalization-never-hard-code-text" aria-hidden="true">#</a></h2>
+<p><strong>All</strong> user-facing text — component copy and error messages alike — must go through translations.
+Strings live in <code>apps/&lt;app&gt;/src/locales/{en,es,fr,de}/translation.ts</code>.</p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-keyword">import</span> { useTranslation } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@syndigo/app-shell/hooks/use-translation&quot;</span>;
+
+<span class="hljs-keyword">const</span> { t } = <span class="hljs-title function_">useTranslation</span>();
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{t($ =&gt; $.errors.not_found)}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{t($ =&gt; $.vendor.display.employees_count, { count: 5 })}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>   <span class="hljs-comment">// interpolation + pluralization</span></code></pre></div><p>Keys are <strong>selector callbacks</strong> (<code>t($ =&gt; $.a.b)</code>), not strings — this gives compile-time checking
+and avoids TS depth-limit issues. For a runtime-computed key use
+<code>dynamicSelector(&#39;a.b.c&#39;)</code>, but prefer a <code>Record&lt;Union, TranslationSelector&gt;</code> lookup when the set
+of keys is closed. The <code>i18n-sync</code> skill audits the four locale files for missing/mismatched keys.</p>
+<hr>
+<h2 id="9-making-your-first-change-worked-examples">9. Making your first change — worked examples<a class="anchor" href="#9-making-your-first-change-worked-examples" aria-hidden="true">#</a></h2>
+<p>Pick the pattern that matches your task. Each has a dedicated skill (see §10) that walks the exact
+steps; here&#39;s the shape so you know what &quot;done&quot; looks like.</p>
+<ul>
+<li><strong>New UI component</strong> → add it to <code>@syndigo/design-system</code> (CVA + Tailwind + @base-ui/react, OKLch
+tokens, <code>cn()</code> for class merging, no barrel export). Skill: <code>add-design-component</code>.</li>
+<li><strong>New API endpoint</strong> → schema in <code>core-contracts</code> → contract → implement in <code>orpc</code> → wire into
+the router → add error keys + locale strings. Skill: <code>add-orpc-procedure</code>.</li>
+<li><strong>New page/route</strong> → add a file under <code>src/routes/_shell/</code>, add a permission guard, register it in
+<code>navigation-config.ts</code>, add locale strings, regenerate the route tree. Skill: <code>add-route</code>.</li>
+<li><strong>New permission check</strong> → decide the layer (procedure / route guard / component) and use the
+matching helper. Skill: <code>add-permission-check</code>.</li>
+<li><strong>New error variant</strong> → <code>ErrorKey</code> literal + <code>errors.&lt;key&gt;</code> in all four locales. Skill: <code>error-key</code>.</li>
+</ul>
+<h3 id="the-pre-pr-checklist">The pre-PR checklist<a class="anchor" href="#the-pre-pr-checklist" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm typecheck &amp;&amp; pnpm lint &amp;&amp; pnpm <span class="hljs-built_in">test</span></code></pre></div><p>Then confirm your change in a running app (<code>pnpm dev --filter=&lt;app&gt;</code>). Commit on a feature branch
+(not <code>main</code>); regenerated <code>routeTree.gen.ts</code> changes belong in the same commit as the route change
+that caused them.</p>
+<hr>
+<h2 id="10-skills-the-repos-built-in-playbooks">10. Skills — the repo&#39;s built-in playbooks<a class="anchor" href="#10-skills-the-repos-built-in-playbooks" aria-hidden="true">#</a></h2>
+<p>This repo ships <strong>skills</strong>: focused, step-by-step guides for recurring tasks, living in
+<code>.claude/skills/</code>. They&#39;re written for <strong>Claude Code</strong> — invoke one by typing <code>/&lt;skill-name&gt;</code> in
+the Claude Code prompt (or just describe your task and Claude will load the matching skill). If a
+skill matches what you&#39;re doing, follow it: it encodes the exact conventions this guide only
+summarizes.</p>
+<p>The skills currently available in this repo:</p>
+<div class="table-wrap"><table><thead><tr><th>Skill</th><th>Use it when you&#39;re…</th></tr></thead><tbody><tr><td><code>add-orpc-procedure</code></td><td>Adding a new server endpoint (schema → contract → implementation → router).</td></tr><tr><td><code>add-route</code></td><td>Adding a new page/route to an app.</td></tr><tr><td><code>add-design-component</code></td><td>Adding a component to <code>@syndigo/design-system</code>.</td></tr><tr><td><code>add-permission-check</code></td><td>Adding or auditing an access check at the right layer.</td></tr><tr><td><code>error-key</code></td><td>Adding a new <code>ErrorKey</code> and its <code>errors.&lt;key&gt;</code> strings across all locales.</td></tr><tr><td><code>i18n-sync</code></td><td>Auditing the four locale files for missing/mismatched keys.</td></tr><tr><td><code>absorb-openapi-changes</code></td><td>Propagating an upstream OpenAPI spec change through the BFF stack.</td></tr><tr><td><code>shadcn</code></td><td>Working with shadcn components / the component registry.</td></tr><tr><td><code>update-loveable</code></td><td>Updating the loveable submodule and summarizing the UX changes.</td></tr><tr><td><code>ux-reference-implementation</code></td><td>Implementing a feature using the loveable submodule as a UX reference.</td></tr><tr><td><code>playwright-cli</code></td><td>Driving a browser / writing Playwright tests.</td></tr><tr><td><code>find-skills</code></td><td>Discovering whether a skill exists for something not listed here.</td></tr></tbody></table></div><blockquote class="blockquote"><p>Not sure one exists for your task? Run the <code>find-skills</code> skill, or browse <code>.claude/skills/</code> —
+each folder has a <code>SKILL.md</code> describing exactly what it does and when to reach for it.</p>
+</blockquote><hr>
+<h2 id="11-glossary-for-newcomers">11. Glossary for newcomers<a class="anchor" href="#11-glossary-for-newcomers" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Term</th><th>Meaning in this repo</th></tr></thead><tbody><tr><td><strong>Monorepo</strong></td><td>One git repo holding multiple apps and shared packages.</td></tr><tr><td><strong>pnpm workspace</strong></td><td>How the packages link to each other locally (<code>workspace:*</code> deps).</td></tr><tr><td><strong>Turbo</strong></td><td>Task runner that orders and caches <code>build</code>/<code>lint</code>/<code>test</code> across the workspace.</td></tr><tr><td><strong>oRPC</strong></td><td>The type-safe RPC layer. &quot;Contract-first&quot;: shapes defined once, enforced end-to-end.</td></tr><tr><td><strong>BFF</strong></td><td>Backend-for-frontend — <code>@syndigo/orpc</code> is our BFF; it fronts upstream services.</td></tr><tr><td><strong>Contract</strong></td><td>The typed declaration of an endpoint (input/output/errors) in <code>@repo/core-contracts</code>.</td></tr><tr><td><strong>TanStack Start</strong></td><td>The SSR React framework the apps are built on (routing, server functions, on Nitro).</td></tr><tr><td><strong>Shell</strong></td><td>The authenticated app frame (nav, chrome) shared via <code>@syndigo/app-shell</code>.</td></tr><tr><td><strong>Module / Action</strong></td><td>The vocabulary of the permission system (what area, what capability).</td></tr><tr><td><strong>Selector callback</strong></td><td>The <code>t($ =&gt; $.a.b)</code> form for translation keys — compile-time-checked.</td></tr><tr><td><strong>Isomorphic client</strong></td><td>An oRPC client that calls the router directly on the server and over HTTP in the browser.</td></tr></tbody></table></div><hr>
+<h2 id="12-where-to-get-unstuck">12. Where to get unstuck<a class="anchor" href="#12-where-to-get-unstuck" aria-hidden="true">#</a></h2>
+<ol>
+<li><strong><code>CLAUDE.md</code></strong> (repo root) — the authoritative, detailed conventions reference. When this guide
+and <code>CLAUDE.md</code> disagree, <code>CLAUDE.md</code> wins; it&#39;s kept closest to the code.</li>
+<li><strong><code>README.md</code></strong> — the quick project overview and tech-stack table.</li>
+<li><strong>Skills</strong> (§10) — task-specific playbooks.</li>
+<li><strong>The code itself</strong> — a package&#39;s <code>package.json</code> <code>exports</code> tells you its public surface; an
+existing route/procedure/component is the best template for the next one.</li>
+<li><strong>Your team</strong> — for the Auth client credentials and anything environment-specific.</li>
+</ol>
+<p>Welcome aboard. Your first PR is usually a small, well-scoped change (a copy fix, a new sub-tab, a
+single procedure) — that&#39;s the fastest way to exercise the whole loop in §9 end to end.</p>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

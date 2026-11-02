@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>relationship-manager-rewrite</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#react-rewrite-relationshipmanage-relationshipgroup-relationshipgrid">React Rewrite: RelationshipManage, RelationshipGroup, RelationshipGrid</a></li><ol class="toc-sub"><li><a href="#source-repository">Source Repository</a></li><li><a href="#ux-reference">UX Reference</a></li><li><a href="#target-location">Target Location</a></li><li><a href="#context">Context</a></li><li><a href="#what-these-components-do">What These Components Do</a></li><ol class="toc-sub"><li><a href="#rock-relationship-manage-v2-orchestrator">rock-relationship-manage-v2 (orchestrator)</a></li><li><a href="#rock-entity-relationship-search-result-v2-per-type-container">rock-entity-relationship-search-result-v2 (per-type container)</a></li><li><a href="#rock-relationship-grid-v2-the-main-grid">rock-relationship-grid-v2 (the main grid)</a></li></ol><li><a href="#typescript-types">TypeScript Types</a></li><ol class="toc-sub"><li><a href="#relationshiptypedefinition">RelationshipTypeDefinition</a></li><li><a href="#relationshipitem">RelationshipItem</a></li><li><a href="#normalizedrelvalue">NormalizedRelValue</a></li><li><a href="#relationshipdata">RelationshipData</a></li><li><a href="#pendingrelationshipchange">PendingRelationshipChange</a></li><li><a href="#valuecontext">ValueContext</a></li><li><a href="#raw-riversand-normalized-name-map">Raw Riversand → normalized name map</a></li></ol><li><a href="#api-interactions">API Interactions</a></li><ol class="toc-sub"><li><a href="#api-stack">API Stack</a></li><li><a href="#rpc-procedure-surface">RPC procedure surface</a></li><li><a href="#base-url-pattern-datapass-through">Base URL pattern: /data/pass-through/&lt;service&gt;/&lt;action&gt;</a></li><li><a href="#api-call-inventory">API Call Inventory</a></li></ol><li><a href="#component-tree">Component Tree</a></li><li><a href="#state-architecture">State Architecture</a></li><ol class="toc-sub"><li><a href="#relationshipmanagestore">RelationshipManageStore</a></li><li><a href="#named-updater-functions-replace-action-types">Named updater functions (replace action types)</a></li><li><a href="#consuming-the-store-in-components">Consuming the store in components</a></li></ol><li><a href="#infrastructure-replacements">Infrastructure Replacements</a></li><li><a href="#key-files">Key Files</a></li><ol class="toc-sub"><li><a href="#repocore-contracts">@repo/core-contracts</a></li><li><a href="#syndigoorpc">@syndigo/orpc</a></li><li><a href="#appspxc-retailsrccomponentsrelationship-manager">apps/pxc-retail/src/components/relationship-manager</a></li></ol><li><a href="#known-gaps-future-work">Known Gaps / Future Work</a></li><li><a href="#implementation-order">Implementation Order</a></li><li><a href="#verification">Verification</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">relationship-manager-rewrite</h1>
+        <p class="page-meta">From <code>relationship-manager-rewrite.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="react-rewrite-relationshipmanage-relationshipgroup-relationshipgrid">React Rewrite: RelationshipManage, RelationshipGroup, RelationshipGrid<a class="anchor" href="#react-rewrite-relationshipmanage-relationshipgroup-relationshipgrid" aria-hidden="true">#</a></h1>
+<h2 id="source-repository">Source Repository<a class="anchor" href="#source-repository" aria-hidden="true">#</a></h2>
+<blockquote class="blockquote"><p><strong>At the start of any session working on this rewrite, ask the user for the path to the <code>ui-platform-business-components-v2</code> checkout</strong> — e.g. &quot;What&#39;s the local path to the ui-platform-business-components-v2 repo?&quot;</p>
+</blockquote><p>Key files to read once the path is known:</p>
+<ul>
+<li><code>&lt;root&gt;/src/elements/rock-relationship-manage-v2/rock-relationship-manage-v2.js</code> — 1,745 lines</li>
+<li><code>&lt;root&gt;/src/elements/rock-entity-relationship-search-result-v2/rock-entity-relationship-search-result-v2.js</code> — ~1,205 lines</li>
+<li><code>&lt;root&gt;/src/elements/rock-relationship-grid-v2/rock-relationship-grid-v2.js</code> — 9,598 lines</li>
+<li><code>&lt;root&gt;/src/helpers/</code> — DataRequestHelper, DataTransformHelper, DataHelper</li>
+</ul>
+<hr>
+<h2 id="ux-reference">UX Reference<a class="anchor" href="#ux-reference" aria-hidden="true">#</a></h2>
+<p>Two loveable mockups cover both use cases of this component:</p>
+<ul>
+<li><a href="../submodules/loveable/src/components/product-detail/ProductAssetsTab.tsx"><code>submodules/loveable/src/components/product-detail/ProductAssetsTab.tsx</code></a> — assets tab: Grid/List toggle, grouped by asset type (images/videos/documents/audio), collapsible sections with status icons</li>
+<li><a href="../submodules/loveable/src/components/product-detail/ProductRelationshipsTab.tsx"><code>submodules/loveable/src/components/product-detail/ProductRelationshipsTab.tsx</code></a> — relationships tab: collapsible groups (accessories/crossSell/upSell) with tabular view, product thumbnail + variants</li>
+</ul>
+<hr>
+<h2 id="target-location">Target Location<a class="anchor" href="#target-location" aria-hidden="true">#</a></h2>
+<p>This rewrite lives directly in the <strong><code>apps/pxc-retail</code></strong> app under:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">apps/pxc-retail/src/components/relationship-manager/
+  types.ts
+  context/
+  components/
+    RelationshipManage/
+    RelationshipGroup/
+    RelationshipGrid/
+  test/</code></pre></div><p>No separate package — co-located app code. Conventions:</p>
+<ul>
+<li>Inherits pxc-retail&#39;s TypeScript config, ESLint config, and Vitest setup</li>
+<li>Import via the <code>#/</code> alias: <code>import { RelationshipManage } from &#39;#/components/relationship-manager/...&#39;</code></li>
+<li>Consumes <code>@syndigo/design-system/components/*</code> for UI primitives</li>
+</ul>
+<hr>
+<h2 id="context">Context<a class="anchor" href="#context" aria-hidden="true">#</a></h2>
+<p>These three LitElement web components form the core relationship and asset editing UI in the Riversand MDM platform. They are being rewritten in React inside the retail-pxc monorepo. No LitElement infrastructure, no Polymer/RUF managers.</p>
+<p><strong>The same component powers both the Assets tab and Relationships tab</strong> on the product detail page. The <code>dockingIdentifier</code> and <code>domain</code> props drive the distinction:</p>
+<ul>
+<li><strong>Assets tab</strong>: <code>domain=&quot;digitalasset&quot;</code> — shows groups by asset type (images, videos, documents, audio) in Grid or List view</li>
+<li><strong>Relationships tab</strong>: <code>domain</code> varies by entity type — shows relationship type groups (accessories, crossSell, upSell, etc.) in Tile or Tabular view</li>
+</ul>
+<p><strong>Stack decisions:</strong> TypeScript + Tailwind, TanStack Query + fetch, <strong>TanStack Store</strong> for state, <code>@syndigo/design-system</code> (shadcn/base-nova preset) for UI primitives.</p>
+<hr>
+<h2 id="what-these-components-do">What These Components Do<a class="anchor" href="#what-these-components-do" aria-hidden="true">#</a></h2>
+<h3 id="rock-relationship-manage-v2-orchestrator">rock-relationship-manage-v2 (orchestrator)<a class="anchor" href="#rock-relationship-manage-v2-orchestrator" aria-hidden="true">#</a></h3>
+<ul>
+<li>Fetches entity composite model to discover available relationship type names and their <code>relTo</code> entity-type mappings</li>
+<li>Fetches relationship models (<code>typesCriterion: [&#39;relationshipModel&#39;]</code>) to resolve domain, direction, and permissions per type</li>
+<li>Renders relationship types progressively via chunked lazy loading (<code>relationshipChunkLength</code>, default 10) using <code>requestAnimationFrame</code></li>
+<li>Owns global view mode: Tile vs. Tabular; fires <code>_onViewChange()</code> which resets inline-edit state when the user switches</li>
+<li>Inline-edit coordination: tracks <code>isRelGridInEditMode</code> + which grid (<code>relGridUnderEdit</code>) is editing; disables all other grids while one is active (<code>disableGrid</code> prop)</li>
+<li>Save/cancel bar: shown when any child grid enters edit mode (<code>showSaveCancel</code>); hidden after save or revert</li>
+<li>Dirty-state checking: polls all child <code>rock-entity-relationship-search-result-v2</code> elements via <code>getIsDirty()</code> before allowing navigation away</li>
+<li>Variant model: for variant-type relationships, fetches <code>variantModelSettings</code> entity then calls <code>/data/pass-through/entityappmodelservice/getnearest</code> with enhancer attribute context</li>
+<li><code>dockingIdentifier</code> drives which config is loaded (passed to <code>requestConfig()</code>)</li>
+</ul>
+<h3 id="rock-entity-relationship-search-result-v2-per-type-container">rock-entity-relationship-search-result-v2 (per-type container)<a class="anchor" href="#rock-entity-relationship-search-result-v2-per-type-container" aria-hidden="true">#</a></h3>
+<ul>
+<li>Renders one relationship type as a collapsible accordion section</li>
+<li>Loads component config via <code>requestConfig()</code> — drives column definitions, business actions, and permissions</li>
+<li>Fetches composite model for the relationship type → extracts <code>hasWritePermission</code>, <code>hasDeletePermission</code>, and the full relationship attribute schema</li>
+<li>Fetches attribute models for all related entity types (entity-type-keyed schema map stored as <code>entityTypeBasedAttributeModel</code>)</li>
+<li>Fetches models for &quot;enhancer&quot; attributes not covered by the initial attribute model response</li>
+<li>Shows/hides accordion based on whether &gt; 1 relationship type exists in the parent context</li>
+<li>Proxies <code>getIsDirty()</code>, <code>getControlIsDirty()</code>, and <code>refresh()</code> calls through to the inner grid</li>
+<li>Builds and passes <code>relGridConfig</code> (merged config + attribute models + permissions + business actions) down to the grid</li>
+<li>Handles &quot;up direction&quot; (whereused/inverse) relationships by transforming config via <code>_getConfigForUpDirection()</code></li>
+</ul>
+<h3 id="rock-relationship-grid-v2-the-main-grid">rock-relationship-grid-v2 (the main grid)<a class="anchor" href="#rock-relationship-grid-v2-the-main-grid" aria-hidden="true">#</a></h3>
+<ul>
+<li>Fetches relationship data: entity GET request built by the parent (passed as <code>relReq</code> prop), with <code>fields.relationships: [typeName]</code> — returns the entity with an embedded relationship array</li>
+<li>Renders Tile view (card grid with thumbnails) or Tabular view (bedrock-grid-v2 with columns)</li>
+<li>Bulk selection: checkbox per row; bulk-action bar shows Download and Delete when items are selected</li>
+<li>Add relationships: dispatches global <code>&#39;open-wizard&#39;</code> action with <code>componentname: &#39;rock-wizard-entity-relationship-add&#39;</code>; passes already-linked entities as <code>pre-selected-items</code> so the picker deduplicates</li>
+<li>Remove relationships: marks items <code>action: &#39;delete&#39;</code>; for owned relationships updates the main entity; for whereused relationships updates each related entity individually</li>
+<li>Inline editing: direct cell editing with <code>evaluateRelationshipTypeValidation: true</code> sync validation (debounced)</li>
+<li>Sort: ascending/descending per-column</li>
+<li>Pagination: <code>pageSize</code> default 500, <code>maxConfiguredCount</code> default 2000</li>
+<li>Permission gates: <code>hasWritePermission</code> controls Add/edit visibility; <code>hasDeletePermission</code> controls Delete visibility</li>
+<li>Marketplace asset thumbnails: resolves <code>thumbnailUrl</code> from <code>marketplaceAssetData</code> keyed by relationship type (lowercase)</li>
+<li>Variant generation: variant-specific actions for product variant relationships</li>
+</ul>
+<hr>
+<h2 id="typescript-types">TypeScript Types<a class="anchor" href="#typescript-types" aria-hidden="true">#</a></h2>
+<blockquote class="blockquote"><p>The raw Riversand API shapes are complex. Normalized types are defined as Zod schemas in <code>@repo/core-contracts/src/schemas/relationship-schema.ts</code> and exported as TypeScript types from <code>@repo/core-contracts/src/types/relationship-manager.ts</code>. Import them via <code>@repo/core-contracts/types/relationship-manager</code>. The frontend <code>types.ts</code> re-exports them from there.</p>
+</blockquote><h3 id="relationshiptypedefinition">RelationshipTypeDefinition<a class="anchor" href="#relationshiptypedefinition" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">RelationshipTypeDefinition</span> = {
+  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>                <span class="hljs-comment">// internal name (e.g., &#x27;hasImages&#x27;, &#x27;crossSell&#x27;)</span>
+  <span class="hljs-attr">title</span>: <span class="hljs-built_in">string</span>               <span class="hljs-comment">// display title (e.g., &#x27;Images&#x27;, &#x27;Cross Sell&#x27;)</span>
+  <span class="hljs-attr">domain</span>: <span class="hljs-built_in">string</span>              <span class="hljs-comment">// &#x27;digitalasset&#x27; | &#x27;thing&#x27; | ...</span>
+  <span class="hljs-attr">direction</span>: <span class="hljs-string">&#x27;down&#x27;</span> | <span class="hljs-string">&#x27;up&#x27;</span>   <span class="hljs-comment">// &#x27;down&#x27; = owned, &#x27;up&#x27; = whereused (inverse)</span>
+  <span class="hljs-attr">entityTypes</span>: <span class="hljs-built_in">string</span>[]       <span class="hljs-comment">// allowed relTo entity types</span>
+  <span class="hljs-attr">hasWritePermission</span>: <span class="hljs-built_in">boolean</span>
+  <span class="hljs-attr">hasDeletePermission</span>: <span class="hljs-built_in">boolean</span>
+}</code></pre></div><h3 id="relationshipitem">RelationshipItem<a class="anchor" href="#relationshipitem" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">RelationshipItem</span> = {
+  <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>                  <span class="hljs-comment">// relTo.id</span>
+  <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span>                <span class="hljs-comment">// relTo.type</span>
+  <span class="hljs-attr">name</span>?: <span class="hljs-built_in">string</span>               <span class="hljs-comment">// display name (from related entity attributes)</span>
+  <span class="hljs-attr">thumbnailUrl</span>?: <span class="hljs-built_in">string</span>       <span class="hljs-comment">// asset thumbnail (resolved from marketplace data)</span>
+  <span class="hljs-comment">// Attributes on the relationship itself (e.g., sequence, isPrimary)</span>
+  <span class="hljs-attr">relationshipAttributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">NormalizedRelValue</span>[]&gt;
+  <span class="hljs-comment">// Attributes on the related entity (columns rendered in the grid)</span>
+  <span class="hljs-attr">attributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">NormalizedRelValue</span>[]&gt;
+}</code></pre></div><h3 id="normalizedrelvalue">NormalizedRelValue<a class="anchor" href="#normalizedrelvalue" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">NormalizedRelValue</span> = {
+  <span class="hljs-attr">locale</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">source</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">value</span>: <span class="hljs-built_in">unknown</span>
+}</code></pre></div><h3 id="relationshipdata">RelationshipData<a class="anchor" href="#relationshipdata" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">RelationshipData</span> = {
+  <span class="hljs-attr">relationshipType</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">items</span>: <span class="hljs-title class_">RelationshipItem</span>[]
+  <span class="hljs-attr">totalCount</span>: <span class="hljs-built_in">number</span>
+}</code></pre></div><h3 id="pendingrelationshipchange">PendingRelationshipChange<a class="anchor" href="#pendingrelationshipchange" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">PendingRelationshipChange</span> = {
+  <span class="hljs-attr">added</span>: <span class="hljs-title class_">RelationshipItem</span>[]
+  <span class="hljs-attr">removed</span>: <span class="hljs-built_in">string</span>[]          <span class="hljs-comment">// relTo.id values to delete</span>
+  <span class="hljs-attr">modified</span>: <span class="hljs-title class_">RelationshipItem</span>[]  <span class="hljs-comment">// inline-edited items</span>
+}</code></pre></div><h3 id="valuecontext">ValueContext<a class="anchor" href="#valuecontext" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">ValueContext</span> = {
+  <span class="hljs-attr">locale</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">source</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">channel</span>?: <span class="hljs-built_in">string</span>
+}</code></pre></div><h3 id="raw-riversand-normalized-name-map">Raw Riversand → normalized name map<a class="anchor" href="#raw-riversand-normalized-name-map" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>Riversand (lit source)</th><th>Normalized (our types)</th></tr></thead><tbody><tr><td><code>rel.relTo.id</code> + <code>rel.relTo.type</code></td><td><code>RelationshipItem.id</code> + <code>.type</code></td></tr><tr><td><code>rel.attributes</code></td><td><code>RelationshipItem.relationshipAttributes</code></td></tr><tr><td>related entity <code>data.attributes</code></td><td><code>RelationshipItem.attributes</code></td></tr><tr><td><code>relationshipModel</code> entity</td><td><code>RelationshipTypeDefinition</code></td></tr><tr><td><code>gridConfig.hasWritePermission</code></td><td><code>RelationshipTypeDefinition.hasWritePermission</code></td></tr><tr><td><code>ownership: &#39;owned&#39;</code></td><td><code>direction: &#39;down&#39;</code></td></tr><tr><td><code>ownership: &#39;whereused&#39;</code></td><td><code>direction: &#39;up&#39;</code></td></tr></tbody></table></div><hr>
+<h2 id="api-interactions">API Interactions<a class="anchor" href="#api-interactions" aria-hidden="true">#</a></h2>
+<p>All Riversand API calls are exposed as oRPC procedures in <code>@syndigo/orpc</code>, following the same contract-first pattern as <code>attributeManager</code>. The relationship-manager components consume them via the isomorphic oRPC client.</p>
+<h3 id="api-stack">API Stack<a class="anchor" href="#api-stack" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">specs/riversand-relationship-api.yaml       ← OpenAPI spec for Riversand pass-through API
+       ↓  pnpm generate:relationship-api
+src/generated/riversand-relationship-api.d.ts  ← auto-generated TS types
+       ↓
+src/clients/riversand-relationship-api.ts   ← openapi-fetch client
+       ↓
+src/middleware/api-client.ts                ← injects context.relationshipApi
+       ↓
+src/procedures/relationship-manager/*.ts    ← call context.relationshipApi, map raw → normalized
+       ↓
+@repo/core-contracts relationshipManager    ← Zod contracts define clean input/output types
+       ↓
+orpc.relationshipManager.*                  ← consumed via useSuspenseQuery / useMutation</code></pre></div><h3 id="rpc-procedure-surface">RPC procedure surface<a class="anchor" href="#rpc-procedure-surface" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript">orpc.<span class="hljs-property">relationshipManager</span>.<span class="hljs-property">compositeModel</span>.<span class="hljs-property">get</span>       <span class="hljs-comment">// fetch entity composite model → relationship type list</span>
+orpc.<span class="hljs-property">relationshipManager</span>.<span class="hljs-property">relationshipModels</span>.<span class="hljs-property">get</span>   <span class="hljs-comment">// fetch relationship model definitions (permissions, domain)</span>
+orpc.<span class="hljs-property">relationshipManager</span>.<span class="hljs-property">relationships</span>.<span class="hljs-property">get</span>        <span class="hljs-comment">// fetch relationship data for one type</span>
+orpc.<span class="hljs-property">relationshipManager</span>.<span class="hljs-property">relationships</span>.<span class="hljs-property">save</span>       <span class="hljs-comment">// add / remove / update relationships</span>
+orpc.<span class="hljs-property">relationshipManager</span>.<span class="hljs-property">relationships</span>.<span class="hljs-property">validate</span>   <span class="hljs-comment">// debounced sync validation (300ms)</span></code></pre></div><h3 id="base-url-pattern-datapass-through">Base URL pattern: <code>/data/pass-through/&lt;service&gt;/&lt;action&gt;</code><a class="anchor" href="#base-url-pattern-datapass-through" aria-hidden="true">#</a></h3>
+<h3 id="api-call-inventory">API Call Inventory<a class="anchor" href="#api-call-inventory" aria-hidden="true">#</a></h3>
+<h4 id="1-fetch-entity-composite-model">1. Fetch entity composite model<a class="anchor" href="#1-fetch-entity-composite-model" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entitymodelservice/getcompositemodel</span>
+{
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">query</span>: {
+      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;entityTypeName&#x27;</span>,
+      <span class="hljs-attr">filters</span>: { <span class="hljs-attr">typesCriterion</span>: [<span class="hljs-string">&#x27;entityCompositeModel&#x27;</span>] },
+      <span class="hljs-attr">contexts</span>: [{ <span class="hljs-attr">self</span>: <span class="hljs-string">&#x27;self&#x27;</span> }],
+      <span class="hljs-attr">valueContexts</span>: [{ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-US&#x27;</span>, <span class="hljs-attr">source</span>: <span class="hljs-string">&#x27;internal&#x27;</span>, <span class="hljs-attr">channel</span>: <span class="hljs-string">&#x27;web&#x27;</span> }]
+    },
+    <span class="hljs-attr">fields</span>: { <span class="hljs-attr">relationships</span>: [<span class="hljs-string">&#x27;_ALL&#x27;</span>] }
+  }
+}
+
+<span class="hljs-comment">// Response: relationship type names mapped to their relTo entity types</span>
+{
+  <span class="hljs-attr">data</span>: {
+    <span class="hljs-attr">relationships</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, {
+      <span class="hljs-attr">properties</span>: {
+        <span class="hljs-attr">externalName</span>: <span class="hljs-built_in">string</span>
+        <span class="hljs-attr">relatedEntityInfo</span>: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">relEntityType</span>: <span class="hljs-built_in">string</span> }&gt;
+      }
+    }&gt;
+  }
+}</code></pre></div><h4 id="2-fetch-relationship-models">2. Fetch relationship models<a class="anchor" href="#2-fetch-relationship-models" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entityservice/getbyids</span>
+{
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">query</span>: {
+      <span class="hljs-attr">ids</span>: [<span class="hljs-string">&#x27;relationshipTypeName_relationshipModel&#x27;</span>, ...],
+      <span class="hljs-attr">filters</span>: { <span class="hljs-attr">typesCriterion</span>: [<span class="hljs-string">&#x27;relationshipModel&#x27;</span>] },
+      <span class="hljs-attr">valueContexts</span>: [{ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-US&#x27;</span>, <span class="hljs-attr">source</span>: <span class="hljs-string">&#x27;internal&#x27;</span> }]
+    },
+    <span class="hljs-attr">fields</span>: { <span class="hljs-attr">attributes</span>: [<span class="hljs-string">&#x27;_ALL&#x27;</span>] }
+  }
+}
+
+<span class="hljs-comment">// Response: entities with properties for domain, ownership, permissions</span>
+{
+  <span class="hljs-attr">entities</span>: [{
+    <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;relationshipModel&#x27;</span>,
+    <span class="hljs-attr">data</span>: {
+      <span class="hljs-attr">attributes</span>: {
+        <span class="hljs-attr">externalName</span>: { <span class="hljs-attr">values</span>: [{ <span class="hljs-attr">value</span>: <span class="hljs-built_in">string</span> }] },
+        <span class="hljs-attr">relationshipOwnership</span>: { <span class="hljs-attr">values</span>: [{ <span class="hljs-attr">value</span>: <span class="hljs-string">&#x27;owned&#x27;</span> | <span class="hljs-string">&#x27;whereused&#x27;</span> }] },
+        <span class="hljs-attr">relationshipDomain</span>: { <span class="hljs-attr">values</span>: [{ <span class="hljs-attr">value</span>: <span class="hljs-built_in">string</span> }] }
+      },
+      <span class="hljs-attr">properties</span>: {
+        <span class="hljs-attr">hasWritePermission</span>: <span class="hljs-built_in">boolean</span>
+        <span class="hljs-attr">hasDeletePermission</span>: <span class="hljs-built_in">boolean</span>
+      }
+    }
+  }]
+}</code></pre></div><h4 id="3-fetch-relationship-data-grid">3. Fetch relationship data (grid)<a class="anchor" href="#3-fetch-relationship-data-grid" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entityservice/get (or getbyids for specific IDs)</span>
+{
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">query</span>: {
+      <span class="hljs-attr">ids</span>: [<span class="hljs-string">&#x27;entityId&#x27;</span>],
+      <span class="hljs-attr">filters</span>: { <span class="hljs-attr">typesCriterion</span>: [<span class="hljs-string">&#x27;entityType&#x27;</span>] },
+      <span class="hljs-attr">valueContexts</span>: [{ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-US&#x27;</span>, <span class="hljs-attr">source</span>: <span class="hljs-string">&#x27;internal&#x27;</span> }]
+    },
+    <span class="hljs-attr">fields</span>: {
+      <span class="hljs-attr">relationships</span>: [<span class="hljs-string">&#x27;relationshipTypeName&#x27;</span>],         <span class="hljs-comment">// which relationship type to load</span>
+      <span class="hljs-attr">relationshipAttributes</span>: [<span class="hljs-string">&#x27;_ALL&#x27;</span>],                <span class="hljs-comment">// attrs on the relationship itself</span>
+      <span class="hljs-attr">relatedEntityAttributes</span>: [<span class="hljs-string">&#x27;externalName&#x27;</span>, ...]   <span class="hljs-comment">// attrs on the related entities</span>
+    },
+    <span class="hljs-attr">options</span>: { <span class="hljs-attr">maxRecords</span>: <span class="hljs-number">500</span> }
+  }
+}
+
+<span class="hljs-comment">// Response</span>
+{
+  <span class="hljs-attr">entities</span>: [{
+    <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span>,
+    <span class="hljs-attr">data</span>: {
+      <span class="hljs-attr">relationships</span>: {
+        [relationshipTypeName]: <span class="hljs-title class_">Array</span>&lt;{
+          <span class="hljs-attr">relTo</span>: { <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span> }
+          <span class="hljs-attr">id</span>?: <span class="hljs-built_in">string</span>
+          <span class="hljs-attr">attributes</span>?: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, { <span class="hljs-attr">values</span>: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">locale</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">source</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">value</span>: <span class="hljs-built_in">unknown</span> }&gt; }&gt;
+          <span class="hljs-comment">// related entity data embedded when relatedEntityAttributes requested:</span>
+          <span class="hljs-attr">relatedEntity</span>?: {
+            <span class="hljs-attr">data</span>: { <span class="hljs-attr">attributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, { <span class="hljs-attr">values</span>: ... }&gt; }
+          }
+        }&gt;
+      }
+    }
+  }]
+}</code></pre></div><h4 id="4-save-add-remove-update-relationships">4. Save (add / remove / update) relationships<a class="anchor" href="#4-save-add-remove-update-relationships" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entityservice/update</span>
+{
+  <span class="hljs-attr">entities</span>: [{
+    <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>,
+    <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span>,
+    <span class="hljs-attr">data</span>: {
+      <span class="hljs-attr">relationships</span>: {
+        [relationshipTypeName]: <span class="hljs-title class_">Array</span>&lt;{
+          <span class="hljs-attr">relTo</span>: { <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span> }
+          <span class="hljs-attr">action</span>: <span class="hljs-string">&#x27;create&#x27;</span> | <span class="hljs-string">&#x27;delete&#x27;</span>           <span class="hljs-comment">// omit action for updates</span>
+          <span class="hljs-attr">attributes</span>?: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, {
+            <span class="hljs-attr">values</span>: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">locale</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">source</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">value</span>: <span class="hljs-built_in">unknown</span> }&gt;
+          }&gt;
+        }&gt;
+      }
+    }
+  }]
+}
+
+<span class="hljs-comment">// Response</span>
+{
+  <span class="hljs-attr">dataObjectOperationResponse</span>: {
+    <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;success&#x27;</span>,
+    <span class="hljs-attr">statusDetail</span>: { <span class="hljs-attr">messages</span>: <span class="hljs-title class_">ValidationMessage</span>[] }
+  }
+}</code></pre></div><p>For <strong>whereused (up-direction)</strong> relationships: one update request per related entity rather than updating the main entity. Each request deletes/creates the reverse relationship on the related entity.</p>
+<h4 id="5-sync-validation">5. Sync validation<a class="anchor" href="#5-sync-validation" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entitygovernservice/validate</span>
+{
+  <span class="hljs-attr">entity</span>: {
+    <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span>,
+    <span class="hljs-attr">data</span>: {
+      <span class="hljs-attr">relationships</span>: {
+        [typeName]: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">relTo</span>: { <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span> } }&gt;
+      }
+    }
+  },
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">evaluateRelationshipTypeValidation</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">evaluateDataResolution</span>: <span class="hljs-literal">true</span>
+  }
+}
+
+<span class="hljs-comment">// Response</span>
+{
+  <span class="hljs-attr">response</span>: {
+    <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;success&#x27;</span>,
+    <span class="hljs-attr">statusDetail</span>: {
+      <span class="hljs-attr">messages</span>: <span class="hljs-title class_">Array</span>&lt;{
+        <span class="hljs-attr">messageCode</span>: <span class="hljs-built_in">string</span>
+        <span class="hljs-attr">messageType</span>: <span class="hljs-string">&#x27;error&#x27;</span> | <span class="hljs-string">&#x27;warning&#x27;</span> | <span class="hljs-string">&#x27;info&#x27;</span>
+        <span class="hljs-attr">relationshipRelToId</span>?: <span class="hljs-built_in">string</span>   <span class="hljs-comment">// which related entity the message targets</span>
+      }&gt;
+    }
+  }
+}</code></pre></div><h4 id="6-variant-model-variant-relationships-only">6. Variant model (variant relationships only)<a class="anchor" href="#6-variant-model-variant-relationships-only" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entityappmodelservice/getnearest</span>
+{
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">query</span>: {
+      <span class="hljs-attr">name</span>: entityType,
+      <span class="hljs-attr">filters</span>: { <span class="hljs-attr">typesCriterion</span>: [<span class="hljs-string">&#x27;variantModel&#x27;</span>] }
+    },
+    <span class="hljs-attr">fields</span>: { <span class="hljs-attr">attributes</span>: [<span class="hljs-string">&#x27;_ALL&#x27;</span>] }
+  },
+  <span class="hljs-attr">entity</span>: {
+    <span class="hljs-attr">data</span>: {
+      <span class="hljs-attr">contexts</span>: [variantContext],   <span class="hljs-comment">// enhancer attribute values from the entity</span>
+      <span class="hljs-attr">attributes</span>: enhancerAttributes
+    }
+  }
+}
+<span class="hljs-comment">// Response: variant model with dimension attribute lists and path config</span></code></pre></div><hr>
+<h2 id="component-tree">Component Tree<a class="anchor" href="#component-tree" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">&lt;RelationshipManage&gt;                  → replaces rock-relationship-manage-v2
+  ├── RelationshipStoreContext         → TanStack Store instance provided to all children
+  ├── View toolbar                    → Grid/List (assets) or Tile/Tabular (relationships)
+  │                                     hidden via hideViewToggle prop (e.g. relationships tab)
+  ├── &lt;SaveCancelBar /&gt;               → shows when showSaveCancel is true; cancel → discard confirm dialog
+  └── &lt;RelationshipGroup&gt; ×N          → replaces rock-entity-relationship-search-result-v2
+      ├── Collapsible header          → type title + pending-changes badge
+      │                                 + selection count + bulk Delete (when items checked)
+      │                                 + Add button (gated by hasWritePermission)
+      └── &lt;RelationshipGrid&gt;          → replaces rock-relationship-grid-v2
+          ├── Tabular view            → Table: checkbox | thumbnail | name | type | delete per row
+          └── Tile view               → Card grid: thumbnail | name | hover checkbox | hover X button</code></pre></div><blockquote class="blockquote"><p><strong>Design note</strong>: selection count and bulk-delete live in the group header (not a floating bar inside the grid) to eliminate layout shift when rows are checked.</p>
+</blockquote><hr>
+<h2 id="state-architecture">State Architecture<a class="anchor" href="#state-architecture" aria-hidden="true">#</a></h2>
+<h3 id="relationshipmanagestore">RelationshipManageStore<a class="anchor" href="#relationshipmanagestore" aria-hidden="true">#</a></h3>
+<p>State is managed with <strong>TanStack Store</strong> (<code>@tanstack/store</code>). The store is created once per <code>&lt;RelationshipManage&gt;</code> instance and passed via React context so child components can subscribe with <code>useStore</code>.</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">import</span> { <span class="hljs-title class_">Store</span>, useStore } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@tanstack/store&#x27;</span>
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">RelationshipManageState</span> = {
+  <span class="hljs-comment">// Display</span>
+  <span class="hljs-attr">viewMode</span>: <span class="hljs-string">&#x27;Tile&#x27;</span> | <span class="hljs-string">&#x27;Tabular&#x27;</span>
+
+  <span class="hljs-comment">// Relationship type definitions (loaded from composite model + relationship models)</span>
+  <span class="hljs-attr">relationshipTypes</span>: <span class="hljs-title class_">RelationshipTypeDefinition</span>[]
+
+  <span class="hljs-comment">// Relationship data per type (loaded lazily per group as it&#x27;s expanded)</span>
+  <span class="hljs-attr">relationshipData</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">RelationshipData</span>&gt;
+
+  <span class="hljs-comment">// Save bar visibility + saving indicator</span>
+  <span class="hljs-attr">showSaveCancel</span>: <span class="hljs-built_in">boolean</span>
+  <span class="hljs-attr">isSaving</span>: <span class="hljs-built_in">boolean</span>
+
+  <span class="hljs-comment">// Pending changes (staged until Save)</span>
+  <span class="hljs-attr">pendingChanges</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">PendingRelationshipChange</span>&gt;
+
+  <span class="hljs-comment">// Checkbox selection per type (drives group-header bulk-delete; cleared on remove/revert)</span>
+  <span class="hljs-attr">selection</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>[]&gt;
+}
+
+<span class="hljs-comment">// loadingState (per type) is managed by TanStack Query, not stored here.</span>
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">createRelationshipStore</span> = (<span class="hljs-params"></span>) =&gt;
+  <span class="hljs-keyword">new</span> <span class="hljs-title class_">Store</span>&lt;<span class="hljs-title class_">RelationshipManageState</span>&gt;({
+    <span class="hljs-attr">viewMode</span>: <span class="hljs-string">&#x27;Tabular&#x27;</span>,
+    <span class="hljs-attr">relationshipTypes</span>: [],
+    <span class="hljs-attr">relationshipData</span>: {},
+    <span class="hljs-attr">showSaveCancel</span>: <span class="hljs-literal">false</span>,
+    <span class="hljs-attr">isSaving</span>: <span class="hljs-literal">false</span>,
+    <span class="hljs-attr">pendingChanges</span>: {},
+    <span class="hljs-attr">selection</span>: {},
+  })
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">RelationshipStore</span> = <span class="hljs-title class_">ReturnType</span>&lt;<span class="hljs-keyword">typeof</span> createRelationshipStore&gt;</code></pre></div><h3 id="named-updater-functions-replace-action-types">Named updater functions (replace action types)<a class="anchor" href="#named-updater-functions-replace-action-types" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// src/components/relationship-manager/store/updaters.ts</span>
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">setViewMode</span> = (<span class="hljs-params"><span class="hljs-attr">store</span>: <span class="hljs-title class_">RelationshipStore</span>, <span class="hljs-attr">mode</span>: <span class="hljs-string">&#x27;Tile&#x27;</span> | <span class="hljs-string">&#x27;Tabular&#x27;</span></span>) =&gt;
+  store.<span class="hljs-title function_">setState</span>(<span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> ({ ...s, <span class="hljs-attr">viewMode</span>: mode }))
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">setRelationshipTypes</span> = (<span class="hljs-params"><span class="hljs-attr">store</span>: <span class="hljs-title class_">RelationshipStore</span>, <span class="hljs-attr">types</span>: <span class="hljs-title class_">RelationshipTypeDefinition</span>[]</span>) =&gt;
+  store.<span class="hljs-title function_">setState</span>(<span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> ({ ...s, <span class="hljs-attr">relationshipTypes</span>: types }))
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">setRelationshipData</span> = (<span class="hljs-params"><span class="hljs-attr">store</span>: <span class="hljs-title class_">RelationshipStore</span>, <span class="hljs-attr">typeName</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">data</span>: <span class="hljs-title class_">RelationshipData</span></span>) =&gt;
+  store.<span class="hljs-title function_">setState</span>(<span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> ({
+    ...s,
+    <span class="hljs-attr">relationshipData</span>: { ...s.<span class="hljs-property">relationshipData</span>, [typeName]: data },
+  }))
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">addRelationships</span> = (<span class="hljs-params"><span class="hljs-attr">store</span>: <span class="hljs-title class_">RelationshipStore</span>, <span class="hljs-attr">typeName</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">items</span>: <span class="hljs-title class_">RelationshipItem</span>[]</span>) =&gt;
+  store.<span class="hljs-title function_">setState</span>(<span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> existing = s.<span class="hljs-property">pendingChanges</span>[typeName] ?? { <span class="hljs-attr">added</span>: [], <span class="hljs-attr">removed</span>: [], <span class="hljs-attr">modified</span>: [] }
+    <span class="hljs-keyword">return</span> {
+      ...s,
+      <span class="hljs-attr">pendingChanges</span>: {
+        ...s.<span class="hljs-property">pendingChanges</span>,
+        [typeName]: { ...existing, <span class="hljs-attr">added</span>: [...existing.<span class="hljs-property">added</span>, ...items] },
+      },
+      <span class="hljs-attr">showSaveCancel</span>: <span class="hljs-literal">true</span>,
+    }
+  })
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">removeRelationships</span> = (<span class="hljs-params"><span class="hljs-attr">store</span>: <span class="hljs-title class_">RelationshipStore</span>, <span class="hljs-attr">typeName</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">ids</span>: <span class="hljs-built_in">string</span>[]</span>) =&gt;
+  store.<span class="hljs-title function_">setState</span>(<span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> existing = s.<span class="hljs-property">pendingChanges</span>[typeName] ?? { <span class="hljs-attr">added</span>: [], <span class="hljs-attr">removed</span>: [], <span class="hljs-attr">modified</span>: [] }
+    <span class="hljs-keyword">return</span> {
+      ...s,
+      <span class="hljs-attr">pendingChanges</span>: {
+        ...s.<span class="hljs-property">pendingChanges</span>,
+        [typeName]: {
+          ...existing,
+          <span class="hljs-comment">// remove from pending-added if not yet saved; otherwise stage for deletion</span>
+          <span class="hljs-attr">added</span>: existing.<span class="hljs-property">added</span>.<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> !ids.<span class="hljs-title function_">includes</span>(item.<span class="hljs-property">id</span>)),
+          <span class="hljs-attr">removed</span>: [...<span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>([...existing.<span class="hljs-property">removed</span>, ...ids.<span class="hljs-title function_">filter</span>(
+            <span class="hljs-function">(<span class="hljs-params">id</span>) =&gt;</span> !existing.<span class="hljs-property">added</span>.<span class="hljs-title function_">some</span>(<span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">id</span> === id)
+          )])],
+        },
+      },
+      <span class="hljs-attr">showSaveCancel</span>: <span class="hljs-literal">true</span>,
+    }
+  })
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">saveStart</span> = (<span class="hljs-params"><span class="hljs-attr">store</span>: <span class="hljs-title class_">RelationshipStore</span></span>) =&gt;
+  store.<span class="hljs-title function_">setState</span>(<span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> ({ ...s, <span class="hljs-attr">isSaving</span>: <span class="hljs-literal">true</span> }))
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">saveSuccess</span> = (<span class="hljs-params"><span class="hljs-attr">store</span>: <span class="hljs-title class_">RelationshipStore</span>, <span class="hljs-attr">typeName</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">data</span>: <span class="hljs-title class_">RelationshipData</span></span>) =&gt;
+  store.<span class="hljs-title function_">setState</span>(<span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> pendingChanges = { ...s.<span class="hljs-property">pendingChanges</span> }
+    <span class="hljs-keyword">delete</span> pendingChanges[typeName]
+    <span class="hljs-keyword">const</span> allClean = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(pendingChanges).<span class="hljs-property">length</span> === <span class="hljs-number">0</span>
+    <span class="hljs-keyword">return</span> {
+      ...s,
+      <span class="hljs-attr">isSaving</span>: <span class="hljs-literal">false</span>,
+      <span class="hljs-attr">showSaveCancel</span>: !allClean,
+      <span class="hljs-attr">relationshipData</span>: { ...s.<span class="hljs-property">relationshipData</span>, [typeName]: data },
+      pendingChanges,
+    }
+  })
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">saveError</span> = (<span class="hljs-params"><span class="hljs-attr">store</span>: <span class="hljs-title class_">RelationshipStore</span></span>) =&gt;
+  store.<span class="hljs-title function_">setState</span>(<span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> ({ ...s, <span class="hljs-attr">isSaving</span>: <span class="hljs-literal">false</span> }))
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">revert</span> = (<span class="hljs-params"><span class="hljs-attr">store</span>: <span class="hljs-title class_">RelationshipStore</span>, <span class="hljs-attr">typeName</span>?: <span class="hljs-built_in">string</span></span>) =&gt;
+  store.<span class="hljs-title function_">setState</span>(<span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> {
+    <span class="hljs-keyword">if</span> (typeName) {
+      <span class="hljs-keyword">const</span> pendingChanges = { ...s.<span class="hljs-property">pendingChanges</span> }
+      <span class="hljs-keyword">delete</span> pendingChanges[typeName]
+      <span class="hljs-keyword">return</span> { ...s, pendingChanges, <span class="hljs-attr">showSaveCancel</span>: <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(pendingChanges).<span class="hljs-property">length</span> &gt; <span class="hljs-number">0</span> }
+    }
+    <span class="hljs-keyword">return</span> { ...s, <span class="hljs-attr">pendingChanges</span>: {}, <span class="hljs-attr">showSaveCancel</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">selection</span>: {} }
+  })</code></pre></div><h3 id="consuming-the-store-in-components">Consuming the store in components<a class="anchor" href="#consuming-the-store-in-components" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// Subscribe to a slice — only re-renders when viewMode changes</span>
+<span class="hljs-keyword">const</span> viewMode = <span class="hljs-title function_">useStore</span>(store, <span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> s.<span class="hljs-property">viewMode</span>)
+
+<span class="hljs-comment">// Subscribe to pending count for one type</span>
+<span class="hljs-keyword">const</span> pendingCount = <span class="hljs-title function_">useStore</span>(
+  store,
+  <span class="hljs-function">(<span class="hljs-params">s</span>) =&gt;</span> (s.<span class="hljs-property">pendingChanges</span>[<span class="hljs-string">&#x27;hasImages&#x27;</span>]?.<span class="hljs-property">added</span>.<span class="hljs-property">length</span> ?? <span class="hljs-number">0</span>) +
+          (s.<span class="hljs-property">pendingChanges</span>[<span class="hljs-string">&#x27;hasImages&#x27;</span>]?.<span class="hljs-property">removed</span>.<span class="hljs-property">length</span> ?? <span class="hljs-number">0</span>),
+)</code></pre></div><p>The store instance is created in <code>&lt;RelationshipManage&gt;</code> and provided via a React context so all children share the same instance without prop-drilling.</p>
+<hr>
+<h2 id="infrastructure-replacements">Infrastructure Replacements<a class="anchor" href="#infrastructure-replacements" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Old (LitElement/RUF)</th><th>New (React)</th></tr></thead><tbody><tr><td><code>DataObjectManager</code></td><td>TanStack Query <code>queryFn</code> + plain <code>fetch</code></td></tr><tr><td><code>DataRequestHelper</code></td><td>Request builder functions in <code>src/api/requestBuilders.ts</code></td></tr><tr><td><code>DataTransformHelper</code></td><td>Transform functions in <code>src/api/responseTransformers.ts</code></td></tr><tr><td><code>EntityCompositeModelManager</code></td><td><code>useQuery</code> wrapping a fetch</td></tr><tr><td><code>EntityTypeManager.getDomainByType()</code></td><td>Domain resolved from relationship model fetch (op 2)</td></tr><tr><td><code>DialogManager.openBusinessFunction(&#39;rock-wizard-entity-relationship-add&#39;, ...)</code></td><td><code>&lt;Dialog&gt;</code> + <code>RelationshipSearchDialog</code> controlled by state</td></tr><tr><td><code>MixinManager / RufElement / ComponentContextBase</code></td><td>Props + <code>@tanstack/store</code> + custom hooks, no class inheritance</td></tr><tr><td><code>ToastManagerV2.showToast()</code></td><td><code>@syndigo/design-system</code> toast (Sonner-backed)</td></tr><tr><td><code>pebble-button-v2</code>, <code>pebble-icon-v2</code></td><td><code>@syndigo/design-system</code> Button + Lucide icons</td></tr><tr><td><code>pebble-no-results</code></td><td>Empty-state UI in JSX</td></tr><tr><td><code>pebble-skeleton</code></td><td><code>@syndigo/design-system</code> skeleton components</td></tr><tr><td><code>bedrock-grid-v2</code></td><td>Custom <code>&lt;RelationshipGrid&gt;</code> with Table primitives</td></tr><tr><td><code>bedrock-tile-view-v2</code></td><td>Card grid layout in JSX</td></tr><tr><td><code>ScrollBarUtils</code> (SimpleBar)</td><td>CSS <code>overflow-y-auto</code> + browser scrollbar</td></tr><tr><td><code>microTask.run()</code> / <code>requestAnimationFrame()</code> chunking</td><td>React lazy loading or <code>useDeferredValue</code></td></tr><tr><td>ACI event bus <code>open-wizard</code> action</td><td>Callback prop from host React app + controlled Dialog</td></tr><tr><td>SCSS element styles</td><td>Tailwind utility classes</td></tr><tr><td><code>ObjectUtils.cloneObject()</code></td><td>Structured clone or spread</td></tr><tr><td><code>_domainCache</code> (Map)</td><td>TanStack Query cache</td></tr></tbody></table></div><hr>
+<h2 id="key-files">Key Files<a class="anchor" href="#key-files" aria-hidden="true">#</a></h2>
+<h3 id="repocore-contracts">@repo/core-contracts<a class="anchor" href="#repocore-contracts" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>File</th><th>Status</th><th>Purpose</th></tr></thead><tbody><tr><td><code>src/schemas/relationship-schema.ts</code></td><td>✅</td><td>Zod schemas for normalized types + <code>ValueContextSchema</code></td></tr><tr><td><code>src/types/relationship-manager.ts</code></td><td>✅</td><td><code>z.infer&lt;&gt;</code> exports — canonical TS types for the domain</td></tr><tr><td><code>src/relationship-manager/contracts/composite-model.ts</code></td><td>✅</td><td>composite model contract</td></tr><tr><td><code>src/relationship-manager/contracts/relationships.ts</code></td><td>✅</td><td>get / save / validate contracts</td></tr></tbody></table></div><blockquote class="blockquote"><p><strong>Architectural note</strong>: a separate OpenAPI spec + generated client was not created. Relationship API calls go through the existing <code>context.api</code> pass-through pattern (same as all other procedures), keeping the stack consistent.</p>
+</blockquote><h3 id="syndigoorpc">@syndigo/orpc<a class="anchor" href="#syndigoorpc" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>File</th><th>Status</th><th>Purpose</th></tr></thead><tbody><tr><td><code>src/utils/relationship-manager-mappers.ts</code></td><td>✅</td><td>Raw Riversand API ↔ normalized type mappers</td></tr><tr><td><code>src/procedures/relationship-manager/composite-model.ts</code></td><td>✅</td><td>Composite model procedure (type list + permissions)</td></tr><tr><td><code>src/procedures/relationship-manager/relationships.ts</code></td><td>✅</td><td>get / save / validate procedures</td></tr><tr><td><code>src/__tests__/relationship-manager.test.ts</code></td><td>✅</td><td>13 MSW-backed procedure tests (includes <code>direction: up</code> save path)</td></tr></tbody></table></div><h3 id="appspxc-retailsrccomponentsrelationship-manager">apps/pxc-retail/src/components/relationship-manager<a class="anchor" href="#appspxc-retailsrccomponentsrelationship-manager" aria-hidden="true">#</a></h3>
+<h4 id="implemented">Implemented ✅<a class="anchor" href="#implemented" aria-hidden="true">#</a></h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">  types.ts                                → RelationshipManagerOrpc type (mirrors AttributeManagerOrpc
+                                             pattern); re-exports ValueContext, RelationshipTypeDefinition,
+                                             RelationshipItem, RelationshipData, PendingRelationshipChange,
+                                             ValidationMessage from @repo/core-contracts/types/relationship-manager
+
+  store/
+    RelationshipManageStore.ts              → createRelationshipStore(), RelationshipStoreContext,
+                                             selection: Record&lt;string, string[]&gt; field
+    updaters.ts                             → setViewMode, addRelationships, removeRelationships,
+                                             saveStart/Success/Error, revert,
+                                             setSelection, clearSelection
+                                             (no setEditing — editingRelationshipType removed)
+    updaters.test.ts                        → 13 pure unit tests
+
+  components/
+    RelationshipManage/
+      RelationshipManage.tsx               → store provider, view toolbar (List/LayoutGrid icons,
+                                             variant=&quot;outline&quot;, hideViewToggle prop), save/revert;
+                                             accepts orpc: RelationshipManagerOrpc (required) and
+                                             valueContexts: ValueContext[] (required), threads both
+                                             to all hooks and RelationshipGroup
+      SaveCancelBar.tsx                    → save / cancel with &quot;Discard changes?&quot; confirm dialog
+      SaveCancelBar.test.tsx               → 6 tests
+      hooks/
+        useRelationshipTypes.ts            → TanStack Query: composite model → relationship type list;
+                                             orpc is first param (matches AttributeManage pattern)
+        useRelationshipSave.ts             → raw TanStack Mutation (no callbacks — state transitions
+                                             owned by RelationshipManage.handleSave); buildSaveInput
+                                             exported for building the input object
+
+    RelationshipGroup/
+      RelationshipGroup.tsx               → collapsible section; pending-changes badge;
+                                             selection count + bulk Delete in header (no layout shift);
+                                             Add button gated by hasWritePermission;
+                                             accepts and forwards orpc prop
+      RelationshipGroup.test.tsx          → 9 tests; uses createMockRelationshipOrpc()
+      hooks/
+        useRelationshipData.ts            → TanStack Query: fetch grid data for one type;
+                                             orpc is first param
+
+    RelationshipGrid/
+      RelationshipGrid.tsx               → Tabular vs Tile dispatcher (no disabled prop)
+      RelationshipGridTabular.tsx        → Table: checkbox | thumbnail | name | type | delete per row;
+                                           selection via store (no layout shift); loading=&quot;lazy&quot; on images
+      RelationshipGridTabular.test.tsx   → 10 tests
+      RelationshipGridTile.tsx           → Card grid: thumbnail | name | hover checkbox + X button;
+                                           selection via store (consistent with tabular); loading=&quot;lazy&quot; on images
+      utils.ts                           → getDisplayName(), mergeItemsWithPending() — shared by both views
+
+  lib/mock/relationship-manager.mock.ts   → createMockRelationshipOrpc() — in-memory queryFn/mutationFn
+                                             (same pattern as createMockAttributeManagerOrpc)</code></pre></div><p>POC page: <code>routes/_shell/merchandising/product-catalog/$productId.tsx</code> — Attributes / Assets / Relationships tabs with deep-linked tab state (<code>?tab=attributes|assets|relationships</code>, optional in the search schema with <code>&#39;attributes&#39;</code> as the in-component default). The Relationships tab passes <code>hideViewToggle</code> so only tabular view is shown with no toggle. The POC passes <code>createMockRelationshipOrpc()</code> as the <code>orpc</code> prop — no <code>QueryClientProvider</code> wrapper needed, and saves work via the in-memory mock <code>mutationFn</code>.</p>
+<h4 id="still-to-implement">Still to implement ❌<a class="anchor" href="#still-to-implement" aria-hidden="true">#</a></h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">    RelationshipManage/
+      hooks/
+        useSyncValidation.ts               → debounced inline-edit validation (300ms)
+
+    RelationshipGrid/
+      RelationshipSearchDialog.tsx         → &quot;Add relationships&quot; picker dialog; entity search +
+                                             multi-select; wires up the Add button in RelationshipGroup</code></pre></div><hr>
+<h2 id="known-gaps-future-work">Known Gaps / Future Work<a class="anchor" href="#known-gaps-future-work" aria-hidden="true">#</a></h2>
+<p><strong>Add relationship workflow</strong></p>
+<ul>
+<li>The Lit source opens a full <code>rock-wizard-entity-relationship-add</code> dialog via the ACI event bus. The React replacement needs a <code>RelationshipSearchDialog</code> — an entity search + multi-select panel. The search mechanism mirrors the LOV search from AttributeLov (oRPC <code>entityservice/get</code> with <code>attributesCriterion</code>) but scoped to <code>relatedEntityTypes</code> from the relationship type definition.</li>
+</ul>
+<p><strong>Whereused (up-direction) relationships</strong></p>
+<ul>
+<li>✅ Implemented. <code>relationships.save</code> branches on <code>direction: &#39;up&#39;</code> — each added/removed relationship updates the <strong>related</strong> entity individually via <code>Promise.allSettled</code>. Any failure (HTTP or application-level status check) throws <code>relationship.save_failed</code>.</li>
+</ul>
+<p><strong>Variant relationships</strong></p>
+<ul>
+<li>Variant model fetch (op 6) only applies when <code>variantPath</code> is set on the relationship type. Low-priority unless the PDP surfaces variant generation actions.</li>
+</ul>
+<p><strong>Inline edit (cell editing)</strong></p>
+<ul>
+<li>The source supports direct cell editing inside the grid. The loveable mockup does not include this. Implement as a future iteration; initial build should support Add/Remove only.</li>
+</ul>
+<p><strong>Tile view layout details</strong></p>
+<ul>
+<li>Assets tab tile view shows <code>status</code> icons (valid/invalid/pending) per asset. The source resolves status from governance data. Initial build can omit status icons; add when governance is wired.</li>
+</ul>
+<p><strong>Pagination</strong></p>
+<ul>
+<li>Default <code>pageSize: 500</code> matches source. Infinite scroll or &quot;load more&quot; may be needed for entity types with many relationships; defer until needed.</li>
+</ul>
+<hr>
+<h2 id="implementation-order">Implementation Order<a class="anchor" href="#implementation-order" aria-hidden="true">#</a></h2>
+<ol>
+<li>✅ <strong>Types</strong> — <code>types.ts</code></li>
+<li>✅ <strong>API layer</strong> — Zod schemas, oRPC contracts + procedures, mappers</li>
+<li>✅ <strong>Store</strong> — <code>RelationshipManageStore</code>, all updaters (including <code>selection</code>)</li>
+<li>✅ <strong><code>RelationshipManage</code></strong> — store provider, composite model hook, view toolbar (<code>hideViewToggle</code> prop), save/revert</li>
+<li>✅ <strong><code>RelationshipGroup</code></strong> — collapsible section, lazy data fetch, pending badge, selection count + bulk delete in header</li>
+<li>✅ <strong><code>RelationshipGrid</code> (tabular)</strong> — checkbox, thumbnail, name, type, delete per row; selection via store</li>
+<li>✅ <strong>Tile view</strong> — card grid with hover controls; selection via store</li>
+<li>✅ <strong>POC page</strong> — Attributes / Assets / Relationships tabs with deep-linked <code>?tab=</code> search param</li>
+<li>❌ <strong><code>RelationshipSearchDialog</code></strong> — entity search + multi-select picker; wires up the Add button</li>
+<li>❌ <strong><code>useSyncValidation</code></strong> — debounced inline-edit validation (300ms)</li>
+</ol>
+<hr>
+<h2 id="verification">Verification<a class="anchor" href="#verification" aria-hidden="true">#</a></h2>
+<ol>
+<li>Render <code>&lt;RelationshipManage domain=&quot;digitalasset&quot; /&gt;</code> on a product detail page — asset type groups load (images, videos, documents)</li>
+<li>Render <code>&lt;RelationshipManage domain=&quot;thing&quot; /&gt;</code> — relationship type groups load (accessories, crossSell, upSell, etc.)</li>
+<li>Toggle view mode (List ↔ Grid for assets; Tile ↔ Tabular for relationships) — layout switches, state persists within the session</li>
+<li>Expand a group — relationship data loads, items render with thumbnails and names</li>
+<li>Add a relationship — search dialog opens, selected item appears in pending state, save/cancel bar shows</li>
+<li>Remove a relationship — item marked pending-delete, save/cancel bar shows</li>
+<li>Save — correct API request sent (<code>action: &#39;create&#39;</code> / <code>action: &#39;delete&#39;</code>), success toast shows, grid refreshes</li>
+<li>Revert — &quot;Discard changes?&quot; confirm appears when dirty; on confirm, pending changes cleared, grid resets</li>
+<li>Bulk delete — selecting multiple items and clicking Delete stages all for removal; Save commits all</li>
+<li>Sync validation — inline edit triggers 300ms debounce; server errors display on the offending row</li>
+<li><code>hasWritePermission: false</code> — Add and edit actions hidden; <code>hasDeletePermission: false</code> — Delete hidden</li>
+<li>Two tabs side by side — assets tab and relationships tab both load independently with correct data</li>
+</ol>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

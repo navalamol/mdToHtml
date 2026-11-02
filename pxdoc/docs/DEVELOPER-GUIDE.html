@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEVELOPER-GUIDE</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#developer-guide-end-to-end-feature-walkthrough">Developer Guide: End-to-End Feature Walkthrough</a></li><ol class="toc-sub"><li><a href="#table-of-contents">Table of Contents</a></li><li><a href="#1-what-is-this-product">1. What is this product?</a></li><li><a href="#2-the-architecture-in-one-picture">2. The Architecture in One Picture</a></li><li><a href="#3-the-example-well-trace-vendor-list">3. The Example We&#39;ll Trace: Vendor List</a></li><li><a href="#4-layer-1-zod-schemas-the-data-shapes">4. Layer 1 — Zod Schemas (the data shapes)</a></li><ol class="toc-sub"><li><a href="#what-is-zod">What is Zod?</a></li><li><a href="#why-is-this-in-core-contracts-not-inside-the-app-or-the-server">Why is this in core-contracts, not inside the app or the server?</a></li><li><a href="#the-vendorlistfilterschema-used-on-both-ends">The VendorListFilterSchema — used on both ends</a></li></ol><li><a href="#5-layer-2-orpc-contracts-the-api-promise">5. Layer 2 — oRPC Contracts (the API promise)</a></li><ol class="toc-sub"><li><a href="#what-is-orpc">What is oRPC?</a></li><li><a href="#the-contract">The Contract</a></li><li><a href="#what-is-oc">What is oc?</a></li><li><a href="#why-separate-contracts-from-implementations">Why separate contracts from implementations?</a></li></ol><li><a href="#6-layer-3-typescript-types-free-from-the-schemas">6. Layer 3 — TypeScript Types (free from the schemas)</a></li><li><a href="#7-layer-4-orpc-implementation-server-side-logic">7. Layer 4 — oRPC Implementation (server-side logic)</a></li><ol class="toc-sub"><li><a href="#the-authed-builder">The authed builder</a></li><li><a href="#the-list-handler">The List Handler</a></li><li><a href="#what-is-unwrap">What is unwrap?</a></li><li><a href="#what-is-throwerror">What is throwError?</a></li><li><a href="#the-mapper-functions">The Mapper Functions</a></li></ol><li><a href="#8-layer-5-the-router-wiring-everything-together">8. Layer 5 — The Router (wiring everything together)</a></li><li><a href="#9-layer-6-how-http-actually-works-here">9. Layer 6 — How HTTP Actually Works Here</a></li><ol class="toc-sub"><li><a href="#on-the-server-ssr-first-page-load">On the server (SSR, first page load)</a></li><li><a href="#in-the-browser-subsequent-interactions">In the browser (subsequent interactions)</a></li><li><a href="#where-is-rpc-defined">Where is /rpc defined?</a></li></ol><li><a href="#10-layer-7-the-isomorphic-client-browser-server">10. Layer 7 — The Isomorphic Client (browser + server)</a></li><li><a href="#11-layer-8-tanstack-router-pages-and-url">11. Layer 8 — TanStack Router (pages and URL)</a></li><ol class="toc-sub"><li><a href="#file-based-routing">File-based Routing</a></li><li><a href="#the-route-definition">The Route Definition</a></li><li><a href="#reading-search-params-in-the-component">Reading Search Params in the Component</a></li><li><a href="#navigating-updating-the-url">Navigating (updating the URL)</a></li></ol><li><a href="#12-layer-9-tanstack-query-data-fetching-in-react">12. Layer 9 — TanStack Query (data fetching in React)</a></li><ol class="toc-sub"><li><a href="#the-key-call-in-vendorstsx">The Key Call in vendors.tsx</a></li><li><a href="#what-is-usesuspenseinfinitequery">What is useSuspenseInfiniteQuery?</a></li><li><a href="#the-cache-key">The Cache Key</a></li></ol><li><a href="#13-layer-10-react-components-what-the-user-sees">13. Layer 10 — React Components (what the user sees)</a></li><ol class="toc-sub"><li><a href="#the-page-component-vendorstsx">The Page Component (vendors.tsx)</a></li><li><a href="#the-table-component-vendortabletsx">The Table Component (VendorTable.tsx)</a></li></ol><li><a href="#14-layer-11-i18n-all-user-text">14. Layer 11 — i18n (all user text)</a></li><ol class="toc-sub"><li><a href="#how-translation-works">How Translation Works</a></li><li><a href="#adding-a-translation">Adding a Translation</a></li></ol><li><a href="#15-layer-12-design-system-shared-ui-components">15. Layer 12 — Design System (shared UI components)</a></li><ol class="toc-sub"><li><a href="#import-convention">Import Convention</a></li><li><a href="#key-components-used-in-vendor-list">Key Components Used in Vendor List</a></li></ol><li><a href="#16-the-full-request-journey">16. The Full Request Journey</a></li><ol class="toc-sub"><li><a href="#phase-1-server-side-render-ssr">Phase 1: Server-Side Render (SSR)</a></li><li><a href="#phase-2-browser-hydration">Phase 2: Browser Hydration</a></li><li><a href="#phase-3-user-interaction-client-side">Phase 3: User Interaction (client-side)</a></li></ol><li><a href="#17-what-changes-when-a-new-feature-is-added">17. What Changes When a New Feature Is Added</a></li><ol class="toc-sub"><li><a href="#step-1-add-the-zod-schema">Step 1: Add the Zod schema</a></li><li><a href="#step-2-add-the-contract-procedure">Step 2: Add the contract procedure</a></li><li><a href="#step-3-add-the-typescript-types">Step 3: Add the TypeScript types</a></li><li><a href="#step-4-implement-the-handler">Step 4: Implement the handler</a></li><li><a href="#step-5-add-to-the-router">Step 5: Add to the router</a></li><li><a href="#step-6-add-translation-keys">Step 6: Add translation keys</a></li><li><a href="#step-7-add-the-react-component">Step 7: Add the React component</a></li><li><a href="#step-8-use-it-in-a-route">Step 8: Use it in a route</a></li><li><a href="#what-typescript-enforces-automatically">What TypeScript enforces automatically</a></li></ol><li><a href="#18-error-handling-deep-dive">18. Error Handling Deep Dive</a></li><ol class="toc-sub"><li><a href="#the-rule-never-expose-upstream-details">The Rule: Never Expose Upstream Details</a></li><li><a href="#error-flow-to-the-ui">Error Flow to the UI</a></li></ol><li><a href="#19-permissions-how-route-guards-work">19. Permissions: How Route Guards Work</a></li><ol class="toc-sub"><li><a href="#the-pattern">The Pattern</a></li><li><a href="#in-the-server-procedure">In the Server Procedure</a></li></ol><li><a href="#20-reviewer-checklist">20. Reviewer Checklist</a></li><ol class="toc-sub"><li><a href="#schemas-contracts">Schemas &amp; Contracts</a></li><li><a href="#server-implementation">Server Implementation</a></li><li><a href="#frontend">Frontend</a></li><li><a href="#general">General</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">DEVELOPER-GUIDE</h1>
+        <p class="page-meta">From <code>DEVELOPER-GUIDE.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="developer-guide-end-to-end-feature-walkthrough">Developer Guide: End-to-End Feature Walkthrough<a class="anchor" href="#developer-guide-end-to-end-feature-walkthrough" aria-hidden="true">#</a></h1>
+<p><strong>Audience:</strong> UI developers joining the team. Assumes React knowledge (even if from React 16), basic HTTP/Node.js awareness, and no prior TanStack/oRPC experience.</p>
+<p><strong>Goal:</strong> After reading this, you will understand every layer of this codebase — what it does, why it exists, and exactly what changes when a new feature is added. Use it as your reviewer&#39;s reference.</p>
+<hr>
+<h2 id="table-of-contents">Table of Contents<a class="anchor" href="#table-of-contents" aria-hidden="true">#</a></h2>
+<ol>
+<li><a href="#1-what-is-this-product">What is this product?</a></li>
+<li><a href="#2-the-architecture-in-one-picture">The architecture in one picture</a></li>
+<li><a href="#3-the-example-well-trace-vendor-list">The example we&#39;ll trace: Vendor List</a></li>
+<li><a href="#4-layer-1--zod-schemas-the-data-shapes">Layer 1 — Zod Schemas (the data shapes)</a></li>
+<li><a href="#5-layer-2--orpc-contracts-the-api-promise">Layer 2 — oRPC Contracts (the API promise)</a></li>
+<li><a href="#6-layer-3--typescript-types-free-from-the-schemas">Layer 3 — TypeScript Types (free from the schemas)</a></li>
+<li><a href="#7-layer-4--orpc-implementation-server-side-logic">Layer 4 — oRPC Implementation (server-side logic)</a></li>
+<li><a href="#8-layer-5--the-router-wiring-everything-together">Layer 5 — The Router (wiring everything together)</a></li>
+<li><a href="#9-layer-6--how-http-actually-works-here">Layer 6 — How HTTP Actually Works Here</a></li>
+<li><a href="#10-layer-7--the-isomorphic-client-browser--server">Layer 7 — The Isomorphic Client (browser + server)</a></li>
+<li><a href="#11-layer-8--tanstack-router-pages-and-url">Layer 8 — TanStack Router (pages and URL)</a></li>
+<li><a href="#12-layer-9--tanstack-query-data-fetching-in-react">Layer 9 — TanStack Query (data fetching in React)</a></li>
+<li><a href="#13-layer-10--react-components-what-the-user-sees">Layer 10 — React Components (what the user sees)</a></li>
+<li><a href="#14-layer-11--i18n-all-user-text">Layer 11 — i18n (all user text)</a></li>
+<li><a href="#15-layer-12--design-system-shared-ui-components">Layer 12 — Design System (shared UI components)</a></li>
+<li><a href="#16-the-full-request-journey">The Full Request Journey</a></li>
+<li><a href="#17-what-changes-when-a-new-feature-is-added">What Changes When a New Feature Is Added</a></li>
+<li><a href="#18-error-handling-deep-dive">Error Handling Deep Dive</a></li>
+<li><a href="#19-permissions-how-route-guards-work">Permissions: How Route Guards Work</a></li>
+<li><a href="#20-reviewer-checklist">Reviewer Checklist</a></li>
+</ol>
+<hr>
+<h2 id="1-what-is-this-product">1. What is this product?<a class="anchor" href="#1-what-is-this-product" aria-hidden="true">#</a></h2>
+<p>This is <strong>Syndigo&#39;s retail platform</strong> — a multi-tenant SaaS web application. &quot;Multi-tenant&quot; means many different retail companies (tenants) log into the same app, each seeing only their own data.</p>
+<p>The monorepo contains two applications:</p>
+<div class="table-wrap"><table><thead><tr><th>App</th><th>Port</th><th>What it does</th></tr></thead><tbody><tr><td><code>apps/pxc-retail</code></td><td>3000</td><td>Main retail app — vendors, products, merchandising</td></tr><tr><td><code>apps/tenant-management</code></td><td>3001</td><td>Syndigo-internal admin — onboard tenants, manage features</td></tr></tbody></table></div><p>Both apps share:</p>
+<ul>
+<li>A <strong>BFF (Backend-For-Frontend)</strong> — server code that talks to upstream APIs</li>
+<li>A <strong>design system</strong> — shared React UI components</li>
+<li>An <strong>app shell</strong> — nav, permissions, i18n wiring</li>
+</ul>
+<hr>
+<h2 id="2-the-architecture-in-one-picture">2. The Architecture in One Picture<a class="anchor" href="#2-the-architecture-in-one-picture" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">Browser
+  │  HTTP GET /vendor-central/vendor-management/vendors
+  ▼
+TanStack Start (SSR framework on Nitro)
+  │  Server-renders the React page
+  │  During render, calls are NOT HTTP — they&#x27;re direct function calls
+  ▼
+TanStack Router (file-based routing)
+  │  src/routes/_shell/vendor-central/vendor-management/vendors.tsx
+  │  Runs beforeLoad guards, validates URL search params
+  ▼
+React Component renders, calls useSuspenseInfiniteQuery
+  │
+  ▼
+oRPC isomorphic client
+  │  On server: direct function call into the router
+  │  In browser: HTTP POST to /rpc
+  ▼
+oRPC Router  (packages/orpc/src/router.ts)
+  │  vendorCentral.tenantVendor.list → listTenantVendors handler
+  ▼
+Middleware stack (auth → permissions → api-client)
+  ▼
+Handler calls upstream Vendor API (external HTTP service)
+  │  GET https://vendor-api.internal/v1/vendors
+  ▼
+Returns data → validated against Zod output schema → sent to client
+  ▼
+React Query caches it → VendorTable renders</code></pre></div><p><strong>Key insight:</strong> On the first page load (SSR), there are <strong>zero extra HTTP round-trips</strong> for data — the server calls its own functions directly. After hydration, if the user filters or paginates, the browser sends HTTP POST to <code>/rpc</code>.</p>
+<hr>
+<h2 id="3-the-example-well-trace-vendor-list">3. The Example We&#39;ll Trace: Vendor List<a class="anchor" href="#3-the-example-well-trace-vendor-list" aria-hidden="true">#</a></h2>
+<p>URL: <code>/vendor-central/vendor-management/vendors</code></p>
+<p>The page shows a paginated, filterable list of vendors. You can switch between grid view and table view. Clicking a row navigates to the vendor detail page.</p>
+<p>Files involved:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">packages/core-contracts/src/schemas/vendor-schema.ts        ← data shapes
+packages/core-contracts/src/vendor-central/contracts/tenant-vendor.ts  ← API contract
+packages/core-contracts/src/types/vendor-types.ts           ← TypeScript types
+packages/orpc/src/builder.ts                                ← middleware builder
+packages/orpc/src/procedures/vendor-central/tenant-vendors.ts  ← server logic
+packages/orpc/src/router.ts                                 ← wiring
+apps/pxc-retail/src/integrations/orpc/client.ts             ← isomorphic client
+apps/pxc-retail/src/routes/_shell/vendor-central/vendor-management/vendors.tsx  ← page
+apps/pxc-retail/src/components/vendor/VendorTable.tsx        ← table component
+apps/pxc-retail/src/locales/en/translation.ts               ← text strings</code></pre></div><hr>
+<h2 id="4-layer-1-zod-schemas-the-data-shapes">4. Layer 1 — Zod Schemas (the data shapes)<a class="anchor" href="#4-layer-1-zod-schemas-the-data-shapes" aria-hidden="true">#</a></h2>
+<p><strong>File:</strong> <code>packages/core-contracts/src/schemas/vendor-schema.ts</code></p>
+<h3 id="what-is-zod">What is Zod?<a class="anchor" href="#what-is-zod" aria-hidden="true">#</a></h3>
+<p>Zod is a <strong>runtime validation library</strong>. You describe the shape of data using code, and Zod checks that real data matches that shape at runtime — and TypeScript infers the static types automatically.</p>
+<p>Think of it like a stricter version of PropTypes from old React, but for any data (API responses, URL params, form inputs).</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
+
+<span class="hljs-comment">// This is a Zod schema — a runtime validator AND a type description</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">VendorStatusSchema</span> = z.<span class="hljs-title function_">enum</span>([<span class="hljs-string">&#x27;active&#x27;</span>, <span class="hljs-string">&#x27;pending&#x27;</span>, <span class="hljs-string">&#x27;suspended&#x27;</span>])
+
+<span class="hljs-comment">// This is a full object schema</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">TenantVendorSchema</span> = z.<span class="hljs-title function_">object</span>({
+  <span class="hljs-attr">id</span>: z.<span class="hljs-title function_">uuid</span>(),
+  <span class="hljs-attr">name</span>: z.<span class="hljs-title function_">string</span>(),
+  <span class="hljs-attr">officialCorporationName</span>: z.<span class="hljs-title function_">string</span>(),
+  <span class="hljs-attr">website</span>: z.<span class="hljs-title function_">url</span>().<span class="hljs-title function_">optional</span>(),     <span class="hljs-comment">// optional() means the field may be absent</span>
+  <span class="hljs-attr">employeeCountEstimate</span>: z.<span class="hljs-title function_">number</span>().<span class="hljs-title function_">int</span>().<span class="hljs-title function_">nonnegative</span>().<span class="hljs-title function_">optional</span>(),
+  <span class="hljs-attr">status</span>: <span class="hljs-title class_">VendorStatusSchema</span>,      <span class="hljs-comment">// reuse a schema as a field type</span>
+  <span class="hljs-attr">createdAt</span>: z.<span class="hljs-property">iso</span>.<span class="hljs-title function_">datetime</span>(),
+  <span class="hljs-attr">updatedAt</span>: z.<span class="hljs-property">iso</span>.<span class="hljs-title function_">datetime</span>(),
+})</code></pre></div><h3 id="why-is-this-in-core-contracts-not-inside-the-app-or-the-server">Why is this in <code>core-contracts</code>, not inside the app or the server?<a class="anchor" href="#why-is-this-in-core-contracts-not-inside-the-app-or-the-server" aria-hidden="true">#</a></h3>
+<p>Because <strong>both the server implementation AND the frontend components need the same type information</strong>. Putting schemas in a shared package means:</p>
+<ul>
+<li>The server uses it to validate data coming from the upstream API</li>
+<li>The frontend TypeScript types are automatically correct — no manual sync needed</li>
+<li>If the schema changes, TypeScript fails everywhere that assumes the old shape</li>
+</ul>
+<h3 id="the-vendorlistfilterschema-used-on-both-ends">The VendorListFilterSchema — used on both ends<a class="anchor" href="#the-vendorlistfilterschema-used-on-both-ends" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// packages/core-contracts/src/schemas/vendor-schema.ts</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">VendorListFilterSchema</span> = z.<span class="hljs-title function_">object</span>({
+  <span class="hljs-attr">status</span>: <span class="hljs-title class_">VendorStatusSchema</span>.<span class="hljs-title function_">optional</span>(),
+  <span class="hljs-attr">q</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">optional</span>(),
+  <span class="hljs-attr">sort</span>: <span class="hljs-title class_">VendorSortFieldSchema</span>.<span class="hljs-title function_">optional</span>(),
+  <span class="hljs-attr">sortDir</span>: <span class="hljs-title class_">SortDirectionSchema</span>.<span class="hljs-title function_">optional</span>(),
+})</code></pre></div><p>This exact schema is used in <strong>two completely different places</strong>:</p>
+<ol>
+<li>In the URL search params validation on the frontend (see Layer 8)</li>
+<li>As the basis for the oRPC contract input (see Layer 5)</li>
+</ol>
+<p>This is intentional — the URL reflects the query, and the server receives the same query fields.</p>
+<hr>
+<h2 id="5-layer-2-orpc-contracts-the-api-promise">5. Layer 2 — oRPC Contracts (the API promise)<a class="anchor" href="#5-layer-2-orpc-contracts-the-api-promise" aria-hidden="true">#</a></h2>
+<p><strong>File:</strong> <code>packages/core-contracts/src/vendor-central/contracts/tenant-vendor.ts</code></p>
+<h3 id="what-is-orpc">What is oRPC?<a class="anchor" href="#what-is-orpc" aria-hidden="true">#</a></h3>
+<p>oRPC (Observant Remote Procedure Call) is a <strong>type-safe RPC framework</strong> — think of it as a strongly-typed replacement for writing REST endpoints by hand. Instead of:</p>
+<ul>
+<li>Writing a manual <code>fetch(&#39;/api/vendors?status=active&#39;)</code></li>
+<li>Manually typing the response shape</li>
+<li>Writing the server route handler separately with no connection to the client</li>
+</ul>
+<p>With oRPC:</p>
+<ul>
+<li>You define the contract once (input shape + output shape)</li>
+<li>The server implements it</li>
+<li>The client calls it as a function — no URL strings, no manual fetch</li>
+<li>TypeScript enforces that input and output match across the entire call chain</li>
+</ul>
+<h3 id="the-contract">The Contract<a class="anchor" href="#the-contract" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// packages/core-contracts/src/vendor-central/contracts/tenant-vendor.ts</span>
+<span class="hljs-keyword">import</span> { oc } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../../schemas/standard-errors&#x27;</span>  <span class="hljs-comment">// project-level contract builder</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> tenantVendorContract = {
+  <span class="hljs-attr">list</span>: oc
+    .<span class="hljs-title function_">input</span>(
+      z.<span class="hljs-title function_">object</span>({
+        <span class="hljs-attr">vendorStatus</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">optional</span>(),
+        <span class="hljs-attr">q</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">optional</span>(),
+        <span class="hljs-attr">cursor</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">optional</span>(),  <span class="hljs-comment">// for pagination</span>
+        <span class="hljs-attr">limit</span>: z.<span class="hljs-title function_">number</span>().<span class="hljs-title function_">int</span>().<span class="hljs-title function_">min</span>(<span class="hljs-number">1</span>).<span class="hljs-title function_">max</span>(<span class="hljs-number">100</span>).<span class="hljs-title function_">optional</span>(),
+      }),
+    )
+    .<span class="hljs-title function_">output</span>(
+      z.<span class="hljs-title function_">object</span>({
+        <span class="hljs-attr">items</span>: z.<span class="hljs-title function_">array</span>(<span class="hljs-title class_">TenantVendorSchema</span>),  <span class="hljs-comment">// array of vendors</span>
+        <span class="hljs-attr">nextCursor</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">optional</span>(),   <span class="hljs-comment">// undefined = last page</span>
+      }),
+    )
+    .<span class="hljs-title function_">route</span>({ <span class="hljs-attr">summary</span>: <span class="hljs-string">&#x27;List Tenant Vendors&#x27;</span>, <span class="hljs-attr">tags</span>: [<span class="hljs-string">&#x27;Tenant Vendor&#x27;</span>] }),
+
+  <span class="hljs-attr">find</span>: oc
+    .<span class="hljs-title function_">input</span>(z.<span class="hljs-title function_">object</span>({ <span class="hljs-attr">id</span>: z.<span class="hljs-title function_">string</span>() }))
+    .<span class="hljs-title function_">output</span>(<span class="hljs-title class_">TenantVendorSchema</span>)
+    .<span class="hljs-title function_">route</span>({ <span class="hljs-attr">summary</span>: <span class="hljs-string">&#x27;Get Tenant Vendor&#x27;</span>, ... }),
+  
+  <span class="hljs-comment">// ... more procedures (create, update, delete, etc.)</span>
+}</code></pre></div><h3 id="what-is-oc">What is <code>oc</code>?<a class="anchor" href="#what-is-oc" aria-hidden="true">#</a></h3>
+<p><code>oc</code> (from <code>packages/core-contracts/src/schemas/standard-errors.ts</code>) is the <strong>contract builder</strong>. It&#39;s like a fluent API for describing an endpoint:</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// standard-errors.ts</span>
+<span class="hljs-keyword">import</span> { oc <span class="hljs-keyword">as</span> ocBase } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@orpc/contract&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> standardErrors = {
+  <span class="hljs-attr">BAD_REQUEST</span>: {},
+  <span class="hljs-attr">UNAUTHORIZED</span>: {},
+  <span class="hljs-attr">FORBIDDEN</span>: {},
+  <span class="hljs-attr">NOT_FOUND</span>: {},
+  <span class="hljs-attr">INTERNAL_SERVER_ERROR</span>: {},
+  <span class="hljs-comment">// ... etc</span>
+}
+
+<span class="hljs-comment">// Wrap the base builder with standard error types that every procedure can throw</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> oc = ocBase.<span class="hljs-title function_">errors</span>(standardErrors)</code></pre></div><p>Every procedure declared with <code>oc</code> automatically has typed error variants — <code>UNAUTHORIZED</code>, <code>NOT_FOUND</code>, etc. This means the frontend can pattern-match on error codes with full TypeScript support.</p>
+<h3 id="why-separate-contracts-from-implementations">Why separate contracts from implementations?<a class="anchor" href="#why-separate-contracts-from-implementations" aria-hidden="true">#</a></h3>
+<p>The contract package (<code>@repo/core-contracts</code>) has <strong>zero runtime code</strong> — it&#39;s just type declarations and Zod schemas. This means:</p>
+<ul>
+<li>You can import contracts on the <strong>frontend without pulling in server code</strong></li>
+<li>The frontend bundle never includes database logic, API keys, or secrets</li>
+<li>The contract is the &quot;API specification&quot; that both sides agree on</li>
+</ul>
+<hr>
+<h2 id="6-layer-3-typescript-types-free-from-the-schemas">6. Layer 3 — TypeScript Types (free from the schemas)<a class="anchor" href="#6-layer-3-typescript-types-free-from-the-schemas" aria-hidden="true">#</a></h2>
+<p><strong>File:</strong> <code>packages/core-contracts/src/types/vendor-types.ts</code></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { <span class="hljs-title class_">TenantVendorSchema</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../schemas/tenant-vendor-schema&#x27;</span>
+
+<span class="hljs-comment">// z.infer&lt;&gt; extracts the TypeScript type from a Zod schema</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_">TenantVendor</span> = z.<span class="hljs-property">infer</span>&lt;<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">TenantVendorSchema</span>&gt;
+<span class="hljs-comment">// Result: { id: string; name: string; status: &#x27;active&#x27; | &#x27;pending&#x27; | &#x27;suspended&#x27;; ... }</span></code></pre></div><p>These <code>z.infer&lt;&gt;</code> types are <strong>derived automatically from the Zod schemas</strong> — you never write them by hand. This is important: the types are always in sync with the validation rules. You cannot have a TypeScript type that says <code>status</code> is <code>string</code> while the Zod schema enforces it&#39;s one of <code>[&#39;active&#39;, &#39;pending&#39;, &#39;suspended&#39;]</code>.</p>
+<p>Also used:</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { <span class="hljs-title class_">InferContractRouterInputs</span>, <span class="hljs-title class_">InferContractRouterOutputs</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@orpc/contract&#x27;</span>
+
+<span class="hljs-comment">// Extract the TypeScript input/output types directly from the contract</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_">TenantVendorServiceInputs</span> = <span class="hljs-title class_">InferContractRouterInputs</span>&lt;<span class="hljs-keyword">typeof</span> tenantVendorContract&gt;
+<span class="hljs-comment">// TenantVendorServiceInputs[&#x27;list&#x27;][&#x27;input&#x27;] is the type for list&#x27;s input</span>
+<span class="hljs-comment">// TenantVendorServiceInputs[&#x27;list&#x27;][&#x27;output&#x27;] is the type for list&#x27;s output</span></code></pre></div><p><strong>When to import types:</strong> Frontend components import from <code>@repo/core-contracts/types/vendor-types</code>. They never import from <code>@syndigo/orpc</code> (that&#39;s server code) or define their own type interfaces manually.</p>
+<hr>
+<h2 id="7-layer-4-orpc-implementation-server-side-logic">7. Layer 4 — oRPC Implementation (server-side logic)<a class="anchor" href="#7-layer-4-orpc-implementation-server-side-logic" aria-hidden="true">#</a></h2>
+<p><strong>File:</strong> <code>packages/orpc/src/procedures/vendor-central/tenant-vendors.ts</code></p>
+<p>This is where actual business logic runs. Each function is a <strong>procedure handler</strong> — the server-side function that executes when the contract&#39;s endpoint is called.</p>
+<h3 id="the-authed-builder">The <code>authed</code> builder<a class="anchor" href="#the-authed-builder" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// packages/orpc/src/builder.ts</span>
+<span class="hljs-keyword">import</span> { implement } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@orpc/server&#x27;</span>
+
+<span class="hljs-comment">// &#x27;authed&#x27; is a builder that pre-applies middleware:</span>
+<span class="hljs-comment">// 1. errorRecordingMiddleware  — records all errors to OpenTelemetry spans</span>
+<span class="hljs-comment">// 2. validationErrorMiddleware — wraps Zod validation failures in typed errors</span>
+<span class="hljs-comment">// 3. authMiddleware            — checks the user is logged in, puts user in context</span>
+<span class="hljs-comment">// 4. spanAttributesMiddleware  — adds user/tenant info to OTel spans</span>
+<span class="hljs-comment">// 5. apiClientMiddleware       — creates context.vendorApi (the upstream HTTP client)</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> authed = <span class="hljs-title function_">implement</span>(contract)
+  .<span class="hljs-property">$context</span>&lt;<span class="hljs-title class_">Context</span>&gt;()
+  .<span class="hljs-title function_">use</span>(errorRecordingMiddleware)
+  .<span class="hljs-title function_">use</span>(validationErrorMiddleware)
+  .<span class="hljs-title function_">use</span>(authMiddleware)
+  .<span class="hljs-title function_">use</span>(spanAttributesMiddleware)
+  .<span class="hljs-title function_">use</span>(apiClientMiddleware)</code></pre></div><p>Think of <code>authed</code> as &quot;a procedure blueprint that already has auth, observability, and API client wired in&quot;. Every protected procedure starts from <code>authed</code>.</p>
+<h3 id="the-list-handler">The List Handler<a class="anchor" href="#the-list-handler" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// packages/orpc/src/procedures/vendor-central/tenant-vendors.ts</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> listTenantVendors = authed.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">tenantVendor</span>.<span class="hljs-property">list</span>
+  <span class="hljs-comment">//                              ^^^^^ picks the exact contract entry</span>
+  .<span class="hljs-title function_">use</span>(<span class="hljs-title function_">requirePermission</span>(<span class="hljs-string">&#x27;vendor-management&#x27;</span>, <span class="hljs-string">&#x27;read&#x27;</span>))
+  <span class="hljs-comment">//   ^^^ another middleware: checks this user has &#x27;read&#x27; on &#x27;vendor-management&#x27;</span>
+  .<span class="hljs-title function_">handler</span>(<span class="hljs-title function_">async</span> ({ input, context, signal }) =&gt; {
+    <span class="hljs-comment">//              ^^^^^  ^^^^^^^  ^^^^^^</span>
+    <span class="hljs-comment">//              input  = validated against the contract&#x27;s input schema (already typed!)</span>
+    <span class="hljs-comment">//              context = { user, vendorApi, ... } provided by middleware</span>
+    <span class="hljs-comment">//              signal  = AbortSignal for request cancellation</span>
+
+    <span class="hljs-comment">// Build attribute filters for the upstream API</span>
+    <span class="hljs-keyword">const</span> attributeFilters = input.<span class="hljs-property">vendorStatus</span>
+      ? ({ <span class="hljs-attr">vmvendorstatus</span>: input.<span class="hljs-property">vendorStatus</span> } <span class="hljs-keyword">as</span> <span class="hljs-built_in">object</span>)
+      : {}
+
+    <span class="hljs-comment">// Call the upstream Vendor API via the typed HTTP client</span>
+    <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> <span class="hljs-title function_">unwrap</span>(
+      context.<span class="hljs-property">vendorApi</span>.<span class="hljs-title function_">GET</span>(<span class="hljs-string">&#x27;/v1/vendors&#x27;</span>, {
+        signal,
+        <span class="hljs-attr">params</span>: {
+          <span class="hljs-attr">query</span>: {
+            <span class="hljs-attr">q</span>: input.<span class="hljs-property">q</span>,
+            <span class="hljs-attr">offset</span>: input.<span class="hljs-property">cursor</span> ? <span class="hljs-title class_">Number</span>.<span class="hljs-built_in">parseInt</span>(input.<span class="hljs-property">cursor</span>, <span class="hljs-number">10</span>) : <span class="hljs-literal">undefined</span>,
+            <span class="hljs-attr">limit</span>: input.<span class="hljs-property">limit</span>,
+            ...attributeFilters,
+          },
+        },
+      }),
+    )
+
+    <span class="hljs-comment">// Map from upstream API shape → our TenantVendorSchema shape</span>
+    <span class="hljs-keyword">const</span> vendors = data.<span class="hljs-property">vendors</span>?.<span class="hljs-title function_">map</span>(mapTenantVendorFromApi) ?? []
+    
+    <span class="hljs-comment">// Compute cursor-based pagination</span>
+    <span class="hljs-keyword">const</span> nextOffset = (data.<span class="hljs-property">page</span>?.<span class="hljs-property">offset</span> ?? <span class="hljs-number">0</span>) + (data.<span class="hljs-property">page</span>?.<span class="hljs-property">limit</span> ?? <span class="hljs-number">0</span>)
+    <span class="hljs-keyword">const</span> hasMore = data.<span class="hljs-property">page</span>?.<span class="hljs-property">total</span> !== <span class="hljs-literal">undefined</span> &amp;&amp; nextOffset &lt; data.<span class="hljs-property">page</span>.<span class="hljs-property">total</span>
+
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-attr">items</span>: vendors,
+      <span class="hljs-attr">nextCursor</span>: hasMore ? <span class="hljs-title class_">String</span>(nextOffset) : <span class="hljs-literal">undefined</span>,
+    }
+  })</code></pre></div><h3 id="what-is-unwrap">What is <code>unwrap</code>?<a class="anchor" href="#what-is-unwrap" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> <span class="hljs-title function_">unwrap</span>(context.<span class="hljs-property">vendorApi</span>.<span class="hljs-title function_">GET</span>(<span class="hljs-string">&#x27;/v1/vendors&#x27;</span>, { ... }))</code></pre></div><p><code>unwrap</code> is a helper that:</p>
+<ol>
+<li>Awaits the HTTP call to the upstream Vendor API</li>
+<li>If the response is a non-2xx HTTP status, it calls <code>throwError(...)</code> with an appropriate <code>code</code> and <code>errorKey</code></li>
+<li>If successful, returns the typed response data</li>
+</ol>
+<p>This is the rule: <strong>never expose upstream error details to the client</strong>. <code>unwrap</code> intercepts them and re-throws using our typed error system. A raw error message from the upstream API might leak internal service names, stack traces, or sensitive data. <code>throwError</code> ensures only a sanitized, typed error code reaches the browser.</p>
+<h3 id="what-is-throwerror">What is <code>throwError</code>?<a class="anchor" href="#what-is-throwerror" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-title function_">throwError</span>({
+  <span class="hljs-attr">code</span>: <span class="hljs-string">&#x27;NOT_FOUND&#x27;</span>,          <span class="hljs-comment">// maps to HTTP 404</span>
+  <span class="hljs-attr">errorKey</span>: <span class="hljs-string">&#x27;vendor.not_found&#x27;</span>, <span class="hljs-comment">// key into the i18n translation files</span>
+  <span class="hljs-attr">params</span>: { <span class="hljs-attr">id</span>: input.<span class="hljs-property">id</span> },   <span class="hljs-comment">// template variables for the translated message</span>
+  <span class="hljs-attr">message</span>: <span class="hljs-string">`...`</span>,             <span class="hljs-comment">// server-only log message, never sent to client</span>
+})</code></pre></div><p><code>errorKey</code> is a typed string literal — TypeScript enforces it matches a key in the <code>ErrorKey</code> union type. The client renders the human-readable message by looking up <code>errors.vendor.not_found</code> in the translation files. The server&#39;s <code>message</code> stays in logs/traces only.</p>
+<h3 id="the-mapper-functions">The Mapper Functions<a class="anchor" href="#the-mapper-functions" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">const</span> vendors = data.<span class="hljs-property">vendors</span>?.<span class="hljs-title function_">map</span>(mapTenantVendorFromApi) ?? []</code></pre></div><p>The upstream Vendor API returns field names in its own format (e.g., <code>vmvendorstatus</code>, <code>vmvendorname</code>). Our <code>TenantVendorSchema</code> uses clean names (<code>vendorStatus</code>, <code>legalName</code>). The <code>mapTenantVendorFromApi</code> function translates between these — it lives in <code>packages/orpc/src/utils/tenant-vendor-mappers.ts</code>.</p>
+<p><strong>Why mappers?</strong> Because the upstream API can change its field names without breaking our app — we only update the mapper, not every component that uses the data.</p>
+<hr>
+<h2 id="8-layer-5-the-router-wiring-everything-together">8. Layer 5 — The Router (wiring everything together)<a class="anchor" href="#8-layer-5-the-router-wiring-everything-together" aria-hidden="true">#</a></h2>
+<p><strong>File:</strong> <code>packages/orpc/src/router.ts</code></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">const</span> router = os.<span class="hljs-title function_">router</span>({
+  <span class="hljs-attr">vendorCentral</span>: {
+    <span class="hljs-attr">tenantVendor</span>: {
+      <span class="hljs-attr">list</span>: listTenantVendors,    <span class="hljs-comment">// ← the function from tenant-vendors.ts</span>
+      <span class="hljs-attr">find</span>: findTenantVendor,
+      <span class="hljs-attr">findDetails</span>: findTenantVendorDetails,
+      <span class="hljs-attr">create</span>: createTenantVendor,
+      <span class="hljs-attr">update</span>: updateTenantVendor,
+      <span class="hljs-attr">delete</span>: deleteTenantVendor,
+      <span class="hljs-comment">// ...</span>
+    },
+    <span class="hljs-attr">tenantVendorAddress</span>: { ... },
+    <span class="hljs-attr">tenantVendorContact</span>: { ... },
+  },
+  <span class="hljs-comment">// other domains...</span>
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> router</code></pre></div><p>This is the <strong>address book</strong> — it maps the nested path <code>vendorCentral.tenantVendor.list</code> to the actual handler function. The nested object structure is the same nesting you&#39;ll use when calling from the frontend:</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// Frontend:</span>
+orpc.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">tenantVendor</span>.<span class="hljs-property">list</span>.<span class="hljs-title function_">infiniteOptions</span>(...)
+<span class="hljs-comment">//   ^^^^^^^^^^^^^  ^^^^^^^^^^^^  ^^^^</span>
+<span class="hljs-comment">//   matches exactly the router&#x27;s nested structure</span></code></pre></div><p>TypeScript traverses this structure statically — if the path doesn&#39;t exist in the router, the frontend call won&#39;t compile.</p>
+<hr>
+<h2 id="9-layer-6-how-http-actually-works-here">9. Layer 6 — How HTTP Actually Works Here<a class="anchor" href="#9-layer-6-how-http-actually-works-here" aria-hidden="true">#</a></h2>
+<h3 id="on-the-server-ssr-first-page-load">On the server (SSR, first page load)<a class="anchor" href="#on-the-server-ssr-first-page-load" aria-hidden="true">#</a></h3>
+<p>When a user navigates to <code>/vendor-central/vendor-management/vendors</code>, the Nitro server (TanStack Start&#39;s runtime) SSR-renders the React page. During rendering, <code>useSuspenseInfiniteQuery</code> is called. The oRPC client detects it&#39;s running server-side and calls the router <strong>directly as a function</strong> — no HTTP at all.</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">Browser → GET /vendor-central/vendor-management/vendors
+             ↓
+         Nitro SSR renders React
+             ↓
+         useSuspenseInfiniteQuery calls orpc.vendorCentral.tenantVendor.list
+             ↓
+         createIsomorphicFn().server() branch: calls router directly
+             ↓
+         listTenantVendors handler runs → calls upstream Vendor API
+             ↓
+         HTML with pre-filled data sent to browser</code></pre></div><h3 id="in-the-browser-subsequent-interactions">In the browser (subsequent interactions)<a class="anchor" href="#in-the-browser-subsequent-interactions" aria-hidden="true">#</a></h3>
+<p>After the page loads and React &quot;hydrates&quot; (takes control from the server-rendered HTML), any new queries — filtering by status, loading the next page — go through HTTP:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">User changes filter
+    ↓
+React Query triggers refetch
+    ↓
+orpc.vendorCentral.tenantVendor.list runs in browser
+    ↓
+createIsomorphicFn().client() branch: sends HTTP POST to /rpc
+    ↓
+POST /rpc  body: { procedure: [&#x27;vendorCentral&#x27;,&#x27;tenantVendor&#x27;,&#x27;list&#x27;], input: {...} }
+    ↓
+Nitro receives it → routes to RPCHandler
+    ↓
+Same listTenantVendors handler runs
+    ↓
+JSON response → React Query caches it → component re-renders</code></pre></div><h3 id="where-is-rpc-defined">Where is <code>/rpc</code> defined?<a class="anchor" href="#where-is-rpc-defined" aria-hidden="true">#</a></h3>
+<p>In <code>apps/pxc-retail/src/routes/rpc.ts</code> (or similar) — a TanStack Start server route that hands all requests to the oRPC handler. You don&#39;t usually touch this file; it&#39;s infrastructure.</p>
+<hr>
+<h2 id="10-layer-7-the-isomorphic-client-browser-server">10. Layer 7 — The Isomorphic Client (browser + server)<a class="anchor" href="#10-layer-7-the-isomorphic-client-browser-server" aria-hidden="true">#</a></h2>
+<p><strong>File:</strong> <code>apps/pxc-retail/src/integrations/orpc/client.ts</code></p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">import</span> { createORPCClient } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@orpc/client&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">RPCLink</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@orpc/client/fetch&#x27;</span>
+<span class="hljs-keyword">import</span> { createRouterClient } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@orpc/server&#x27;</span>
+<span class="hljs-keyword">import</span> { createTanstackQueryUtils } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@orpc/tanstack-query&#x27;</span>
+<span class="hljs-keyword">import</span> router <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/orpc/router&#x27;</span>
+<span class="hljs-keyword">import</span> { createIsomorphicFn } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@tanstack/react-start&#x27;</span>
+
+<span class="hljs-comment">// createIsomorphicFn creates a function that has different implementations</span>
+<span class="hljs-comment">// depending on whether it&#x27;s running on the server or in the browser.</span>
+<span class="hljs-keyword">const</span> getORPCClient = <span class="hljs-title function_">createIsomorphicFn</span>()
+  .<span class="hljs-title function_">server</span>(<span class="hljs-function">() =&gt;</span>
+    <span class="hljs-comment">// On the server: call the router directly (no HTTP)</span>
+    <span class="hljs-title function_">createRouterClient</span>(router, {
+      <span class="hljs-attr">context</span>: getOrpcContext,  <span class="hljs-comment">// provides auth token, request headers, etc.</span>
+    }),
+  )
+  .<span class="hljs-title function_">client</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-comment">// In the browser: create an HTTP client that POSTs to /rpc</span>
+    <span class="hljs-keyword">const</span> link = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RPCLink</span>({
+      <span class="hljs-attr">url</span>: <span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">window</span>.location.origin}</span><span class="hljs-subst">${getOrpcServerPrefix(<span class="hljs-string">&#x27;/rpc&#x27;</span>)}</span>`</span>,
+    })
+    <span class="hljs-keyword">return</span> createORPCClient&lt;<span class="hljs-title class_">Client</span>&gt;(link)
+  })
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> client = <span class="hljs-title function_">getORPCClient</span>()
+
+<span class="hljs-comment">// createTanstackQueryUtils wraps the client to work with TanStack Query.</span>
+<span class="hljs-comment">// This gives you .queryOptions(), .infiniteOptions(), .mutationOptions()</span>
+<span class="hljs-comment">// on every procedure path.</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> orpc = <span class="hljs-title function_">createTanstackQueryUtils</span>(client)</code></pre></div><p><strong>Key point:</strong> Both <code>client</code> (the raw callable) and <code>orpc</code> (the TanStack Query wrappers) are exported. Components almost always use <code>orpc</code> — it integrates with React Query&#39;s caching, loading states, and error handling automatically.</p>
+<hr>
+<h2 id="11-layer-8-tanstack-router-pages-and-url">11. Layer 8 — TanStack Router (pages and URL)<a class="anchor" href="#11-layer-8-tanstack-router-pages-and-url" aria-hidden="true">#</a></h2>
+<p><strong>File:</strong> <code>apps/pxc-retail/src/routes/_shell/vendor-central/vendor-management/vendors.tsx</code></p>
+<h3 id="file-based-routing">File-based Routing<a class="anchor" href="#file-based-routing" aria-hidden="true">#</a></h3>
+<p>The file path <strong>is</strong> the URL path. <code>_shell/</code> is a layout route (renders the nav shell but doesn&#39;t add a URL segment). So:</p>
+<ul>
+<li>File: <code>routes/_shell/vendor-central/vendor-management/vendors.tsx</code></li>
+<li>URL: <code>/vendor-central/vendor-management/vendors</code></li>
+</ul>
+<p>The <code>_</code> prefix on <code>_shell</code> means it&#39;s a <strong>pathless layout route</strong> — it wraps everything under it in the shell chrome (sidebar, header) without contributing to the URL.</p>
+<h3 id="the-route-definition">The Route Definition<a class="anchor" href="#the-route-definition" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// At the top of vendors.tsx</span>
+<span class="hljs-keyword">import</span> { createFileRoute } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@tanstack/react-router&#x27;</span>
+<span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">VendorListFilterSchema</span>, <span class="hljs-title class_">VendorSortFieldSchema</span>, <span class="hljs-title class_">SortDirectionSchema</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@repo/core-contracts/schemas/vendor-schema&#x27;</span>
+
+<span class="hljs-comment">// Extend the shared filter schema with page-specific fields</span>
+<span class="hljs-keyword">const</span> vendorPortalSearchSchema = <span class="hljs-title class_">VendorListFilterSchema</span>.<span class="hljs-title function_">extend</span>({
+  <span class="hljs-attr">view</span>: z.<span class="hljs-title function_">enum</span>([<span class="hljs-string">&#x27;grid&#x27;</span>, <span class="hljs-string">&#x27;table&#x27;</span>]).<span class="hljs-title function_">catch</span>(<span class="hljs-string">&#x27;grid&#x27;</span>),  <span class="hljs-comment">// .catch() = default if missing/invalid</span>
+  <span class="hljs-attr">sort</span>: <span class="hljs-title class_">VendorSortFieldSchema</span>.<span class="hljs-title function_">catch</span>(<span class="hljs-string">&#x27;name&#x27;</span>),
+  <span class="hljs-attr">sortDir</span>: <span class="hljs-title class_">SortDirectionSchema</span>.<span class="hljs-title function_">catch</span>(<span class="hljs-string">&#x27;asc&#x27;</span>),
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">Route</span> = <span class="hljs-title function_">createFileRoute</span>(
+  <span class="hljs-string">&#x27;/_shell/vendor-central/vendor-management/vendors&#x27;</span>,
+)({
+  <span class="hljs-attr">validateSearch</span>: <span class="hljs-function">(<span class="hljs-params">search</span>) =&gt;</span> vendorPortalSearchSchema.<span class="hljs-title function_">parse</span>(search),
+  <span class="hljs-comment">//              ^^^^^^ raw URL params (strings) → parsed, typed, defaulted</span>
+  <span class="hljs-attr">component</span>: <span class="hljs-title class_">VendorPortalPage</span>,
+  <span class="hljs-attr">errorComponent</span>: <span class="hljs-title class_">RouteErrorComponent</span>,
+})</code></pre></div><p><code>validateSearch</code> runs Zod validation on the URL query string. The benefit: if the URL has <code>?view=invalid</code>, Zod&#39;s <code>.catch(&#39;grid&#39;)</code> silently defaults it to <code>&#39;grid&#39;</code> instead of crashing. The component always receives correctly-typed search params.</p>
+<h3 id="reading-search-params-in-the-component">Reading Search Params in the Component<a class="anchor" href="#reading-search-params-in-the-component" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">VendorPortalPage</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> { status, q, sort, sortDir } = <span class="hljs-title class_">Route</span>.<span class="hljs-title function_">useSearch</span>()
+  <span class="hljs-comment">//                                   ^^^^^^^^^^^^^^^^</span>
+  <span class="hljs-comment">// Fully typed: status is &#x27;active&#x27; | &#x27;pending&#x27; | &#x27;suspended&#x27; | undefined</span>
+  <span class="hljs-comment">// TypeScript knows exactly what these values can be</span></code></pre></div><h3 id="navigating-updating-the-url">Navigating (updating the URL)<a class="anchor" href="#navigating-updating-the-url" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">const</span> navigate = <span class="hljs-title function_">useNavigate</span>({ <span class="hljs-attr">from</span>: <span class="hljs-title class_">Route</span>.<span class="hljs-property">fullPath</span> })
+
+<span class="hljs-comment">// Update the view while keeping all other search params unchanged</span>
+<span class="hljs-title function_">navigate</span>({ <span class="hljs-attr">search</span>: <span class="hljs-function">(<span class="hljs-params">p</span>) =&gt;</span> ({ ...p, <span class="hljs-attr">view</span>: <span class="hljs-string">&#x27;table&#x27;</span> }) })</code></pre></div><p>This is how state lives in the URL — not in React <code>useState</code>. Benefits:</p>
+<ul>
+<li>Bookmarkable/shareable URLs that preserve filter state</li>
+<li>Browser back button works correctly</li>
+<li>Server can use the same URL to SSR the same view</li>
+</ul>
+<hr>
+<h2 id="12-layer-9-tanstack-query-data-fetching-in-react">12. Layer 9 — TanStack Query (data fetching in React)<a class="anchor" href="#12-layer-9-tanstack-query-data-fetching-in-react" aria-hidden="true">#</a></h2>
+<p>TanStack Query is the <strong>data-fetching and caching layer</strong>. In React 16, you might have used <code>useEffect</code> + <code>useState</code> to fetch data. TanStack Query replaces that pattern entirely, handling loading states, caching, background refetching, and pagination.</p>
+<h3 id="the-key-call-in-vendorstsx">The Key Call in <code>vendors.tsx</code><a class="anchor" href="#the-key-call-in-vendorstsx" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">VendorContent</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> { view, status, q } = <span class="hljs-title class_">Route</span>.<span class="hljs-title function_">useSearch</span>()
+
+  <span class="hljs-keyword">const</span> { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    <span class="hljs-title function_">useSuspenseInfiniteQuery</span>(
+      orpc.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">tenantVendor</span>.<span class="hljs-property">list</span>.<span class="hljs-title function_">infiniteOptions</span>({
+        <span class="hljs-comment">//               ^^^^^^^^^^^^  ^^^^  ^^^^^^^^^^^^^^^</span>
+        <span class="hljs-comment">// Path in the router        proc   returns query options for infinite scroll</span>
+
+        <span class="hljs-attr">input</span>: <span class="hljs-function">(<span class="hljs-params"><span class="hljs-attr">pageParam</span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span></span>) =&gt;</span> ({
+          <span class="hljs-attr">vendorStatus</span>: status,   <span class="hljs-comment">// from URL search params</span>
+          <span class="hljs-attr">q</span>: q || <span class="hljs-literal">undefined</span>,
+          <span class="hljs-attr">cursor</span>: pageParam,      <span class="hljs-comment">// undefined = first page</span>
+          <span class="hljs-attr">limit</span>: <span class="hljs-number">12</span>,
+        }),
+        <span class="hljs-attr">initialPageParam</span>: <span class="hljs-literal">undefined</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span>,
+        <span class="hljs-attr">getNextPageParam</span>: <span class="hljs-function">(<span class="hljs-params">lastPage</span>) =&gt;</span> lastPage.<span class="hljs-property">nextCursor</span>,
+        <span class="hljs-comment">// ^^^^^^^^^^^^^^^^ tells React Query what to pass as pageParam</span>
+        <span class="hljs-comment">// for the next page. undefined = no more pages.</span>
+      }),
+    )
+
+  <span class="hljs-keyword">const</span> items = data.<span class="hljs-property">pages</span>.<span class="hljs-title function_">flatMap</span>(<span class="hljs-function">(<span class="hljs-params">page</span>) =&gt;</span> page.<span class="hljs-property">items</span>)
+  <span class="hljs-comment">// data.pages = array of all fetched pages</span>
+  <span class="hljs-comment">// flatMap combines all pages&#x27; items into one flat array</span></code></pre></div><h3 id="what-is-usesuspenseinfinitequery">What is <code>useSuspenseInfiniteQuery</code>?<a class="anchor" href="#what-is-usesuspenseinfinitequery" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong><code>Suspense</code></strong> prefix: this hook throws a Promise while loading — React catches it and shows the <code>&lt;Suspense fallback={...}&gt;</code> content (the skeleton). No manual <code>if (isLoading) return &lt;Skeleton /&gt;</code> needed.</li>
+<li><strong><code>Infinite</code></strong>: supports &quot;load more&quot; / cursor-based pagination</li>
+<li><strong>Regular <code>useQuery</code></strong> is for single-page fetches (e.g., fetching one vendor by ID)</li>
+<li><strong><code>useMutation</code></strong> is for write operations (create, update, delete)</li>
+</ul>
+<h3 id="the-cache-key">The Cache Key<a class="anchor" href="#the-cache-key" aria-hidden="true">#</a></h3>
+<p>oRPC + TanStack Query automatically generates stable cache keys from the procedure path + input. When <code>status</code> changes in the URL, the hook sees a different cache key, fetches fresh data, and React Query caches both sets (the previous and new). If the user switches back to the original filter, the cached result is shown instantly with no network request.</p>
+<hr>
+<h2 id="13-layer-10-react-components-what-the-user-sees">13. Layer 10 — React Components (what the user sees)<a class="anchor" href="#13-layer-10-react-components-what-the-user-sees" aria-hidden="true">#</a></h2>
+<h3 id="the-page-component-vendorstsx">The Page Component (<code>vendors.tsx</code>)<a class="anchor" href="#the-page-component-vendorstsx" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">VendorPortalPage</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;space-y-6&quot;</span>&gt;</span>
+      {/* Page header with title and &quot;Add Vendor&quot; button */}
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;flex items-start justify-between gap-4&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>{t(($) =&gt; $.pages.vendor_management.title)}<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Link</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/vendor-central/vendor-management/onboarding&quot;</span>&gt;</span>
+          {t(($) =&gt; $.vendor.actions.add_new_vendor)}
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Link</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+      {/* Filter bar — updates URL search params via navigate() */}
+      <span class="hljs-tag">&lt;<span class="hljs-name">VendorFilterBar</span> <span class="hljs-attr">filters</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">status</span>, <span class="hljs-attr">q</span>, <span class="hljs-attr">sort</span>, <span class="hljs-attr">sortDir</span> }} <span class="hljs-attr">onFilterChange</span>=<span class="hljs-string">{onFilterChange}</span> /&gt;</span>
+
+      {/* Suspense: shows skeleton while loading, VendorContent when ready */}
+      <span class="hljs-tag">&lt;<span class="hljs-name">Suspense</span> <span class="hljs-attr">fallback</span>=<span class="hljs-string">{</span>&lt;<span class="hljs-attr">VendorContentSkeleton</span> /&gt;</span>}&gt;
+        <span class="hljs-tag">&lt;<span class="hljs-name">VendorContent</span> /&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">Suspense</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+  )
+}</code></pre></div><p>The page itself doesn&#39;t fetch data — <code>VendorContent</code> does. Wrapping <code>VendorContent</code> in <code>&lt;Suspense&gt;</code> means:</p>
+<ul>
+<li>While data loads: <code>VendorContentSkeleton</code> renders (skeleton shimmer)</li>
+<li>Once data is ready: <code>VendorContent</code> renders with actual data</li>
+</ul>
+<p>This keeps the skeleton and loading logic isolated from the real content.</p>
+<h3 id="the-table-component-vendortabletsx">The Table Component (<code>VendorTable.tsx</code>)<a class="anchor" href="#the-table-component-vendortabletsx" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">import</span> { useTable, columnVisibilityFeature, tableFeatures } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@tanstack/react-table&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">DataTable</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/components/data-table&#x27;</span>
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { <span class="hljs-title class_">TenantVendor</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@repo/core-contracts/types/vendor-types&#x27;</span>
+
+<span class="hljs-comment">// Step 1: Enable table features (column visibility = the &quot;show/hide columns&quot; menu)</span>
+<span class="hljs-keyword">const</span> features = <span class="hljs-title function_">tableFeatures</span>({ columnVisibilityFeature })
+
+<span class="hljs-comment">// Step 2: Define columns</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">useVendorColumns</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> { t } = <span class="hljs-title function_">useTranslation</span>()
+
+  <span class="hljs-keyword">const</span> <span class="hljs-attr">columns</span>: <span class="hljs-title class_">ColumnDef</span>&lt;<span class="hljs-keyword">typeof</span> features, <span class="hljs-title class_">TenantVendor</span>&gt;[] = [
+    {
+      <span class="hljs-attr">accessorKey</span>: <span class="hljs-string">&#x27;legalName&#x27;</span>,        <span class="hljs-comment">// reads row.legalName</span>
+      <span class="hljs-attr">header</span>: <span class="hljs-title function_">t</span>(<span class="hljs-function">(<span class="hljs-params">$</span>) =&gt;</span> $.vendor.<span class="hljs-property">table_headers</span>.<span class="hljs-property">name</span>),  <span class="hljs-comment">// translated header</span>
+      <span class="hljs-attr">cell</span>: <span class="hljs-function">(<span class="hljs-params">{ getValue }</span>) =&gt;</span> (
+        &lt;span className=&quot;font-medium&quot;&gt;{getValue&lt;string&gt;()}&lt;/span&gt;
+      ),
+    },
+    {
+      accessorKey: &#x27;vendorStatus&#x27;,
+      header: t(($) =&gt; $.vendor.table_headers.status),
+      cell: ({ getValue }) =&gt; {
+        const status = getValue&lt;string | undefined&gt;()
+        if (!status) return &lt;span className=&quot;text-muted-foreground&quot;&gt;&amp;mdash;&lt;/span&gt;
+        return &lt;Badge variant={vendorStatusVariant[status]}&gt;{status}&lt;/Badge&gt;
+      },
+    },
+    // ... more columns
+  ]
+  return columns
+}
+
+// Step 3: Wire up the table
+function VendorTable({ items }: { items: TenantVendor[] }) {
+  const [columnVisibility, setColumnVisibility] = useState&lt;ColumnVisibilityState&gt;({
+    websiteUrl: false,  // hidden by default
+    yearEstablished: false,
+  })
+
+  const table = useTable({
+    features,
+    data: items,
+    columns,
+    onColumnVisibilityChange: setColumnVisibility,
+    state: { columnVisibility },
+  })
+
+  return (
+    &lt;DataTable
+      table={table}
+      emptyState={t(($) =&gt; $.data_table.no_results)}
+      onRowClick={(row) =&gt;
+        navigate({ to: &#x27;/vendor-central/vendor-management/$vendorId&#x27;, params: { vendorId: row.original.id } })
+      }
+    /&gt;
+  )
+}</code></pre></div><p><strong>TanStack Table&#39;s job:</strong> Manages which columns are visible, sort state, row selection, etc. <code>useTable</code> holds all the state. <code>&lt;DataTable&gt;</code> from the design system does the actual HTML rendering — it knows how to iterate visible columns correctly.</p>
+<p><strong>Why separate <code>useTable</code> (state) from <code>&lt;DataTable&gt;</code> (rendering)?</strong> Because <code>useTable</code> gives you programmatic access to table state for other things — like reading <code>table.getSelectedRowModel()</code> if you need to act on selected rows. The design system component only renders; the app owns the state.</p>
+<hr>
+<h2 id="14-layer-11-i18n-all-user-text">14. Layer 11 — i18n (all user text)<a class="anchor" href="#14-layer-11-i18n-all-user-text" aria-hidden="true">#</a></h2>
+<p><strong>Files:</strong> <code>apps/pxc-retail/src/locales/{en,es,fr,de}/translation.ts</code></p>
+<p>Every string the user sees is in a translation file. There are NO hardcoded English strings in components.</p>
+<h3 id="how-translation-works">How Translation Works<a class="anchor" href="#how-translation-works" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// In a component:</span>
+<span class="hljs-keyword">const</span> { t } = <span class="hljs-title function_">useTranslation</span>()
+
+<span class="hljs-comment">// Selector callback style — t receives a function, not a string key</span>
+<span class="hljs-title function_">t</span>(<span class="hljs-function">(<span class="hljs-params">$</span>) =&gt;</span> $.vendor.<span class="hljs-property">table_headers</span>.<span class="hljs-property">name</span>)
+<span class="hljs-comment">//         ^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<span class="hljs-comment">//         TypeScript traverses the translation type</span>
+<span class="hljs-comment">//         If this key doesn&#x27;t exist, TypeScript ERROR at compile time</span></code></pre></div><p>Why callbacks instead of strings like the old <code>t(&#39;vendor.table_headers.name&#39;)</code>?</p>
+<p>With the old string approach:</p>
+<ul>
+<li><code>t(&#39;vendor.table_hedrs.name&#39;)</code> — typo, silently returns the key at runtime, no TypeScript error</li>
+<li>No autocomplete</li>
+</ul>
+<p>With callback approach:</p>
+<ul>
+<li><code>t(($) =&gt; $.vendor.table_hedrs.name)</code> — TypeScript error: property <code>table_hedrs</code> does not exist</li>
+<li>Full IDE autocomplete</li>
+</ul>
+<h3 id="adding-a-translation">Adding a Translation<a class="anchor" href="#adding-a-translation" aria-hidden="true">#</a></h3>
+<p>When Claude adds any user-visible text, it must add entries to <strong>all four locale files</strong>:</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// apps/pxc-retail/src/locales/en/translation.ts</span>
+<span class="hljs-attr">vendor</span>: {
+  <span class="hljs-attr">table_headers</span>: {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Vendor Name&#x27;</span>,     <span class="hljs-comment">// ← new key</span>
+    <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;Status&#x27;</span>,
+    <span class="hljs-attr">website</span>: <span class="hljs-string">&#x27;Website&#x27;</span>,
+    <span class="hljs-comment">// ...</span>
+  },
+},
+
+<span class="hljs-comment">// apps/pxc-retail/src/locales/es/translation.ts — Spanish</span>
+<span class="hljs-attr">vendor</span>: {
+  <span class="hljs-attr">table_headers</span>: {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Nombre del Proveedor&#x27;</span>,
+    <span class="hljs-comment">// ...</span>
+  },
+},</code></pre></div><p>If any locale file is missing a key, <strong>TypeScript compilation fails</strong>. This is the safety net — you can&#39;t ship a half-translated UI.</p>
+<hr>
+<h2 id="15-layer-12-design-system-shared-ui-components">15. Layer 12 — Design System (shared UI components)<a class="anchor" href="#15-layer-12-design-system-shared-ui-components" aria-hidden="true">#</a></h2>
+<p><strong>Package:</strong> <code>@syndigo/design-system</code></p>
+<p>The design system is a library of styled React components. It uses:</p>
+<ul>
+<li><strong>Tailwind CSS 4</strong> with CSS variable tokens in OKLch color space</li>
+<li><strong>CVA (Class Variance Authority)</strong> for component variants (e.g., <code>&lt;Badge variant=&quot;success&quot;&gt;</code>)</li>
+<li><strong>@base-ui/react</strong> for accessible primitives (dialogs, selects, tooltips)</li>
+</ul>
+<h3 id="import-convention">Import Convention<a class="anchor" href="#import-convention" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// ✅ Correct: import from the specific subpath</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Button</span>, buttonVariants } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/components/button&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Badge</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/components/badge&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">DataTable</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system/components/data-table&#x27;</span>
+
+<span class="hljs-comment">// ❌ Wrong: no barrel file exists</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Button</span>, <span class="hljs-title class_">Badge</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/design-system&#x27;</span></code></pre></div><p>The design system has no package-root barrel file because that would force the entire component library into every bundle, even if only one component is used. Explicit subpath imports enable tree-shaking.</p>
+<h3 id="key-components-used-in-vendor-list">Key Components Used in Vendor List<a class="anchor" href="#key-components-used-in-vendor-list" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>Component</th><th>Where imported</th><th>What it does</th></tr></thead><tbody><tr><td><code>Button</code></td><td><code>components/button</code></td><td>Standard clickable button</td></tr><tr><td><code>Badge</code></td><td><code>components/badge</code></td><td>Colored status chip (active/pending/suspended)</td></tr><tr><td><code>DataTable</code></td><td><code>components/data-table</code></td><td>Renders a TanStack Table instance</td></tr><tr><td><code>DataTableViewOptions</code></td><td><code>components/data-table-view-options</code></td><td>&quot;Show/hide columns&quot; dropdown</td></tr><tr><td><code>ToggleGroup</code> / <code>ToggleGroupItem</code></td><td><code>components/toggle-group</code></td><td>Grid/Table view switcher</td></tr></tbody></table></div><hr>
+<h2 id="16-the-full-request-journey">16. The Full Request Journey<a class="anchor" href="#16-the-full-request-journey" aria-hidden="true">#</a></h2>
+<p>Let&#39;s trace exactly what happens when a user first opens the vendor list page.</p>
+<h3 id="phase-1-server-side-render-ssr">Phase 1: Server-Side Render (SSR)<a class="anchor" href="#phase-1-server-side-render-ssr" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">1. User browser: GET /vendor-central/vendor-management/vendors?sort=name&amp;sortDir=asc
+
+2. Nitro server receives the request
+
+3. TanStack Router matches the file route:
+   src/routes/_shell/vendor-central/vendor-management/vendors.tsx
+
+4. Route&#x27;s validateSearch runs:
+   - Parses &quot;sort=name&amp;sortDir=asc&quot; with vendorPortalSearchSchema
+   - Defaults: view=&#x27;grid&#x27;, status=undefined, q=undefined
+   - Result: { sort: &#x27;name&#x27;, sortDir: &#x27;asc&#x27;, view: &#x27;grid&#x27;, status: undefined, q: undefined }
+
+5. React renders VendorPortalPage on the server
+   - VendorPortalPage renders VendorFilterBar + &lt;Suspense&gt;&lt;VendorContent /&gt;&lt;/Suspense&gt;
+
+6. VendorContent runs useSuspenseInfiniteQuery:
+   - The oRPC isomorphic client detects server environment
+   - Calls listTenantVendors({ vendorStatus: undefined, q: undefined, cursor: undefined, limit: 12 })
+     directly as a function (no HTTP)
+
+7. Middleware stack runs:
+   a. errorRecordingMiddleware (outermost)
+   b. validationErrorMiddleware
+   c. authMiddleware → reads session cookie, resolves user + tenant
+   d. spanAttributesMiddleware → attaches user/tenant to OTel span
+   e. apiClientMiddleware → creates context.vendorApi (authenticated HTTP client for upstream)
+   f. requirePermission(&#x27;vendor-management&#x27;, &#x27;read&#x27;) → checks user.permissions
+   g. listTenantVendors handler runs
+
+8. Handler calls upstream:
+   context.vendorApi.GET(&#x27;/v1/vendors&#x27;, { params: { query: { limit: 12 } } })
+   → HTTP GET https://vendor-api.internal/v1/vendors?limit=12
+   → Returns: { vendors: [...], page: { offset: 0, limit: 12, total: 47 } }
+
+9. Handler maps response → returns { items: TenantVendor[], nextCursor: &#x27;12&#x27; }
+
+10. React renders VendorContent with data:
+    - Renders grid of 12 vendor cards (or table rows)
+    - Renders &quot;Load more&quot; button (since nextCursor is defined)
+
+11. Nitro serializes the rendered HTML + React Query cache state
+    → Sends to browser</code></pre></div><h3 id="phase-2-browser-hydration">Phase 2: Browser Hydration<a class="anchor" href="#phase-2-browser-hydration" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">12. Browser receives HTML — vendor cards are immediately visible (no flash of empty state)
+
+13. React loads and &quot;hydrates&quot; — attaches event handlers to server-rendered HTML
+
+14. React Query restores cache from serialized state
+    — The data is already there, no refetch needed</code></pre></div><h3 id="phase-3-user-interaction-client-side">Phase 3: User Interaction (client-side)<a class="anchor" href="#phase-3-user-interaction-client-side" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">15. User clicks &quot;Table&quot; toggle → view=&#x27;table&#x27; in URL
+
+16. navigate({ search: (p) =&gt; ({ ...p, view: &#x27;table&#x27; }) }) runs
+    → URL: /vendors?sort=name&amp;sortDir=asc&amp;view=table
+
+17. TanStack Router re-renders with new search params
+    → VendorContent re-renders → shows VendorTable (same cached data, just different view)
+
+18. User types &quot;acme&quot; in search box → q=&#x27;acme&#x27; in URL
+
+19. React Query sees different cache key → triggers new fetch
+
+20. oRPC client (browser): HTTP POST /rpc
+    Body: { procedure: [&#x27;vendorCentral&#x27;,&#x27;tenantVendor&#x27;,&#x27;list&#x27;], input: { q: &#x27;acme&#x27;, limit: 12 } }
+
+21. Server: Same middleware stack → same handler → calls upstream with q=&#x27;acme&#x27;
+
+22. Response: filtered vendors → React Query updates cache → table re-renders</code></pre></div><hr>
+<h2 id="17-what-changes-when-a-new-feature-is-added">17. What Changes When a New Feature Is Added<a class="anchor" href="#17-what-changes-when-a-new-feature-is-added" aria-hidden="true">#</a></h2>
+<p>Suppose we need to add a new procedure: &quot;get vendor performance KPIs&quot;. Here&#39;s every file that changes.</p>
+<h3 id="step-1-add-the-zod-schema">Step 1: Add the Zod schema<a class="anchor" href="#step-1-add-the-zod-schema" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// packages/core-contracts/src/schemas/tenant-vendor-schema.ts</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">VendorPerformanceKpiSchema</span> = z.<span class="hljs-title function_">object</span>({
+  <span class="hljs-attr">metric</span>: z.<span class="hljs-title function_">string</span>(),
+  <span class="hljs-attr">value</span>: z.<span class="hljs-title function_">number</span>(),
+  <span class="hljs-attr">trend</span>: z.<span class="hljs-title function_">enum</span>([<span class="hljs-string">&#x27;up&#x27;</span>, <span class="hljs-string">&#x27;down&#x27;</span>, <span class="hljs-string">&#x27;flat&#x27;</span>]),
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">VendorPerformanceKpisSchema</span> = z.<span class="hljs-title function_">object</span>({
+  <span class="hljs-attr">vendorId</span>: z.<span class="hljs-title function_">string</span>(),
+  <span class="hljs-attr">kpis</span>: z.<span class="hljs-title function_">array</span>(<span class="hljs-title class_">VendorPerformanceKpiSchema</span>),
+})</code></pre></div><h3 id="step-2-add-the-contract-procedure">Step 2: Add the contract procedure<a class="anchor" href="#step-2-add-the-contract-procedure" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// packages/core-contracts/src/vendor-central/contracts/tenant-vendor.ts</span>
+<span class="hljs-attr">findPerformance</span>: oc
+  .<span class="hljs-title function_">input</span>(z.<span class="hljs-title function_">object</span>({ <span class="hljs-attr">id</span>: z.<span class="hljs-title function_">string</span>() }))
+  .<span class="hljs-title function_">output</span>(<span class="hljs-title class_">VendorPerformanceKpisSchema</span>)
+  .<span class="hljs-title function_">route</span>({ <span class="hljs-attr">summary</span>: <span class="hljs-string">&#x27;Get Vendor Performance KPIs&#x27;</span>, <span class="hljs-attr">tags</span>: [<span class="hljs-string">&#x27;Tenant Vendor&#x27;</span>] }),</code></pre></div><h3 id="step-3-add-the-typescript-types">Step 3: Add the TypeScript types<a class="anchor" href="#step-3-add-the-typescript-types" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// packages/core-contracts/src/types/vendor-types.ts</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_">VendorPerformanceKpis</span> = z.<span class="hljs-property">infer</span>&lt;<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">VendorPerformanceKpisSchema</span>&gt;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_">VendorPerformanceKpi</span> = z.<span class="hljs-property">infer</span>&lt;<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">VendorPerformanceKpiSchema</span>&gt;</code></pre></div><h3 id="step-4-implement-the-handler">Step 4: Implement the handler<a class="anchor" href="#step-4-implement-the-handler" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// packages/orpc/src/procedures/vendor-central/tenant-vendors.ts</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> findTenantVendorPerformance =
+  authed.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">tenantVendor</span>.<span class="hljs-property">findPerformance</span>
+    .<span class="hljs-title function_">use</span>(<span class="hljs-title function_">requirePermission</span>(<span class="hljs-string">&#x27;vendor-management&#x27;</span>, <span class="hljs-string">&#x27;read&#x27;</span>))
+    .<span class="hljs-title function_">handler</span>(<span class="hljs-title function_">async</span> ({ input, context }) =&gt; {
+      <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> <span class="hljs-title function_">unwrap</span>(
+        context.<span class="hljs-property">vendorApi</span>.<span class="hljs-title function_">GET</span>(<span class="hljs-string">&#x27;/v1/vendors/{vendorId}/performance&#x27;</span>, {
+          <span class="hljs-attr">params</span>: { <span class="hljs-attr">path</span>: { <span class="hljs-attr">vendorId</span>: input.<span class="hljs-property">id</span> } },
+        }),
+      )
+      <span class="hljs-keyword">return</span> { <span class="hljs-attr">vendorId</span>: input.<span class="hljs-property">id</span>, <span class="hljs-attr">kpis</span>: data.<span class="hljs-property">kpis</span> }
+    })</code></pre></div><h3 id="step-5-add-to-the-router">Step 5: Add to the router<a class="anchor" href="#step-5-add-to-the-router" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// packages/orpc/src/router.ts</span>
+<span class="hljs-attr">vendorCentral</span>: {
+  <span class="hljs-attr">tenantVendor</span>: {
+    <span class="hljs-comment">// ... existing</span>
+    <span class="hljs-attr">findPerformance</span>: findTenantVendorPerformance,   <span class="hljs-comment">// ← add this line</span>
+  },
+}</code></pre></div><h3 id="step-6-add-translation-keys">Step 6: Add translation keys<a class="anchor" href="#step-6-add-translation-keys" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// apps/pxc-retail/src/locales/en/translation.ts</span>
+<span class="hljs-attr">vendor</span>: {
+  <span class="hljs-attr">performance</span>: {
+    <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Performance KPIs&#x27;</span>,
+    <span class="hljs-attr">trend_up</span>: <span class="hljs-string">&#x27;Improving&#x27;</span>,
+    <span class="hljs-attr">trend_down</span>: <span class="hljs-string">&#x27;Declining&#x27;</span>,
+    <span class="hljs-attr">trend_flat</span>: <span class="hljs-string">&#x27;Stable&#x27;</span>,
+  },
+},
+
+<span class="hljs-comment">// Also add to es/, fr/, de/ — TypeScript enforces all four exist</span></code></pre></div><h3 id="step-7-add-the-react-component">Step 7: Add the React component<a class="anchor" href="#step-7-add-the-react-component" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// apps/pxc-retail/src/components/vendor/VendorPerformance.tsx</span>
+<span class="hljs-keyword">import</span> { useSuspenseQuery } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@tanstack/react-query&#x27;</span>
+<span class="hljs-keyword">import</span> { orpc } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;#/integrations/orpc/client&#x27;</span>
+<span class="hljs-keyword">import</span> { useTranslation } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;#/hooks/use-translation&#x27;</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">VendorPerformance</span>(<span class="hljs-params">{ vendorId }: { vendorId: <span class="hljs-built_in">string</span> }</span>) {
+  <span class="hljs-keyword">const</span> { t } = <span class="hljs-title function_">useTranslation</span>()
+  <span class="hljs-keyword">const</span> { data } = <span class="hljs-title function_">useSuspenseQuery</span>(
+    orpc.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">tenantVendor</span>.<span class="hljs-property">findPerformance</span>.<span class="hljs-title function_">queryOptions</span>({
+      <span class="hljs-attr">input</span>: { <span class="hljs-attr">id</span>: vendorId },
+    }),
+  )
+
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>{t(($) =&gt; $.vendor.performance.title)}<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+      {data.kpis.map((kpi) =&gt; (
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{kpi.metric}</span>&gt;</span>
+          {kpi.metric}: {kpi.value}
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      ))}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+  )
+}</code></pre></div><h3 id="step-8-use-it-in-a-route">Step 8: Use it in a route<a class="anchor" href="#step-8-use-it-in-a-route" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// apps/pxc-retail/src/routes/_shell/vendor-central/vendor-management/$vendorId.tsx</span>
+<span class="hljs-comment">// (already exists — just add the component to the page JSX)</span>
+&lt;<span class="hljs-title class_">Suspense</span> fallback={<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Skeleton</span> /&gt;</span></span>}&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">VendorPerformance</span> <span class="hljs-attr">vendorId</span>=<span class="hljs-string">{vendorId}</span> /&gt;</span></span>
+&lt;/<span class="hljs-title class_">Suspense</span>&gt;</code></pre></div><h3 id="what-typescript-enforces-automatically">What TypeScript enforces automatically<a class="anchor" href="#what-typescript-enforces-automatically" aria-hidden="true">#</a></h3>
+<ul>
+<li>The procedure must exist in the contract before it can be in the router (TypeScript build failure)</li>
+<li>The handler&#39;s return type must match the contract&#39;s output schema (TypeScript build failure)</li>
+<li>Every <code>t(($) =&gt; $.vendor.performance.title)</code> must exist in all four locale files (TypeScript build failure)</li>
+<li><code>requirePermission(&#39;vendor-management&#39;, &#39;read&#39;)</code> — the module name must be in the known permissions union (TypeScript build failure)</li>
+</ul>
+<hr>
+<h2 id="18-error-handling-deep-dive">18. Error Handling Deep Dive<a class="anchor" href="#18-error-handling-deep-dive" aria-hidden="true">#</a></h2>
+<h3 id="the-rule-never-expose-upstream-details">The Rule: Never Expose Upstream Details<a class="anchor" href="#the-rule-never-expose-upstream-details" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// ❌ Wrong — leaks internal error to client</span>
+<span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">`Upstream returned: <span class="hljs-subst">${upstreamError.message}</span>`</span>)
+
+<span class="hljs-comment">// ✅ Correct — controlled, typed error with i18n key</span>
+<span class="hljs-title function_">throwError</span>({
+  <span class="hljs-attr">code</span>: <span class="hljs-string">&#x27;NOT_FOUND&#x27;</span>,
+  <span class="hljs-attr">errorKey</span>: <span class="hljs-string">&#x27;vendor.not_found&#x27;</span>,
+  <span class="hljs-attr">params</span>: { <span class="hljs-attr">id</span>: vendorId },
+  <span class="hljs-attr">message</span>: <span class="hljs-string">`Log only: vendor <span class="hljs-subst">${vendorId}</span> 404 from upstream`</span>,  <span class="hljs-comment">// stays in logs</span>
+})</code></pre></div><h3 id="error-flow-to-the-ui">Error Flow to the UI<a class="anchor" href="#error-flow-to-the-ui" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">throwError({ code: &#x27;NOT_FOUND&#x27;, errorKey: &#x27;vendor.not_found&#x27; })
+  ↓
+oRPC error middleware serializes as: { code: &#x27;NOT_FOUND&#x27;, data: { errorKey: &#x27;vendor.not_found&#x27; } }
+  ↓
+Browser: React Query catches the error
+  ↓
+error-toast middleware in app-shell reads errorKey
+  ↓
+Looks up translation: errors.vendor.not_found = &quot;Vendor not found&quot;
+  ↓
+Shows toast: &quot;Vendor not found&quot;</code></pre></div><p>The client never sees &quot;Upstream returned: 404 Not Found from vendor-service-7f3a2b&quot;. It sees a clean, localized message.</p>
+<hr>
+<h2 id="19-permissions-how-route-guards-work">19. Permissions: How Route Guards Work<a class="anchor" href="#19-permissions-how-route-guards-work" aria-hidden="true">#</a></h2>
+<h3 id="the-pattern">The Pattern<a class="anchor" href="#the-pattern" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// In a route file&#x27;s beforeLoad</span>
+<span class="hljs-keyword">import</span> { requireModuleAccess } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@syndigo/app-shell/permissions&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title class_">Route</span> = <span class="hljs-title function_">createFileRoute</span>(<span class="hljs-string">&#x27;/_shell/vendor-central/vendor-management/vendors&#x27;</span>)({
+  <span class="hljs-attr">beforeLoad</span>: <span class="hljs-function">(<span class="hljs-params">{ context }</span>) =&gt;</span> {
+    <span class="hljs-title function_">requireModuleAccess</span>(context.<span class="hljs-property">permissions</span>, <span class="hljs-string">&#x27;vendor-management&#x27;</span>)
+    <span class="hljs-comment">// If user lacks access → throws redirect to /no-access</span>
+  },
+  <span class="hljs-attr">component</span>: <span class="hljs-title class_">VendorPortalPage</span>,
+})</code></pre></div><h3 id="in-the-server-procedure">In the Server Procedure<a class="anchor" href="#in-the-server-procedure" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript">.<span class="hljs-title function_">use</span>(<span class="hljs-title function_">requirePermission</span>(<span class="hljs-string">&#x27;vendor-management&#x27;</span>, <span class="hljs-string">&#x27;read&#x27;</span>))</code></pre></div><p>Both guards check the same permission system — the route guard prevents rendering the page, and the procedure guard prevents the data call from succeeding even if someone bypasses the UI (e.g., calls <code>/rpc</code> directly). Defense in depth.</p>
+<hr>
+<h2 id="20-reviewer-checklist">20. Reviewer Checklist<a class="anchor" href="#20-reviewer-checklist" aria-hidden="true">#</a></h2>
+<p>When Claude creates a new feature, verify these points:</p>
+<h3 id="schemas-contracts">Schemas &amp; Contracts<a class="anchor" href="#schemas-contracts" aria-hidden="true">#</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> New Zod schemas in <code>packages/core-contracts/src/schemas/</code> — using <code>z.object(...)</code> with specific field validations (<code>.min()</code>, <code>.uuid()</code>, <code>.optional()</code>, etc.)</li>
+<li><input disabled="" type="checkbox"> New contract entry in <code>packages/core-contracts/src/&lt;domain&gt;/contracts/&lt;domain&gt;.ts</code> using <code>oc.input(...).output(...)</code> (not bare <code>z.object</code> — uses <code>oc</code> for standard errors)</li>
+<li><input disabled="" type="checkbox"> Types exported from <code>packages/core-contracts/src/types/&lt;domain&gt;-types.ts</code> using <code>z.infer&lt;&gt;</code></li>
+</ul>
+<h3 id="server-implementation">Server Implementation<a class="anchor" href="#server-implementation" aria-hidden="true">#</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> Handler starts with <code>authed.&lt;domain&gt;.&lt;procedure&gt;</code> (not bare <code>os</code>)</li>
+<li><input disabled="" type="checkbox"> Uses <code>.use(requirePermission(...))</code> before <code>.handler(...)</code></li>
+<li><input disabled="" type="checkbox"> All upstream calls wrapped with <code>unwrap(...)</code> — never a raw <code>await fetch</code></li>
+<li><input disabled="" type="checkbox"> All errors use <code>throwError({ code, errorKey, ... })</code> — no <code>throw new Error(...)</code></li>
+<li><input disabled="" type="checkbox"> Added to the router in <code>packages/orpc/src/router.ts</code></li>
+</ul>
+<h3 id="frontend">Frontend<a class="anchor" href="#frontend" aria-hidden="true">#</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> Imports types from <code>@repo/core-contracts/types/...</code> — never re-declares them</li>
+<li><input disabled="" type="checkbox"> All user text uses <code>t(($) =&gt; $....)</code> — no hardcoded strings</li>
+<li><input disabled="" type="checkbox"> All four locale files have the new keys (en, es, fr, de)</li>
+<li><input disabled="" type="checkbox"> Data fetching uses <code>useSuspenseQuery</code> or <code>useSuspenseInfiniteQuery</code> — not <code>useEffect</code></li>
+<li><input disabled="" type="checkbox"> Loading state handled by <code>&lt;Suspense fallback={&lt;Skeleton /&gt;}&gt;</code> — not manual <code>if (isLoading)</code></li>
+<li><input disabled="" type="checkbox"> Design system components imported via subpath (<code>@syndigo/design-system/components/button</code>)</li>
+<li><input disabled="" type="checkbox"> Tables use <code>useTable</code> + <code>&lt;DataTable&gt;</code> pattern — not manual <code>&lt;tr&gt;/&lt;td&gt;</code> loops</li>
+</ul>
+<h3 id="general">General<a class="anchor" href="#general" aria-hidden="true">#</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> <code>pnpm typecheck</code> passes — TypeScript has no errors</li>
+<li><input disabled="" type="checkbox"> <code>pnpm lint</code> passes — no lint violations</li>
+<li><input disabled="" type="checkbox"> <code>knowledge-sync</code> skill has been run (Claude does this before committing)</li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

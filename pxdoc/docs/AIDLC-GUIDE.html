@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIDLC-GUIDE</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#aidlc-guide">AIDLC Guide</a></li><ol class="toc-sub"><li><a href="#what-is-aidlc">What Is AIDLC?</a></li><li><a href="#repository-location">Repository Location</a></li><li><a href="#the-platform-profile-retail-pxcyml">The Platform Profile: retail-pxc.yml</a></li><ol class="toc-sub"><li><a href="#stage-4-auto-injected-skills">Stage 4 Auto-Injected Skills</a></li><li><a href="#known-issues-baked-into-the-profile">Known Issues Baked Into the Profile</a></li></ol><li><a href="#the-planning-only-variant-retail-pxc-planyml">The Planning-Only Variant: retail-pxc-plan.yml</a></li><li><a href="#roadmap-mcp-access">Roadmap MCP Access</a></li><li><a href="#how-to-run-aidlc-against-this-repo">How to Run AIDLC Against This Repo</a></li><ol class="toc-sub"><li><a href="#full-autonomous-pipeline">Full autonomous pipeline</a></li><li><a href="#planning-only-no-code-no-jira-writes">Planning only (no code, no Jira writes)</a></li><li><a href="#generateupdate-the-profile">Generate/update the profile</a></li></ol><li><a href="#aidlc-session-logs">AIDLC Session Logs</a></li><li><a href="#what-aidlc-needs-from-this-repo-to-work-well">What AIDLC Needs From This Repo to Work Well</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">AIDLC-GUIDE</h1>
+        <p class="page-meta">From <code>AIDLC-GUIDE.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="aidlc-guide">AIDLC Guide<a class="anchor" href="#aidlc-guide" aria-hidden="true">#</a></h1>
+<p><strong>Agentic AI-Driven Lifecycle</strong> — Syndigo&#39;s autonomous software delivery platform. This document explains what it is, how it connects to this repo, and how to work with it.</p>
+<hr>
+<h2 id="what-is-aidlc">What Is AIDLC?<a class="anchor" href="#what-is-aidlc" aria-hidden="true">#</a></h2>
+<p>AIDLC is an autonomous software delivery system built on the Claude Agent SDK. Its job is to take a Jira ticket from <code>sdlc-ready</code> state to deployed code with a human gate only at PR review.</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">Jira ticket (sdlc-ready)
+    ↓
+AIDLC reads ticket + platform profile
+    ↓
+11-stage autonomous pipeline:
+  0.5 Run Sizer → measure blast radius (XS/S/M/L/XL)
+  1   Initiation → write acceptance criteria back to Jira
+  2   Planning   → write ADR to Confluence ARCH space
+  3   Design     → write ADD to Confluence
+  4   Development → write code; run gates (typecheck, lint, audit)
+  5   Build      → docker build, push to ACR
+  7   Test       → vitest run
+  8   Deploy     → kubectl rollout; pod health check; AC verification
+  9   Release    → tag + release notes
+  10  Close      → Jira update + cost report
+    ↓
+PR opened for human review</code></pre></div><hr>
+<h2 id="repository-location">Repository Location<a class="anchor" href="#repository-location" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">D:\Work\1_Retail_PXC\setup\aidlc</code></pre></div><p>This is a separate git repository, cloned alongside <code>retail-pxc</code>. It contains:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">aidlc/
+├── agents/                      Individual specialized Claude agents
+│   ├── sdlc/                    Main SDLC orchestrator agent
+│   ├── sdlc-trigger/            Webhook-triggered entry point
+│   ├── build/                   Build &amp; push agent
+│   ├── profile-builder/         Generates platform profiles from repos
+│   ├── discovery/               Codebase analysis agent
+│   ├── coordination-mcp/        MCP server for agent-to-agent coordination
+│   ├── readiness-mcp/           MCP server for gate checks
+│   └── lovable-mcp-gateway/     MCP gateway to Lovable reference UI
+├── shared/
+│   └── profiles/                Platform profiles — one YAML per repo/service
+│       ├── retail-pxc.yml       Profile for THIS repo (pxc-retail app)
+│       └── retail-pxc-plan.yml  Planning-only variant (stages 1-3, no code)
+├── docs/                        Operations docs, migration guides, architecture
+├── .claude/                     Skills and configs consumed by AIDLC&#x27;s own sessions
+└── agents/sessions/             Curated session logs (AIDLC-NNN-*.md = internal)</code></pre></div><hr>
+<h2 id="the-platform-profile-retail-pxcyml">The Platform Profile: <code>retail-pxc.yml</code><a class="anchor" href="#the-platform-profile-retail-pxcyml" aria-hidden="true">#</a></h2>
+<p>The profile is the connection point between AIDLC and this repo. It tells AIDLC everything it needs to build, test, and deploy code autonomously.</p>
+<p>Key things the profile declares:</p>
+<div class="table-wrap"><table><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody><tr><td>Repo</td><td><code>syndigo/retail-pxc</code></td></tr><tr><td>Jira project</td><td><code>RPC</code></td></tr><tr><td>Stack</td><td>TypeScript 5.9, TanStack Start 1.x, Nitro SSR, Node 22</td></tr><tr><td>Database</td><td>None — pure BFF proxy to upstream APIs</td></tr><tr><td>Multi-tenancy</td><td>App-level, subdomain-based</td></tr><tr><td>Auth</td><td>Session cookie pass-through to Riversand</td></tr><tr><td>Build cmd</td><td><code>pnpm build --filter=pxc-retail</code></td></tr><tr><td>Test cmd</td><td><code>pnpm test --filter=pxc-retail</code></td></tr><tr><td>Typecheck cmd</td><td><code>pnpm typecheck</code></td></tr><tr><td>Lint cmd</td><td><code>pnpm lint</code></td></tr><tr><td>Deploy</td><td>Docker 3-stage → AKS, Azure East US</td></tr><tr><td>Dev URL</td><td><code>pxcretaildev.syndigo.com/pxc/</code></td></tr></tbody></table></div><h3 id="stage-4-auto-injected-skills">Stage 4 Auto-Injected Skills<a class="anchor" href="#stage-4-auto-injected-skills" aria-hidden="true">#</a></h3>
+<p>When AIDLC runs Stage 4 (Development) for this repo, it automatically injects the <code>ux-reference-implementation</code> skill. This skill enforces:</p>
+<ul>
+<li>Component imports from <code>@syndigo/design-system/components/&lt;name&gt;</code> (not hand-rolled HTML)</li>
+<li>Reuse of existing components rather than inline primitives</li>
+<li>Consistent use of the design system&#39;s CVA variants and color tokens</li>
+</ul>
+<h3 id="known-issues-baked-into-the-profile">Known Issues Baked Into the Profile<a class="anchor" href="#known-issues-baked-into-the-profile" aria-hidden="true">#</a></h3>
+<p>The profile documents critical blockers that every developer (and AIDLC) must know:</p>
+<div class="table-wrap"><table><thead><tr><th>Issue</th><th>Impact</th><th>Status</th></tr></thead><tbody><tr><td><strong>Auth middleware is stubbed</strong></td><td><code>authMiddleware</code> falls back to <code>DEFAULT_ROLES = [&#39;syndigo-developer&#39;]</code> for all requests. Real user roles are not loaded yet.</td><td>Hard blocker for production</td></tr><tr><td><strong>No CI pipeline</strong></td><td><code>pnpm typecheck</code>, <code>pnpm lint</code>, <code>pnpm test</code> never run automatically on PRs</td><td>Broken builds can merge</td></tr><tr><td><strong>Nitro nightly dependency</strong></td><td><code>npm:nitro-nightly@latest</code> — deterministic today but will break on next update</td><td>Medium risk</td></tr><tr><td><strong>No <code>/health</code> endpoint</strong></td><td>AKS liveness/readiness probes have nothing to call</td><td>Required before prod deploy</td></tr><tr><td><strong>POST-save entity synthesized</strong></td><td>After attribute save, UI merges request body with local state instead of re-fetching</td><td>Stale data until page reload</td></tr><tr><td><strong>ACR repo doesn&#39;t exist</strong></td><td>Stage 5 (Build/Push) is blocked</td><td>Required before automated deploy</td></tr><tr><td><strong>Multiple feature stubs</strong></td><td>AttributeConflictDialog, RelationshipSearchDialog, and others are pending tickets</td><td>RPC-148, RPC-155, etc.</td></tr></tbody></table></div><hr>
+<h2 id="the-planning-only-variant-retail-pxc-planyml">The Planning-Only Variant: <code>retail-pxc-plan.yml</code><a class="anchor" href="#the-planning-only-variant-retail-pxc-planyml" aria-hidden="true">#</a></h2>
+<p>This profile runs only stages 1–3 (Initiation, Planning/ADR, Design/ADD). It writes to local Markdown files (<code>stories.md</code>, <code>decisions.md</code>, <code>design.md</code>) without touching Jira or Confluence.</p>
+<p>Use this for:</p>
+<ul>
+<li>Sprint-by-sprint story breakdown offline</li>
+<li>Architecture decisions that aren&#39;t ready for Jira</li>
+<li>Exploring design options before committing</li>
+</ul>
+<p>Sprint source: <code>roadmap</code> — reads the active sprint from the <code>roadmap.md</code> file in the resolved output folder.</p>
+<hr>
+<h2 id="roadmap-mcp-access">Roadmap MCP Access<a class="anchor" href="#roadmap-mcp-access" aria-hidden="true">#</a></h2>
+<p>AIDLC uses Claude&#39;s <strong>Model Context Protocol (MCP)</strong> to connect to external systems. The Roadmap MCP is one of these connections.</p>
+<p><strong>What it does:</strong></p>
+<ol>
+<li>Reads the active roadmap for the project (features, sprints, bolts)</li>
+<li>Resolves sprint labels and active work items</li>
+<li>Writes planning artifacts back to the correct output folder</li>
+</ol>
+<p><strong>The tools visible in this Claude Code session:</strong></p>
+<ul>
+<li><code>mcp__roadmap__authenticate</code> — initiates auth with the Roadmap MCP server</li>
+<li><code>mcp__roadmap__complete_authentication</code> — completes the OAuth flow</li>
+</ul>
+<p>These appear as deferred tools in Claude Code&#39;s context — they&#39;re the client side of the Roadmap MCP connection that AIDLC uses during the planning stages.</p>
+<p><strong>Flow during <code>/sdlc --profile retail-pxc</code>:</strong></p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">AIDLC skill starts
+  → reads retail-pxc.yml profile
+  → if sprint_source: roadmap → calls Roadmap MCP to get active sprint
+  → resolves output folder (e.g. docs/sprints/2026-Q4/)
+  → runs pipeline stages, writing artifacts to resolved paths
+  → Stage 4: spawns a Claude Code session with the retail-pxc profile baked in
+  → that session runs the skills (add-orpc-procedure, add-route, etc.) to write code</code></pre></div><hr>
+<h2 id="how-to-run-aidlc-against-this-repo">How to Run AIDLC Against This Repo<a class="anchor" href="#how-to-run-aidlc-against-this-repo" aria-hidden="true">#</a></h2>
+<h3 id="full-autonomous-pipeline">Full autonomous pipeline<a class="anchor" href="#full-autonomous-pipeline" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># From the AIDLC repo directory:</span>
+/sdlc --profile retail-pxc --ticket RPC-XXX</code></pre></div><p>This reads the Jira ticket <code>RPC-XXX</code>, runs all 11 stages, and opens a PR.</p>
+<h3 id="planning-only-no-code-no-jira-writes">Planning only (no code, no Jira writes)<a class="anchor" href="#planning-only-no-code-no-jira-writes" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">/sdlc --profile retail-pxc-plan --ticket RPC-XXX</code></pre></div><p>Writes <code>stories.md</code>, <code>decisions.md</code>, <code>design.md</code> to the local output folder.</p>
+<h3 id="generateupdate-the-profile">Generate/update the profile<a class="anchor" href="#generateupdate-the-profile" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">/profile-builder syndigo/retail-pxc</code></pre></div><p>Introspects the repo and generates/updates <code>shared/profiles/retail-pxc.yml</code>.</p>
+<hr>
+<h2 id="aidlc-session-logs">AIDLC Session Logs<a class="anchor" href="#aidlc-session-logs" aria-hidden="true">#</a></h2>
+<p>Past AIDLC sessions for this repo appear in <code>aidlc/agents/sessions/</code> as <code>RPC-NNN-*.md</code> files. These are curated logs showing how AIDLC approached a specific ticket — useful context for understanding previous design decisions.</p>
+<p><code>GDI-NNNN-*.md</code> files are sessions for other repos (Global DevOps Infra and others) — ignore them for retail-pxc work.</p>
+<hr>
+<h2 id="what-aidlc-needs-from-this-repo-to-work-well">What AIDLC Needs From This Repo to Work Well<a class="anchor" href="#what-aidlc-needs-from-this-repo-to-work-well" aria-hidden="true">#</a></h2>
+<p>For AIDLC to write accurate code autonomously, the following must be in place:</p>
+<div class="table-wrap"><table><thead><tr><th>Need</th><th>Current State</th><th>Fix</th></tr></thead><tbody><tr><td>Platform profile</td><td><code>retail-pxc.yml</code> exists</td><td>Keep updated as stack changes</td></tr><tr><td>Knowledge base</td><td><code>.claude/knowledge/</code> exists</td><td>Run <code>knowledge-sync</code> after changes</td></tr><tr><td>CI pipeline</td><td>Not yet set up</td><td><code>/cicd-configure</code> skill</td></tr><tr><td>Auth stub resolved</td><td>Stubbed</td><td>Wire real role fetch before Stage 8 AC verify</td></tr><tr><td>Recipes directory</td><td>Empty</td><td>Add cross-skill recipes as patterns emerge</td></tr></tbody></table></div><p>The more accurate and up-to-date the knowledge base is, the more accurately AIDLC will generate code that compiles and passes gates on the first attempt.</p>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>README</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#forms-knowledge-base">Forms — Knowledge Base</a></li><ol class="toc-sub"><li><a href="#files">Files</a></li><li><a href="#scope">Scope</a></li><li><a href="#architecture">Architecture</a></li><li><a href="#design-patterns">Design Patterns</a></li><li><a href="#flow">Flow</a></li><li><a href="#reusable-components">Reusable Components</a></li><li><a href="#related-kb">Related KB</a></li><li><a href="#last-verified">Last verified</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">README</h1>
+        <p class="page-meta">From <code>README.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="forms-knowledge-base">Forms — Knowledge Base<a class="anchor" href="#forms-knowledge-base" aria-hidden="true">#</a></h1>
+<p><strong>Modules owned:</strong> <code>apps/*/src/components/**/use-*-form.ts</code>, <code>apps/*/src/components/**/*-schema.ts</code>, <code>packages/app-shell/src/components/UnsavedChangesGuard.tsx</code>, <code>apps/*/src/components/_shared/UnsavedChangesGuard.tsx</code>, components that call <code>useForm</code> directly (vendor profile dialogs, tenant-management feature/mapping/entitlement forms; full list in the registry)
+<strong>Entry points:</strong> <code>useForm</code> (TanStack Form), <code>UnsavedChangesGuard</code>
+<strong>Last verified:</strong> 2026-10-26 | commit <code>f57ed86</code> | branch <code>feature/RPC-135-document-management-core</code></p>
+<p>TanStack Form usage patterns across both apps. Larger forms (wizards, forms whose state is shared across sibling components) extract a <code>use-*-form.ts</code> factory that wraps <code>useForm</code>, plus a <code>*-schema.ts</code> for Zod validation and form ↔ API shape conversion. Self-contained forms and dialogs call <code>useForm</code> directly in the component. The shared <code>UnsavedChangesGuard</code> blocks navigation when a form has unsaved changes.</p>
+<h2 id="files">Files<a class="anchor" href="#files" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Doc</th><th>Covers</th></tr></thead><tbody><tr><td><code>README.md</code></td><td>scope, architecture, flow, patterns, reusable surface, related KB</td></tr><tr><td><code>contracts.md</code></td><td>factory hook signatures, guard props, schema shape samples</td></tr></tbody></table></div><h2 id="scope">Scope<a class="anchor" href="#scope" aria-hidden="true">#</a></h2>
+<p><strong>In scope:</strong> <code>useForm</code> factory pattern, <code>defaultValues</code> + Zod schema structure, dirtiness via <code>isDefaultValue</code>, submit-button disabled conditions, <code>UnsavedChangesGuard</code>, per-step wizard validation.
+<strong>Out of scope:</strong> i18n for form labels (→ <code>PATTERNS.md</code>), route <code>beforeLoad</code> access guards (→ <code>permissions</code>), mutation error toasts on submit failures (→ <code>error-handling</code>).</p>
+<h2 id="architecture">Architecture<a class="anchor" href="#architecture" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Layer</th><th>Module</th><th>Export</th><th>Responsibility</th></tr></thead><tbody><tr><td>Form factory (optional)</td><td><code>apps/*/src/components/**/use-*-form.ts</code></td><td><code>useXxxForm</code>, <code>XxxForm</code> type</td><td>Wraps <code>useForm</code>; owns <code>defaultValues</code> and <code>onSubmit</code> adapter</td></tr><tr><td>Schema</td><td><code>apps/*/src/components/**/*-schema.ts</code></td><td>Zod schemas, default-value objects, transform fns</td><td>Input validation; form ↔ API shape conversion</td></tr><tr><td>Guard (base)</td><td><code>packages/app-shell/src/components/UnsavedChangesGuard.tsx</code></td><td><code>UnsavedChangesGuard</code></td><td>Blocks route navigation when <code>when</code> is true via <code>useBlocker</code>; arms native <code>beforeUnload</code></td></tr><tr><td>Guard (app)</td><td><code>apps/*/src/components/_shared/UnsavedChangesGuard.tsx</code></td><td><code>UnsavedChangesGuard</code> (localized)</td><td>Supplies translated strings; exposes only <code>when</code> and <code>blockedSearchParams</code> to callers</td></tr></tbody></table></div><h2 id="design-patterns">Design Patterns<a class="anchor" href="#design-patterns" aria-hidden="true">#</a></h2>
+<p><strong>Factory + derived type (when shared)</strong> — extract a <code>useXxxForm</code> hook that returns the <code>useForm</code> instance when the form spans several components or wizard steps (e.g. <code>useBankingForm</code> in <code>BankingCard.tsx</code>, whose <code>BankingEditForm</code> child takes the form as a prop); a self-contained dialog or form can call <code>useForm</code> inline (e.g. <code>FeatureDefinitionForm.tsx</code>). A <code>type XxxForm = ReturnType&lt;typeof useXxxForm&gt;</code> alias is exported so sibling components accept the form as a prop without importing the hook.</p>
+<p><strong><code>isDefaultValue</code> for dirtiness, never <code>isDirty</code></strong> — <code>isDefaultValue</code> is a live deep-equality check that returns to <code>true</code> when the user restores the original value. <code>isDirty</code> latches on first change and never self-corrects without an explicit <code>form.reset()</code>. See <code>PATTERNS.md</code>.</p>
+<p><strong><code>form.Subscribe</code> for reactive reads</strong> — always read <code>form.state.*</code> inside a <code>form.Subscribe</code> selector so only the subscribing subtree re-renders. Do not read <code>form.state</code> directly in the component body.</p>
+<p><strong>Per-step validation in wizards</strong> — call <code>form.validateField(name, &#39;change&#39;)</code> for each field in the current step and gate the &quot;Next&quot; button on all calls returning empty-error arrays. A single flat <code>useForm</code> instance spans all wizard steps; <code>stepFieldNames</code> maps step numbers to their field keys.</p>
+<p><strong>Action dialogs are the exception to the submit gate</strong> — a dialog whose submit runs an action on its default values rather than saving edits (<code>DownloadAuditHistoryDialog</code>: export with default filters) disables submit only while the mutation is pending, not on <code>isDefaultValue</code>. Saving dialogs keep the full gate in <code>contracts.md</code>.</p>
+<p><strong>Two-phase submit with an acknowledgement dialog</strong> — for forms with soft (non-blocking) warnings after hard validation passes (<code>AddressDialog</code>, <code>ContactDialog</code>). In <code>onSubmit</code>: (1) run hard rules and return on violations via <code>applyIssuesToFields</code>; (2) collect soft warnings → stash the pending save, open the warnings dialog. The dialog has a checkbox and an &quot;Ignore &amp; save&quot; button gated on the checkbox; &quot;Fix issues&quot; clears the pending save and closes. The rule functions live in a pure, unit-tested sibling module — <code>validateAddressRules</code>/<code>computeAddressWarnings</code> for addresses, and <code>contact-validation.ts</code> (<code>findDuplicateEmail</code> as the CT-004 hard block, <code>collectContactWarnings</code> for the CT-005/CT-014 soft set) for <code>ContactDialog</code>. Two minor variants of stashing the pending save coexist: <code>AddressDialog</code> stores the mutation callback in a <code>useRef</code>; <code>ContactDialog</code> stores the normalized values in <code>useState</code> and calls a <code>persist(values)</code> helper. Reuse this pattern for any future acknowledgement-gated save. <strong>Inline variant</strong> — <code>DocumentUploadDialog</code> (vendor document upload / new-version) keeps the warnings inline rather than in a separate dialog: a <code>form.Subscribe</code> on the file renders a warnings panel with an <code>acknowledge</code> checkbox when a duplicate filename is detected (DC-002), and the submit button is gated on <code>warnings.length === 0 || acknowledge</code>. Its hard rules (DC-001/004–006/010–017, including the type-specific CoI / FDA / GFSI / W-9 fields chosen by <code>documentType</code> and rendered via a <code>form.Subscribe</code> on it) run in a local <code>validate()</code> on submit through <code>applyIssuesToFields</code>; the Zod resource schema lives in <code>@repo/core-contracts</code> (<code>TenantVendorDocumentSchema</code>), not a local <code>*-schema.ts</code>.</p>
+<p><strong>Save-time validation with an error summary</strong> — the single Banking profile (<code>BankingCard</code>, card-level edit, not the page <code>EditModeProvider</code>) validates on Save rather than per-field blur: it runs <code>validateBankingRules</code> on the form values, applies per-field errors via <code>applyIssuesToFields</code>, shows an error-count toast (<code>&quot;N errors must be fixed before saving&quot;</code>) and focuses the first invalid field. Account Number and Tax ID are write-only — blank means &quot;leave blank to keep ••••NNNN&quot; and skips their rules (<code>accountNumberRequired</code> / <code>taxIdRequired</code>). Soft warnings (BK-002/004/015) reuse the acknowledgement dialog via <code>BankingWarningsDialog</code>. A validation-state banner shows &quot;All banking details passed validation&quot; / &quot;Bank details failed validation&quot; (no AI — the prior &quot;verified by AI&quot; wording was withdrawn). <strong>INTERIM</strong>: these rules move server-side under RPC-150.</p>
+<p><strong>Blur validation with cross-field rules</strong> — when a form has multi-field validation logic (e.g. <code>validateAddressRules</code> checks addressType together with both street lines), add <code>validators.onBlur</code> to each validated field. The blur validator reads <code>fieldApi.form.state.values</code> to access sibling field values and returns the translation key of the first matching violation, or <code>undefined</code> when clean. Errors only surface once a field is touched: <code>fieldError</code> (in <code>field-utils.ts</code>) gates on <code>field.state.meta.isTouched</code>, so <code>onBlur</code> alone is sufficient — no <code>onChange</code> guard is needed to suppress errors on untouched fields. When one field&#39;s value affects another field&#39;s rules (e.g. addressType affects the PO Box check on both street lines), call <code>void form.validateField(&#39;fieldName&#39;, &#39;blur&#39;)</code> inside the first field&#39;s <code>onValueChange</code> so the dependent fields re-evaluate without marking them as touched artificially.</p>
+<h2 id="flow">Flow<a class="anchor" href="#flow" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Hop</th><th>Condition</th><th>Envelope</th><th>Mutates</th></tr></thead><tbody><tr><td>Component mounts</td><td>always</td><td><code>useXxxForm</code> returns instance; <code>isDefaultValue: true</code>, guard off, submit disabled</td><td>no</td></tr><tr><td>User edits a field</td><td>value ≠ default</td><td><code>isDefaultValue → false</code>; guard arms; submit enabled if also valid</td><td>form state</td></tr><tr><td>User restores original value</td><td>value === default</td><td><code>isDefaultValue → true</code>; guard disarms; submit disabled</td><td>form state</td></tr><tr><td>User clicks submit</td><td><code>!isDefaultValue &amp;&amp; isValid &amp;&amp; !isSubmitting</code></td><td><code>form.handleSubmit()</code> → <code>isSubmitting: true</code>; submit disabled</td><td>form state</td></tr><tr><td><code>onSubmit</code> resolves</td><td>success</td><td>mutation fires; caller resets form or remounts with new defaults</td><td>form state</td></tr><tr><td>User navigates away dirty</td><td><code>when === true</code></td><td>guard dialog: &quot;Keep&quot; → <code>guard.reset()</code> (stay); &quot;Discard&quot; → <code>guard.proceed()</code> (navigate)</td><td>router</td></tr></tbody></table></div><h2 id="reusable-components">Reusable Components<a class="anchor" href="#reusable-components" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Export</th><th>From</th><th>Use</th></tr></thead><tbody><tr><td><code>UnsavedChangesGuard</code></td><td><code>apps/*/src/components/_shared/UnsavedChangesGuard.tsx</code></td><td>Render inside the form; pass <code>when={canEdit &amp;&amp; !form.state.isDefaultValue}</code></td></tr><tr><td><code>DateRangeField</code></td><td><code>apps/pxc-retail/src/components/vendor/_shared/forms/DateRangeField.tsx</code></td><td><code>Popover</code> + <code>Calendar(mode=&quot;range&quot;)</code> date-range input; pass <code>disabled={{ after: today }}</code>-style clamps through props</td></tr><tr><td>Base <code>UnsavedChangesGuard</code></td><td><code>packages/app-shell/src/components/UnsavedChangesGuard.tsx</code></td><td>Starting point for a new app&#39;s guard wrapper; supply translated label props</td></tr></tbody></table></div><h2 id="related-kb">Related KB<a class="anchor" href="#related-kb" aria-hidden="true">#</a></h2>
+<ul>
+<li><code>error-handling</code> — mutation error toasts on submit failures; <code>meta.errorToast</code> for per-mutation suppression or override</li>
+<li><code>permissions</code> — route <code>beforeLoad</code> access guards that block the page before the form renders; separate from the unsaved-changes guard</li>
+</ul>
+<h2 id="last-verified">Last verified<a class="anchor" href="#last-verified" aria-hidden="true">#</a></h2>
+<p>2026-10-26 | commit <code>f57ed86</code> | branch <code>feature/RPC-135-document-management-core</code></p>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

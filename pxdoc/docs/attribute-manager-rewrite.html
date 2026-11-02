@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>attribute-manager-rewrite</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#react-rewrite-attributemanage-attributelist-attributeitem">React Rewrite: AttributeManage, AttributeList, AttributeItem</a></li><ol class="toc-sub"><li><a href="#source-repository">Source Repository</a></li><li><a href="#target-location">Target Location</a></li><li><a href="#context">Context</a></li><li><a href="#what-these-components-do">What These Components Do</a></li><ol class="toc-sub"><li><a href="#rock-attribute-manage-v2-orchestrator">rock-attribute-manage-v2 (orchestrator)</a></li><li><a href="#rock-attribute-list-v2-presentational-grouping-layer">rock-attribute-list-v2 (presentational grouping layer)</a></li><li><a href="#rock-attribute-v2-individual-attribute-input">rock-attribute-v2 (individual attribute input)</a></li></ol><li><a href="#typescript-types">TypeScript Types</a></li><ol class="toc-sub"><li><a href="#attributemodelproperties">AttributeModelProperties</a></li><li><a href="#normalizedattributevalue-runtime-value">NormalizedAttributeValue (runtime value)</a></li><li><a href="#governmessage">GovernMessage</a></li><li><a href="#dnarow-dnavalue-deeply-nested-value-shape">DnaRow / DnaValue (deeply-nested value shape)</a></li><li><a href="#valuecontext">ValueContext</a></li><li><a href="#normalizedentity">NormalizedEntity</a></li><li><a href="#attributeconflict">AttributeConflict</a></li><li><a href="#raw-riversand-normalized-name-map">Raw Riversand → normalized name map</a></li><li><a href="#datatype-input-mapping">DataType → Input mapping</a></li></ol><li><a href="#api-interactions">API Interactions</a></li><ol class="toc-sub"><li><a href="#api-stack">API Stack</a></li><li><a href="#regenerating-types">Regenerating types</a></li><li><a href="#rpc-procedure-surface">RPC procedure surface</a></li><li><a href="#query-usage-in-product-catalog-components">Query usage in product-catalog components</a></li><li><a href="#base-url-pattern-datapass-through">Base URL pattern: /data/pass-through/&lt;service&gt;/&lt;action&gt;</a></li><li><a href="#api-call-inventory">API Call Inventory</a></li></ol><li><a href="#component-tree">Component Tree</a></li><li><a href="#state-architecture">State Architecture</a></li><ol class="toc-sub"><li><a href="#attributemanagecontext">AttributeManageContext</a></li></ol><li><a href="#infrastructure-replacements">Infrastructure Replacements</a></li><li><a href="#key-files-to-create">Key Files to Create</a></li><ol class="toc-sub"><li><a href="#already-implemented-in-this-repo">Already implemented in this repo</a></li><li><a href="#appspxc-retailsrccomponentsattribute-manager-current-status">apps/pxc-retail/src/components/attribute-manager — current status</a></li></ol><li><a href="#implementation-order">Implementation Order</a></li><li><a href="#verification">Verification</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">attribute-manager-rewrite</h1>
+        <p class="page-meta">From <code>attribute-manager-rewrite.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="react-rewrite-attributemanage-attributelist-attributeitem">React Rewrite: AttributeManage, AttributeList, AttributeItem<a class="anchor" href="#react-rewrite-attributemanage-attributelist-attributeitem" aria-hidden="true">#</a></h1>
+<h2 id="source-repository">Source Repository<a class="anchor" href="#source-repository" aria-hidden="true">#</a></h2>
+<blockquote class="blockquote"><p><strong>At the start of any session working on this rewrite, ask the user for the path to the <code>ui-platform-business-components-v2</code> checkout</strong> — e.g. &quot;What&#39;s the local path to the ui-platform-business-components-v2 repo?&quot;</p>
+</blockquote><p>Key files to read once the path is known:</p>
+<ul>
+<li><code>&lt;root&gt;/src/elements/rock-attribute-manage-v2/rock-attribute-manage-v2.js</code> — 4,279 lines</li>
+<li><code>&lt;root&gt;/src/elements/rock-attribute-list-v2/rock-attribute-list-v2.js</code> — 3,507 lines</li>
+<li><code>&lt;root&gt;/src/elements/rock-attribute-v2/rock-attribute-v2.js</code> — 5,034 lines</li>
+<li><code>&lt;root&gt;/src/helpers/</code> — DataRequestHelper, DataTransformHelper, DataHelper, ReferenceEntityHelper</li>
+</ul>
+<hr>
+<h2 id="target-location">Target Location<a class="anchor" href="#target-location" aria-hidden="true">#</a></h2>
+<p>This rewrite lives directly in the <strong><code>apps/pxc-retail</code></strong> app under:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">apps/pxc-retail/src/components/attribute-manager/
+  types.ts
+  context/
+  components/
+    AttributeManage/
+    AttributeList/
+    AttributeItem/
+  test/</code></pre></div><p>No separate package — it is co-located app code, not a publishable library. Conventions:</p>
+<ul>
+<li>Inherits pxc-retail&#39;s TypeScript config, ESLint config, and Vitest setup</li>
+<li>Import via the <code>#/</code> alias: <code>import { AttributeManage } from &#39;#/components/attribute-manager/...&#39;</code></li>
+<li>Consumes <code>@syndigo/design-system/components/*</code> for UI primitives</li>
+</ul>
+<hr>
+<h2 id="context">Context<a class="anchor" href="#context" aria-hidden="true">#</a></h2>
+<p>These three LitElement web components form the core attribute editing UI in the Riversand MDM platform. They are being rewritten in React inside the retail-pxc monorepo. No LitElement infrastructure, no Polymer/RUF managers. The goal is to replicate all behaviors (attribute display/edit, validation, save/revert, grouping, filtering, AI features, dependent attributes, conflict resolution) using idiomatic React with modern tooling.</p>
+<p><strong>Stack decisions:</strong> TypeScript + Tailwind, TanStack Query + fetch, useReducer + Context for state, <code>@syndigo/design-system</code> (shadcn/base-nova preset) for UI primitives.</p>
+<p><strong>Architecture notes:</strong></p>
+<ul>
+<li><strong>AttributeLov is layered.</strong> The reusable UI lives in <code>@syndigo/design-system</code> (<code>SearchableCombobox</code> — generic search-driven combobox built on base-ui Combobox + <code>ComboboxVirtualList</code>). The TanStack-Query wiring (debounce, open-gated fetch, page flattening) lives in <code>apps/pxc-retail/src/components/query-combobox.tsx</code> (<code>QueryCombobox</code>). Domain glue (<code>RefEntity</code> ↔ <code>NormalizedAttributeValue</code> adapters, <code>AttributeManageContext</code> dispatch, oRPC procedure) stays in <code>AttributeLov.tsx</code>. The same <code>QueryCombobox</code> is reusable for any other &quot;click → search server-side → pick&quot; pattern in the app.</li>
+</ul>
+<hr>
+<h2 id="what-these-components-do">What These Components Do<a class="anchor" href="#what-these-components-do" aria-hidden="true">#</a></h2>
+<h3 id="rock-attribute-manage-v2-orchestrator">rock-attribute-manage-v2 (orchestrator)<a class="anchor" href="#rock-attribute-manage-v2-orchestrator" aria-hidden="true">#</a></h3>
+<ul>
+<li>Fetches entity data and composite attribute models via REST API on context change</li>
+<li>Manages the full edit lifecycle: dirty state → sync validation → save → post-save refresh</li>
+<li>Handles attribute conflict detection (server auto-updates vs. user changes)</li>
+<li>Owns the save/cancel bar visibility and DQS (Data Quality Score) dirty state signaling</li>
+<li>Triggers AI content generation and content translation workflows</li>
+<li>Checks for duplicate entities before save (when <code>checkDuplicatesOnUpdate</code> is set)</li>
+</ul>
+<h3 id="rock-attribute-list-v2-presentational-grouping-layer">rock-attribute-list-v2 (presentational grouping layer)<a class="anchor" href="#rock-attribute-list-v2-presentational-grouping-layer" aria-hidden="true">#</a></h3>
+<ul>
+<li>Groups attributes by <code>groupName</code> into collapsible panels</li>
+<li>Renders each attribute via <code>rock-attribute-v2</code> in a 1–3 column grid or PDP layout</li>
+<li>Handles virtual scrolling for large attribute lists (<code>attributesChunkLength</code> threshold)</li>
+<li>Accumulates client-side and server-side validation errors, tracks error counts per group</li>
+<li>Manages dependent attribute updates when source attribute values change</li>
+<li>Supports filtering: by attribute names, search text, empty values, content-gen filters</li>
+</ul>
+<h3 id="rock-attribute-v2-individual-attribute-input">rock-attribute-v2 (individual attribute input)<a class="anchor" href="#rock-attribute-v2-individual-attribute-input" aria-hidden="true">#</a></h3>
+<ul>
+<li>Renders a single attribute input appropriate to its <code>dataType</code> + <code>displayType</code></li>
+<li>Supports view and edit modes, with inline mode switching</li>
+<li>Shows validation errors, revert icon, history icon, clear icon</li>
+<li>Handles locale-aware display (coalesced values from other locales/contexts)</li>
+<li>Handles reference attribute lookups (LOV with search and pagination)</li>
+<li>Supports marketplace source display, AI suggestion highlighting, image analysis integration</li>
+<li>Fires <code>attribute-value-changed</code> events that bubble up through the list to the manage component</li>
+</ul>
+<hr>
+<h2 id="typescript-types">TypeScript Types<a class="anchor" href="#typescript-types" aria-hidden="true">#</a></h2>
+<blockquote class="blockquote"><p>The raw Riversand API shapes are complex (see the lit source). Below are the <strong>normalized types</strong> we actually use in <code>packages/attribute-manager/src/types.ts</code>. They strip Riversand-specific metadata and flatten the value structure for React consumption.</p>
+</blockquote><h3 id="attributemodelproperties">AttributeModelProperties<a class="anchor" href="#attributemodelproperties" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">AttributeDataType</span> = <span class="hljs-string">&#x27;string&#x27;</span> | <span class="hljs-string">&#x27;integer&#x27;</span> | <span class="hljs-string">&#x27;decimal&#x27;</span> | <span class="hljs-string">&#x27;boolean&#x27;</span> | <span class="hljs-string">&#x27;date&#x27;</span> | <span class="hljs-string">&#x27;datetime&#x27;</span> | <span class="hljs-string">&#x27;nested&#x27;</span> | <span class="hljs-string">&#x27;deeplynested&#x27;</span>
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">AttributeDisplayType</span> = <span class="hljs-string">&#x27;textbox&#x27;</span> | <span class="hljs-string">&#x27;textarea&#x27;</span> | <span class="hljs-string">&#x27;richtexteditor&#x27;</span> | <span class="hljs-string">&#x27;dropdown&#x27;</span> | <span class="hljs-string">&#x27;boolean&#x27;</span>
+  | <span class="hljs-string">&#x27;date&#x27;</span> | <span class="hljs-string">&#x27;datetime&#x27;</span> | <span class="hljs-string">&#x27;referencelist&#x27;</span> | <span class="hljs-string">&#x27;path&#x27;</span> | <span class="hljs-string">&#x27;nestedgrid&#x27;</span> | <span class="hljs-string">&#x27;address&#x27;</span>
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">AttributeModelProperties</span> = {
+  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">externalName</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">dataType</span>: <span class="hljs-title class_">AttributeDataType</span>
+  <span class="hljs-attr">displayType</span>?: <span class="hljs-title class_">AttributeDisplayType</span>
+  <span class="hljs-attr">isLocalizable</span>?: <span class="hljs-built_in">boolean</span>
+  <span class="hljs-attr">isCollection</span>?: <span class="hljs-built_in">boolean</span>
+  <span class="hljs-attr">readOnly</span>?: <span class="hljs-built_in">boolean</span>
+  <span class="hljs-attr">required</span>?: <span class="hljs-built_in">boolean</span>
+  <span class="hljs-attr">groupName</span>?: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">referenceEntityTypes</span>?: <span class="hljs-built_in">string</span>[]
+  <span class="hljs-attr">allowedValues</span>?: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">value</span>: <span class="hljs-built_in">string</span> }&gt;       <span class="hljs-comment">// dropdown options</span>
+  <span class="hljs-attr">nestedAttributes</span>?: <span class="hljs-title class_">AttributeModelProperties</span>[]              <span class="hljs-comment">// nested grid children</span>
+  <span class="hljs-comment">// UOM — populated on numeric attributes that carry a unit of measure</span>
+  <span class="hljs-attr">uomEntityInfo</span>?: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">uomEntityType</span>: <span class="hljs-built_in">string</span> }&gt;
+  <span class="hljs-attr">uomAllowedUnitSymbols</span>?: <span class="hljs-built_in">string</span>[]
+  <span class="hljs-attr">defaultUom</span>?: <span class="hljs-built_in">string</span>
+  <span class="hljs-comment">// Deeply-nested children — array of records keyed by child attribute name.</span>
+  <span class="hljs-comment">// Children may themselves be `deeplynested`, hence the recursion. The Zod</span>
+  <span class="hljs-comment">// schema uses `z.lazy` + an explicit `z.ZodType&lt;AttributeModelProperties&gt;`</span>
+  <span class="hljs-comment">// annotation, because Zod can&#x27;t infer output types of recursive schemas.</span>
+  <span class="hljs-attr">group</span>?: <span class="hljs-title class_">Array</span>&lt;<span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">AttributeModelProperties</span>&gt;&gt;
+  <span class="hljs-attr">properties</span>?: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">unknown</span>&gt;
+}</code></pre></div><h3 id="normalizedattributevalue-runtime-value">NormalizedAttributeValue (runtime value)<a class="anchor" href="#normalizedattributevalue-runtime-value" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">NormalizedAttributeValue</span> = {
+  <span class="hljs-attr">locale</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">source</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">value</span>: <span class="hljs-built_in">unknown</span>
+  <span class="hljs-attr">uom</span>?: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">string</span>[]
+  <span class="hljs-attr">referenceDataId</span>?: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">string</span>[]
+  <span class="hljs-attr">properties</span>?: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">unknown</span>&gt;
+  <span class="hljs-attr">action</span>?: <span class="hljs-string">&#x27;delete&#x27;</span>
+}</code></pre></div><h3 id="governmessage">GovernMessage<a class="anchor" href="#governmessage" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">GovernMessage</span> = {
+  <span class="hljs-attr">messageCode</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">messageType</span>: <span class="hljs-string">&#x27;error&#x27;</span> | <span class="hljs-string">&#x27;warning&#x27;</span> | <span class="hljs-string">&#x27;info&#x27;</span>
+  <span class="hljs-attr">attributeName</span>?: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">message</span>?: <span class="hljs-built_in">string</span>
+  <span class="hljs-comment">// Path to the offending cell inside a deeply-nested attribute. Alternates</span>
+  <span class="hljs-comment">// row-index (number) and child attribute name (string), root-to-leaf.</span>
+  <span class="hljs-comment">// Empty / omitted for flat attributes.</span>
+  <span class="hljs-comment">//   [1, &#x27;ingredient_name&#x27;]             → row 1, ingredient_name field</span>
+  <span class="hljs-comment">//   [0, &#x27;audits&#x27;, 1, &#x27;auditor&#x27;]        → row 0, audits row 1, auditor field</span>
+  <span class="hljs-attr">path</span>?: <span class="hljs-title class_">Array</span>&lt;<span class="hljs-built_in">string</span> | <span class="hljs-built_in">number</span>&gt;
+}</code></pre></div><h3 id="dnarow-dnavalue-deeply-nested-value-shape">DnaRow / DnaValue (deeply-nested value shape)<a class="anchor" href="#dnarow-dnavalue-deeply-nested-value-shape" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// One record inside a deeply-nested attribute — child attribute name → cells.</span>
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">DnaRow</span> = <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">NormalizedAttributeValue</span>[]&gt;
+
+<span class="hljs-comment">// Runtime payload for a `deeplynested` attribute value, stored as the `value`</span>
+<span class="hljs-comment">// of a single NormalizedAttributeValue:</span>
+<span class="hljs-comment">//   isCollection: true  → value is DnaRow[]</span>
+<span class="hljs-comment">//   isCollection: false → value is a single DnaRow</span>
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">DnaValue</span> = <span class="hljs-title class_">DnaRow</span> | <span class="hljs-title class_">DnaRow</span>[]</code></pre></div><h3 id="valuecontext">ValueContext<a class="anchor" href="#valuecontext" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">ValueContext</span> = {
+  <span class="hljs-attr">locale</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">source</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">channel</span>?: <span class="hljs-built_in">string</span>
+}</code></pre></div><h3 id="normalizedentity">NormalizedEntity<a class="anchor" href="#normalizedentity" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">NormalizedEntity</span> = {
+  <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">attributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">NormalizedAttributeValue</span>[]&gt;
+}</code></pre></div><h3 id="attributeconflict">AttributeConflict<a class="anchor" href="#attributeconflict" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">AttributeConflict</span> = {
+  <span class="hljs-attr">attributeName</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">serverValues</span>: <span class="hljs-title class_">NormalizedAttributeValue</span>[]
+  <span class="hljs-attr">userValues</span>: <span class="hljs-title class_">NormalizedAttributeValue</span>[]
+}</code></pre></div><h3 id="raw-riversand-normalized-name-map">Raw Riversand → normalized name map<a class="anchor" href="#raw-riversand-normalized-name-map" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>Riversand (lit source)</th><th>Normalized (our types)</th></tr></thead><tbody><tr><td><code>AttributeModelObject</code></td><td><code>AttributeModelProperties</code></td></tr><tr><td><code>AttributeObject</code></td><td><code>NormalizedAttributeValue[]</code> (array per attribute)</td></tr><tr><td><code>ValidationMessage</code></td><td><code>GovernMessage</code></td></tr><tr><td><code>ConflictAttribute</code></td><td><code>AttributeConflict</code></td></tr><tr><td><code>valueContexts[].locale + source + channel</code></td><td><code>ValueContext</code></td></tr></tbody></table></div><h3 id="datatype-input-mapping">DataType → Input mapping<a class="anchor" href="#datatype-input-mapping" aria-hidden="true">#</a></h3>
+<p>✅ = implemented · ❌ = falls through to read-only placeholder · 🔲 = planned component not yet built</p>
+<div class="table-wrap"><table><thead><tr><th>dataType</th><th>displayType</th><th>React component</th><th>Status</th></tr></thead><tbody><tr><td>string</td><td>textbox</td><td><code>&lt;Input type=&quot;text&quot;&gt;</code></td><td>✅</td></tr><tr><td>string</td><td>textarea</td><td><code>&lt;Textarea&gt;</code></td><td>✅</td></tr><tr><td>string</td><td>dropdown</td><td><code>&lt;Select&gt;</code> from <code>allowedValues</code></td><td>✅</td></tr><tr><td>string</td><td>referencelist</td><td><code>&lt;AttributeLov&gt;</code> — Combobox, single + multi</td><td>✅</td></tr><tr><td>string</td><td>richtexteditor</td><td>no component yet — falls to textbox</td><td>🔲 needs design-system component first</td></tr><tr><td>integer</td><td>textbox</td><td><code>&lt;Input type=&quot;number&quot; step=&quot;1&quot;&gt;</code></td><td>✅</td></tr><tr><td>decimal</td><td>textbox</td><td><code>&lt;Input type=&quot;number&quot; step=&quot;any&quot;&gt;</code></td><td>✅</td></tr><tr><td>integer / decimal</td><td>+ UOM</td><td><code>&lt;UomInput&gt;</code></td><td>✅</td></tr><tr><td>boolean</td><td>boolean</td><td><code>&lt;Checkbox&gt;</code></td><td>✅</td></tr><tr><td>date</td><td>date</td><td><code>&lt;Input type=&quot;date&quot;&gt;</code></td><td>✅</td></tr><tr><td>datetime</td><td>datetime</td><td><code>&lt;Input type=&quot;datetime-local&quot;&gt;</code></td><td>✅</td></tr><tr><td>nested</td><td>nestedgrid</td><td><code>&lt;NestedAttributeGrid&gt;</code> — tabular, add/delete rows</td><td>✅</td></tr><tr><td>path</td><td>path</td><td><code>&lt;PathSelector&gt;</code></td><td>❌</td></tr><tr><td>deeplynested</td><td>—</td><td><code>&lt;DnaManage&gt;</code> modal</td><td>✅ recursive at any depth — level 0 uses split-panel (tab sidebar + form), level &gt; 0 uses vertical accordion stack (no width consumed per level). Lazy mount via controlled open state makes circular model references safe. Empty collections allowed.</td></tr></tbody></table></div><hr>
+<h2 id="api-interactions">API Interactions<a class="anchor" href="#api-interactions" aria-hidden="true">#</a></h2>
+<p>All Riversand API calls are exposed as oRPC procedures in <code>@syndigo/orpc</code>, following the same contract-first pattern as <code>vendorCentral</code>. The <code>packages/attribute-manager</code> React package consumes them via the isomorphic oRPC client (<code>orpc.attributeManager.*</code>) using TanStack Query.</p>
+<h3 id="api-stack">API Stack<a class="anchor" href="#api-stack" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">specs/riversand-attribute-api.yaml      ← OpenAPI spec for Riversand pass-through API
+       ↓  pnpm generate:attribute-api
+src/generated/riversand-attribute-api.d.ts   ← auto-generated TS types
+       ↓
+src/clients/riversand-attribute-api.ts  ← openapi-fetch client (RiversandAttributeApiClient)
+       ↓
+src/middleware/api-client.ts            ← injects context.attributeApi alongside context.api
+       ↓
+src/procedures/attribute-manager/*.ts  ← call context.attributeApi, map raw → normalized
+       ↓
+@repo/core-contracts attributeManager  ← Zod contracts define clean input/output types
+       ↓
+orpc.attributeManager.*                ← consumed in packages/attribute-manager via useSuspenseQuery / useMutation</code></pre></div><h3 id="regenerating-types">Regenerating types<a class="anchor" href="#regenerating-types" aria-hidden="true">#</a></h3>
+<p><code>generate</code> runs automatically before <code>build</code> and <code>typecheck</code> via the Turbo pipeline. To regenerate in isolation (e.g. while iterating on the spec):</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm --filter=@syndigo/orpc generate:attribute-api</code></pre></div><h3 id="rpc-procedure-surface">RPC procedure surface<a class="anchor" href="#rpc-procedure-surface" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript">orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">entity</span>.<span class="hljs-property">get</span>           <span class="hljs-comment">// fetch entity + optional govern data</span>
+orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">entity</span>.<span class="hljs-property">create</span>        <span class="hljs-comment">// create new entity</span>
+orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">entity</span>.<span class="hljs-property">update</span>        <span class="hljs-comment">// update attribute values</span>
+orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">entity</span>.<span class="hljs-property">validate</span>      <span class="hljs-comment">// debounced server-side validation (300ms)</span>
+orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">compositeModel</span>.<span class="hljs-property">get</span>   <span class="hljs-comment">// fetch attribute model definitions</span>
+orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">reference</span>.<span class="hljs-property">getData</span>    <span class="hljs-comment">// fetch reference entities for LOV</span>
+orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">reference</span>.<span class="hljs-property">getModel</span>   <span class="hljs-comment">// fetch reference entity model</span>
+orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">aiContent</span>.<span class="hljs-property">generate</span>   <span class="hljs-comment">// AI content generation</span>
+orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">duplicate</span>.<span class="hljs-property">check</span>      <span class="hljs-comment">// pre-save duplicate detection</span>
+orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">uom</span>.<span class="hljs-property">getEntityData</span>    <span class="hljs-comment">// fetch UOM symbol → unitname map for a UOM entity type</span></code></pre></div><h3 id="query-usage-in-product-catalog-components">Query usage in product-catalog components<a class="anchor" href="#query-usage-in-product-catalog-components" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-keyword">import</span> { orpc } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;#/integrations/orpc/client&#x27;</span>
+<span class="hljs-keyword">import</span> { useSuspenseQuery, useMutation } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@tanstack/react-query&#x27;</span>
+
+<span class="hljs-comment">// Fetch entity + model in parallel</span>
+<span class="hljs-keyword">const</span> [{ <span class="hljs-attr">data</span>: entityData }, { <span class="hljs-attr">data</span>: modelData }] = <span class="hljs-title function_">useSuspenseQueries</span>({
+  <span class="hljs-attr">queries</span>: [
+    orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">entity</span>.<span class="hljs-property">get</span>.<span class="hljs-title function_">queryOptions</span>({
+      <span class="hljs-attr">input</span>: { entityId, entityType, valueContexts, <span class="hljs-attr">loadGovernData</span>: <span class="hljs-literal">true</span> },
+    }),
+    orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">compositeModel</span>.<span class="hljs-property">get</span>.<span class="hljs-title function_">queryOptions</span>({
+      <span class="hljs-attr">input</span>: { entityType, valueContexts },
+    }),
+  ],
+})
+
+<span class="hljs-comment">// Save</span>
+<span class="hljs-keyword">const</span> { <span class="hljs-attr">mutate</span>: save } = <span class="hljs-title function_">useMutation</span>(
+  orpc.<span class="hljs-property">attributeManager</span>.<span class="hljs-property">entity</span>.<span class="hljs-property">update</span>.<span class="hljs-title function_">mutationOptions</span>(),
+)</code></pre></div><h3 id="base-url-pattern-datapass-through">Base URL pattern: <code>/data/pass-through/&lt;service&gt;/&lt;action&gt;</code><a class="anchor" href="#base-url-pattern-datapass-through" aria-hidden="true">#</a></h3>
+<h3 id="api-call-inventory">API Call Inventory<a class="anchor" href="#api-call-inventory" aria-hidden="true">#</a></h3>
+<h4 id="1-fetch-entity-attributes-govern-data">1. Fetch entity attributes + govern data<a class="anchor" href="#1-fetch-entity-attributes-govern-data" aria-hidden="true">#</a></h4>
+<p>Combined request (entityservice + entitygovernservice in one call):</p>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/combinedservice/get</span>
+{
+  <span class="hljs-attr">params</span>: { <span class="hljs-attr">isCombinedQuerySearch</span>: <span class="hljs-literal">true</span> },
+  <span class="hljs-attr">entity</span>: {
+    <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;combinedGet&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;combinedGet&#x27;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;config&#x27;</span>,
+    <span class="hljs-attr">data</span>: {
+      <span class="hljs-attr">jsonData</span>: {
+        <span class="hljs-attr">searchQueries</span>: [
+          {
+            <span class="hljs-attr">serviceName</span>: <span class="hljs-string">&#x27;entitygovernservice&#x27;</span>,
+            <span class="hljs-attr">action</span>: <span class="hljs-string">&#x27;get&#x27;</span>,
+            <span class="hljs-attr">searchSequence</span>: <span class="hljs-number">1</span>,
+            <span class="hljs-attr">searchQuery</span>: {
+              <span class="hljs-attr">params</span>: {
+                <span class="hljs-attr">query</span>: {
+                  <span class="hljs-attr">ids</span>: [<span class="hljs-string">&#x27;entity-id&#x27;</span>],
+                  <span class="hljs-attr">filters</span>: { <span class="hljs-attr">typesCriterion</span>: [<span class="hljs-string">&#x27;entityType&#x27;</span>] },
+                  <span class="hljs-attr">contexts</span>: [{ <span class="hljs-attr">self</span>: <span class="hljs-string">&#x27;self&#x27;</span> }],
+                  <span class="hljs-attr">valueContexts</span>: [{ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-US&#x27;</span>, <span class="hljs-attr">source</span>: <span class="hljs-string">&#x27;internal&#x27;</span> }]
+                },
+                <span class="hljs-attr">fields</span>: { <span class="hljs-attr">attributes</span>: [<span class="hljs-string">&#x27;_ALL&#x27;</span>] }
+              }
+            }
+          },
+          {
+            <span class="hljs-attr">serviceName</span>: <span class="hljs-string">&#x27;entityservice&#x27;</span>,
+            <span class="hljs-attr">action</span>: <span class="hljs-string">&#x27;get&#x27;</span>,
+            <span class="hljs-attr">searchSequence</span>: <span class="hljs-number">2</span>,
+            <span class="hljs-attr">searchQuery</span>: { <span class="hljs-comment">/* same shape */</span> }
+          }
+        ]
+      }
+    }
+  }
+}
+
+<span class="hljs-comment">// Response</span>
+{
+  <span class="hljs-attr">response</span>: {
+    <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;success&#x27;</span>,
+    <span class="hljs-attr">content</span>: {
+      <span class="hljs-attr">entities</span>: [{
+        <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span>,
+        <span class="hljs-attr">data</span>: {
+          <span class="hljs-attr">attributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, {
+            <span class="hljs-attr">values</span>: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">source</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">locale</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">value</span>: <span class="hljs-built_in">unknown</span> }&gt;
+            <span class="hljs-attr">properties</span>?: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">unknown</span>&gt;
+          }&gt;
+        }
+      }]
+    }
+  }
+}</code></pre></div><h4 id="2-fetch-composite-attribute-models">2. Fetch composite attribute models<a class="anchor" href="#2-fetch-composite-attribute-models" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entitymodelservice/getcompositemodel</span>
+{
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">query</span>: {
+      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;entityTypeName&#x27;</span>,
+      <span class="hljs-attr">filters</span>: { <span class="hljs-attr">typesCriterion</span>: [<span class="hljs-string">&#x27;entityCompositeModel&#x27;</span>] },
+      <span class="hljs-attr">contexts</span>: [{ <span class="hljs-attr">self</span>: <span class="hljs-string">&#x27;self&#x27;</span> }],
+      <span class="hljs-attr">valueContexts</span>: [{ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-US&#x27;</span>, <span class="hljs-attr">source</span>: <span class="hljs-string">&#x27;internal&#x27;</span>, <span class="hljs-attr">channel</span>: <span class="hljs-string">&#x27;web&#x27;</span> }]
+    },
+    <span class="hljs-attr">fields</span>: { <span class="hljs-attr">attributes</span>: [<span class="hljs-string">&#x27;_ALL&#x27;</span>] }
+  }
+}
+
+<span class="hljs-comment">// Response</span>
+{
+  <span class="hljs-attr">data</span>: {
+    <span class="hljs-attr">attributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, {
+      <span class="hljs-attr">properties</span>: {
+        <span class="hljs-attr">externalName</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">dataType</span>: <span class="hljs-built_in">string</span>
+        <span class="hljs-attr">isLocalizable</span>: <span class="hljs-built_in">boolean</span>; <span class="hljs-attr">isCollection</span>: <span class="hljs-built_in">boolean</span>
+        <span class="hljs-attr">referenceEntityInfo</span>?: [{ <span class="hljs-attr">refEntityType</span>: <span class="hljs-built_in">string</span> }]
+      }
+    }&gt;
+  }
+}</code></pre></div><h4 id="3-4-save-entity-update-create">3 &amp; 4. Save entity (update / create)<a class="anchor" href="#3-4-save-entity-update-create" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entityservice/update  (or /create)</span>
+{
+  <span class="hljs-attr">entities</span>: [{
+    <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>,
+    <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span>,
+    <span class="hljs-attr">data</span>: {
+      <span class="hljs-attr">attributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, {
+        <span class="hljs-attr">values</span>: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">source</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">locale</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">value</span>: <span class="hljs-built_in">unknown</span> }&gt;
+      }&gt;
+    }
+  }],
+  <span class="hljs-attr">clientState</span>?: {
+    <span class="hljs-attr">notificationInfo</span>: { <span class="hljs-attr">showNotificationToUser</span>: <span class="hljs-built_in">boolean</span>; <span class="hljs-attr">userId</span>?: <span class="hljs-built_in">string</span> }
+    <span class="hljs-attr">updateCacheId</span>?: <span class="hljs-built_in">string</span>
+  }
+}
+
+<span class="hljs-comment">// Response</span>
+{
+  <span class="hljs-attr">dataObjectOperationResponse</span>: {
+    <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;success&#x27;</span>,
+    <span class="hljs-attr">statusDetail</span>: { <span class="hljs-attr">messages</span>: <span class="hljs-title class_">ValidationMessage</span>[] },
+    <span class="hljs-attr">dataObjects</span>: [{ <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">data</span>: { <span class="hljs-attr">attributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">unknown</span>&gt; } }]
+  }
+}</code></pre></div><h4 id="5-fetch-entity-post-save-getbyids-no-govern">5. Fetch entity post-save (getbyids, no govern)<a class="anchor" href="#5-fetch-entity-post-save-getbyids-no-govern" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entityservice/getbyids</span>
+{
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">query</span>: {
+      <span class="hljs-attr">ids</span>: [<span class="hljs-string">&#x27;entity-id&#x27;</span>],
+      <span class="hljs-attr">filters</span>: { <span class="hljs-attr">typesCriterion</span>: [<span class="hljs-string">&#x27;entityType&#x27;</span>] },
+      <span class="hljs-attr">valueContexts</span>: [{ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-US&#x27;</span>, <span class="hljs-attr">source</span>: <span class="hljs-string">&#x27;internal&#x27;</span> }]
+    },
+    <span class="hljs-attr">fields</span>: { <span class="hljs-attr">attributes</span>: [<span class="hljs-string">&#x27;_ALL&#x27;</span>] },
+    <span class="hljs-attr">options</span>: { <span class="hljs-attr">maxRecords</span>: <span class="hljs-number">200</span> }
+  }
+}
+<span class="hljs-comment">// Response: same shape as op 1 entity portion</span></code></pre></div><h4 id="6-sync-validation-debounced-300ms">6. Sync validation (debounced 300ms)<a class="anchor" href="#6-sync-validation-debounced-300ms" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entitygovernservice/validate</span>
+{
+  <span class="hljs-attr">entity</span>: {
+    <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span>,
+    <span class="hljs-attr">data</span>: {
+      <span class="hljs-attr">attributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, { <span class="hljs-attr">values</span>: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">value</span>: <span class="hljs-built_in">unknown</span> }&gt; }&gt;
+    }
+  }
+}
+
+<span class="hljs-comment">// Response</span>
+{
+  <span class="hljs-attr">response</span>: {
+    <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;success&#x27;</span>,
+    <span class="hljs-attr">statusDetail</span>: {
+      <span class="hljs-attr">messages</span>: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">messageCode</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">messageType</span>: <span class="hljs-string">&#x27;error&#x27;</span>|<span class="hljs-string">&#x27;warning&#x27;</span>|<span class="hljs-string">&#x27;info&#x27;</span>; <span class="hljs-attr">attributeName</span>: <span class="hljs-built_in">string</span> }&gt;
+    }
+  }
+}</code></pre></div><h4 id="7-duplicate-match-check">7. Duplicate match check<a class="anchor" href="#7-duplicate-match-check" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/matchservice/getMatchEntityInfo</span>
+<span class="hljs-comment">// Same entity body shape as update/create (op 3)</span>
+<span class="hljs-comment">// Response</span>
+{
+  <span class="hljs-attr">matchList</span>: <span class="hljs-title class_">Array</span>&lt;{
+    <span class="hljs-attr">matchFound</span>: <span class="hljs-built_in">boolean</span>
+    <span class="hljs-attr">matchFailure</span>: <span class="hljs-built_in">boolean</span>
+    <span class="hljs-attr">response</span>: {
+      <span class="hljs-attr">statusDetail</span>: { <span class="hljs-attr">probabilisticMatch</span>?: <span class="hljs-built_in">boolean</span> }
+      <span class="hljs-attr">response</span>: <span class="hljs-built_in">unknown</span>
+    }
+  }&gt;
+}</code></pre></div><h4 id="8-reference-entity-data-lov-population">8. Reference entity data (LOV population)<a class="anchor" href="#8-reference-entity-data-lov-population" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entityservice/getbyids</span>
+{
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">query</span>: {
+      <span class="hljs-attr">ids</span>: <span class="hljs-built_in">string</span>[],
+      <span class="hljs-attr">filters</span>: { <span class="hljs-attr">typesCriterion</span>: [<span class="hljs-string">&#x27;referenceEntityType&#x27;</span>] },
+      <span class="hljs-attr">valueContexts</span>: [{ <span class="hljs-attr">locale</span>: <span class="hljs-string">&#x27;en-US&#x27;</span>, <span class="hljs-attr">source</span>: <span class="hljs-string">&#x27;internal&#x27;</span> }]
+    },
+    <span class="hljs-attr">fields</span>: { <span class="hljs-attr">attributes</span>: [<span class="hljs-string">&#x27;externalNameAttr&#x27;</span>, <span class="hljs-string">&#x27;entityIdentifierAttr&#x27;</span>] }
+  }
+}
+<span class="hljs-comment">// Response: standard entities array</span></code></pre></div><h4 id="8b-reference-entity-search-lov-browse-filter">8b. Reference entity search (LOV browse + filter)<a class="anchor" href="#8b-reference-entity-search-lov-browse-filter" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/entityservice/get</span>
+{
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">query</span>: {
+      <span class="hljs-attr">filters</span>: {
+        <span class="hljs-attr">typesCriterion</span>: <span class="hljs-built_in">string</span>[],            <span class="hljs-comment">// one or more reference entity types</span>
+        <span class="hljs-attr">attributesCriterion</span>?: <span class="hljs-title class_">Array</span>&lt;<span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, { <span class="hljs-attr">eq</span>: <span class="hljs-built_in">string</span> }&gt;&gt;, <span class="hljs-comment">// prefix-wildcard search</span>
+        <span class="hljs-attr">isAttributesCriterionOR</span>?: <span class="hljs-built_in">boolean</span>
+      },
+      <span class="hljs-attr">valueContexts</span>: [{ locale, source }]
+    },
+    <span class="hljs-attr">fields</span>: { <span class="hljs-attr">attributes</span>: [<span class="hljs-string">&#x27;_ALL&#x27;</span>] },
+    <span class="hljs-attr">options</span>: { <span class="hljs-attr">from</span>: <span class="hljs-built_in">number</span>, <span class="hljs-attr">maxRecords</span>: <span class="hljs-built_in">number</span> }   <span class="hljs-comment">// page * pageSize, pageSize</span>
+  }
+}
+<span class="hljs-comment">// Response: { entities: [...], totalRecords: number }</span>
+<span class="hljs-comment">// Procedure also computes hasMore so the consumer doesn&#x27;t have to.</span></code></pre></div><h4 id="9-reference-entity-model">9. Reference entity model<a class="anchor" href="#9-reference-entity-model" aria-hidden="true">#</a></h4>
+<p>Same as op 2 but for the reference entity type — returns composite model with <code>externalNameAttr</code> and <code>entityIdentifierAttr</code> property names.</p>
+<h4 id="10-ai-content-generation">10. AI content generation<a class="anchor" href="#10-ai-content-generation" aria-hidden="true">#</a></h4>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-comment">// POST /data/pass-through/attributerservice/generate</span>
+{
+  <span class="hljs-attr">tenant</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">domain</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">entityType</span>: <span class="hljs-built_in">string</span>,
+  <span class="hljs-attr">contexts</span>: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">self</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">locale</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">channel</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">role</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">user</span>: <span class="hljs-built_in">string</span> }&gt;,
+  <span class="hljs-attr">attributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, { <span class="hljs-attr">values</span>: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">source</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">value</span>: <span class="hljs-built_in">unknown</span> }&gt; }&gt;,
+  <span class="hljs-attr">getnearestPath</span>: <span class="hljs-built_in">string</span>,
+  <span class="hljs-attr">coalesceOptions</span>?: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">unknown</span>&gt;
+}
+
+<span class="hljs-comment">// Response</span>
+{
+  <span class="hljs-attr">dataObjectOperationResponse</span>: {
+    <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;success&#x27;</span>,
+    <span class="hljs-attr">dataObjects</span>: [{
+      <span class="hljs-attr">data</span>: {
+        <span class="hljs-attr">jsonData</span>: {
+          <span class="hljs-attr">attributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, { <span class="hljs-attr">values</span>: <span class="hljs-title class_">Array</span>&lt;{ <span class="hljs-attr">value</span>: <span class="hljs-built_in">unknown</span>; <span class="hljs-attr">uom</span>?: <span class="hljs-built_in">string</span> }&gt; }&gt;
+        }
+      }
+    }]
+  }
+}</code></pre></div><h4 id="11-enhancer-attribute-names">11. Enhancer attribute names<a class="anchor" href="#11-enhancer-attribute-names" aria-hidden="true">#</a></h4>
+<p>Synchronous — returned from cached composite model data (no HTTP call). Returns <code>Record&lt;string, string&gt;</code> of enhancer attribute names for filtering.</p>
+<h4 id="12-source-entity-lookup">12. Source entity lookup<a class="anchor" href="#12-source-entity-lookup" aria-hidden="true">#</a></h4>
+<p>Same shape as op 5 (getbyids) with <code>maxRecords: 1</code>.</p>
+<hr>
+<h2 id="component-tree">Component Tree<a class="anchor" href="#component-tree" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">&lt;AttributeManage&gt;                   → replaces rock-attribute-manage-v2
+  ├── AttributeManageContext         → React context: state + dispatch + callbacks
+  ├── &lt;SaveCancelBar /&gt;              → Save / Cancel buttons
+  ├── &lt;AttributeConflictDialog /&gt;    → Conflict resolution modal
+  └── &lt;AttributeList&gt;               → replaces rock-attribute-list-v2
+      ├── &lt;AttributeListHeader /&gt;    → PDP layout header (isPDPLayout mode)
+      ├── &lt;AttributeGroup /&gt;         → collapsible group panel, error count badge
+      │   └── &lt;AttributeItem /&gt;      → replaces rock-attribute-v2
+      │       ├── &lt;input&gt; / &lt;Select&gt; / &lt;DatePicker&gt; / &lt;Switch&gt; (by dataType)
+      │       ├── &lt;AttributeLov /&gt;   → reference/LOV selector with search
+      │       ├── &lt;UomInput /&gt;       → numeric + unit selector
+      │       ├── &lt;NestedAttributeGrid /&gt; → nested children (rock-nested-attribute-grid-v2)
+      │       └── validation error display + revert/clear/history icons
+      └── (100+ attributes → @tanstack/virtual row virtualizer)</code></pre></div><hr>
+<h2 id="state-architecture">State Architecture<a class="anchor" href="#state-architecture" aria-hidden="true">#</a></h2>
+<h3 id="attributemanagecontext">AttributeManageContext<a class="anchor" href="#attributemanagecontext" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">AttributeManageState</span> = {
+  <span class="hljs-attr">mode</span>: <span class="hljs-string">&#x27;view&#x27;</span> | <span class="hljs-string">&#x27;edit&#x27;</span>
+
+  <span class="hljs-comment">// Data</span>
+  <span class="hljs-attr">entity</span>: <span class="hljs-title class_">NormalizedEntity</span> | <span class="hljs-literal">null</span>
+  <span class="hljs-attr">originalEntity</span>: <span class="hljs-title class_">NormalizedEntity</span> | <span class="hljs-literal">null</span>              <span class="hljs-comment">// immutable snapshot for revert</span>
+  <span class="hljs-attr">attributeModels</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">AttributeModelProperties</span>&gt;
+  <span class="hljs-attr">changedAttributes</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">NormalizedAttributeValue</span>[]&gt;
+
+  <span class="hljs-comment">// Validation</span>
+  <span class="hljs-attr">governMessages</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">GovernMessage</span>[]&gt;      <span class="hljs-comment">// from govern service on load</span>
+  <span class="hljs-attr">syncValidationMessages</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">GovernMessage</span>[]&gt;
+  <span class="hljs-attr">clientValidationMessages</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">GovernMessage</span>[]&gt;
+
+  <span class="hljs-comment">// Save lifecycle</span>
+  <span class="hljs-attr">showSaveCancel</span>: <span class="hljs-built_in">boolean</span>
+  <span class="hljs-attr">isSaving</span>: <span class="hljs-built_in">boolean</span>
+  <span class="hljs-attr">conflictData</span>: <span class="hljs-title class_">AttributeConflict</span>[] | <span class="hljs-literal">null</span>             <span class="hljs-comment">// non-null when conflict dialog open</span>
+}
+
+<span class="hljs-comment">// isLoading is managed by TanStack Query, not stored in reducer state.</span>
+<span class="hljs-comment">// Feature flags (doSyncValidation, checkDuplicatesOnUpdate, etc.) are props on &lt;AttributeManage&gt;,</span>
+<span class="hljs-comment">// not stored in reducer state.</span>
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">AttributeManageAction</span> =
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;INIT&#x27;</span>; <span class="hljs-attr">payload</span>: { <span class="hljs-attr">entity</span>: <span class="hljs-title class_">NormalizedEntity</span>; <span class="hljs-attr">governMessages</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">GovernMessage</span>[]&gt; } }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;SET_MODELS&#x27;</span>; <span class="hljs-attr">payload</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">AttributeModelProperties</span>&gt; }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;ATTRIBUTE_CHANGED&#x27;</span>; <span class="hljs-attr">payload</span>: { <span class="hljs-attr">attributeName</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">values</span>: <span class="hljs-title class_">NormalizedAttributeValue</span>[] } }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;REVERT_ATTRIBUTE&#x27;</span>; <span class="hljs-attr">payload</span>: { <span class="hljs-attr">attributeName</span>: <span class="hljs-built_in">string</span> } }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;REVERT_ALL&#x27;</span> }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;SET_SYNC_MESSAGES&#x27;</span>; <span class="hljs-attr">payload</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">GovernMessage</span>[]&gt; }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;SET_CLIENT_MESSAGES&#x27;</span>; <span class="hljs-attr">payload</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-title class_">GovernMessage</span>[]&gt; }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;SAVE_START&#x27;</span> }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;SAVE_SUCCESS&#x27;</span>; <span class="hljs-attr">payload</span>: <span class="hljs-title class_">NormalizedEntity</span> }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;SAVE_ERROR&#x27;</span> }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;SET_CONFLICT&#x27;</span>; <span class="hljs-attr">payload</span>: <span class="hljs-title class_">AttributeConflict</span>[] }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;CLEAR_CONFLICT&#x27;</span> }
+  | { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;SET_MODE&#x27;</span>; <span class="hljs-attr">payload</span>: <span class="hljs-string">&#x27;view&#x27;</span> | <span class="hljs-string">&#x27;edit&#x27;</span> }</code></pre></div><hr>
+<h2 id="infrastructure-replacements">Infrastructure Replacements<a class="anchor" href="#infrastructure-replacements" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Old (LitElement/RUF)</th><th>New (React)</th></tr></thead><tbody><tr><td><code>DataObjectManager</code></td><td>TanStack Query <code>queryFn</code> + plain <code>fetch</code></td></tr><tr><td><code>DataRequestHelper</code></td><td>Request builder functions in <code>src/api/requestBuilders.ts</code></td></tr><tr><td><code>DataTransformHelper</code></td><td>Transform functions in <code>src/api/responseTransformers.ts</code></td></tr><tr><td><code>EntityCompositeModelManager</code></td><td><code>useQuery</code> hook wrapping a fetch</td></tr><tr><td><code>BedrockValidatorV2</code></td><td>Zod schema validation</td></tr><tr><td><code>MixinManager / RufElement / ComponentContextBase</code></td><td>Props + custom hooks, no class inheritance</td></tr><tr><td><code>ToastManagerV2.showToast()</code></td><td><code>@syndigo/design-system</code> toast (Sonner-backed)</td></tr><tr><td><code>DialogManager.openConfirm()</code></td><td><code>@syndigo/design-system</code> <code>&lt;Dialog&gt;</code> controlled by state</td></tr><tr><td><code>SettingsManager.appSetting()</code></td><td>React context or props</td></tr><tr><td><code>LoggerManager</code></td><td>Console</td></tr><tr><td><code>Debouncer</code></td><td><code>useDebouncedCallback</code> from <code>use-debounce</code></td></tr><tr><td>ACI event bus (cross-app)</td><td>Callback props from host React app</td></tr><tr><td><code>@lit-labs/virtualizer</code></td><td><code>@tanstack/virtual</code> row virtualizer</td></tr><tr><td>SCSS element styles</td><td>Tailwind utility classes</td></tr><tr><td><code>LocaleManager</code></td><td>Props or context</td></tr><tr><td><code>BinaryStreamObjectManager</code></td><td>Direct fetch for binary asset URLs</td></tr><tr><td><code>DependentAttributesUtils</code></td><td><code>useDependentAttributes</code> hook</td></tr></tbody></table></div><hr>
+<h2 id="key-files-to-create">Key Files to Create<a class="anchor" href="#key-files-to-create" aria-hidden="true">#</a></h2>
+<h3 id="already-implemented-in-this-repo">Already implemented in this repo<a class="anchor" href="#already-implemented-in-this-repo" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>File</th><th>Package</th><th>Purpose</th></tr></thead><tbody><tr><td><a href="../packages/orpc/specs/riversand-attribute-api.yaml">specs/riversand-attribute-api.yaml</a></td><td><code>@syndigo/orpc</code></td><td>OpenAPI spec for Riversand pass-through API</td></tr><tr><td><a href="../packages/orpc/src/generated/riversand-attribute-api.d.ts">src/generated/riversand-attribute-api.d.ts</a></td><td><code>@syndigo/orpc</code></td><td>Auto-generated TypeScript types</td></tr><tr><td><a href="../packages/orpc/src/clients/riversand-attribute-api.ts">src/clients/riversand-attribute-api.ts</a></td><td><code>@syndigo/orpc</code></td><td><code>openapi-fetch</code> client</td></tr><tr><td><a href="../packages/core-contracts/src/schemas/attribute-schema.ts">src/schemas/attribute-schema.ts</a></td><td><code>@repo/core-contracts</code></td><td>Zod schemas for normalized types</td></tr><tr><td><a href="../packages/core-contracts/src/attribute-manager/contracts/entity.ts">src/attribute-manager/contracts/entity.ts</a></td><td><code>@repo/core-contracts</code></td><td>get/create/update/validate contracts</td></tr><tr><td><a href="../packages/core-contracts/src/attribute-manager/contracts/composite-model.ts">src/attribute-manager/contracts/composite-model.ts</a></td><td><code>@repo/core-contracts</code></td><td>composite model contract</td></tr><tr><td><a href="../packages/core-contracts/src/attribute-manager/contracts/reference.ts">src/attribute-manager/contracts/reference.ts</a></td><td><code>@repo/core-contracts</code></td><td>LOV data + model contracts</td></tr><tr><td><a href="../packages/core-contracts/src/attribute-manager/contracts/ai-content.ts">src/attribute-manager/contracts/ai-content.ts</a></td><td><code>@repo/core-contracts</code></td><td>AI content generation contract</td></tr><tr><td><a href="../packages/core-contracts/src/attribute-manager/contracts/duplicate.ts">src/attribute-manager/contracts/duplicate.ts</a></td><td><code>@repo/core-contracts</code></td><td>Duplicate check contract</td></tr><tr><td><a href="../packages/orpc/src/utils/attribute-manager-mappers.ts">src/utils/attribute-manager-mappers.ts</a></td><td><code>@syndigo/orpc</code></td><td>Raw API ↔ normalized type mappers — round-trips <code>referenceDataId</code> + <code>referenceEntityType</code> so reference attributes keep their id link, not just the display label</td></tr><tr><td><a href="../packages/orpc/src/procedures/attribute-manager/entity.ts">src/procedures/attribute-manager/entity.ts</a></td><td><code>@syndigo/orpc</code></td><td>Entity CRUD + validate procedures</td></tr><tr><td><a href="../packages/orpc/src/procedures/attribute-manager/composite-model.ts">src/procedures/attribute-manager/composite-model.ts</a></td><td><code>@syndigo/orpc</code></td><td>Composite model procedure</td></tr><tr><td><a href="../packages/orpc/src/procedures/attribute-manager/reference.ts">src/procedures/attribute-manager/reference.ts</a></td><td><code>@syndigo/orpc</code></td><td>LOV data + model procedures + <code>reference.search</code> (paged <code>entityservice/get</code> with <code>attributesCriterion</code>)</td></tr><tr><td><a href="../packages/orpc/src/procedures/attribute-manager/ai-content.ts">src/procedures/attribute-manager/ai-content.ts</a></td><td><code>@syndigo/orpc</code></td><td>AI generation procedure</td></tr><tr><td><a href="../packages/orpc/src/procedures/attribute-manager/duplicate.ts">src/procedures/attribute-manager/duplicate.ts</a></td><td><code>@syndigo/orpc</code></td><td>Duplicate check procedure</td></tr><tr><td><a href="../packages/design-system/src/components/searchable-combobox.tsx">src/components/searchable-combobox.tsx</a></td><td><code>@syndigo/design-system</code></td><td>Generic search-driven combobox: button/chips trigger, search input <em>inside</em> popover, virtualized list, empty/loading states, <code>onLoadMore</code> from scroll- and keyboard-driven prefetch</td></tr><tr><td><a href="../packages/design-system/src/components/combobox-virtual-list.tsx">src/components/combobox-virtual-list.tsx</a></td><td><code>@syndigo/design-system</code></td><td><code>@tanstack/react-virtual</code>-backed list inside <code>Combobox.Popup</code>. Adds <code>onEndReached</code>/<code>endReachedThreshold</code> for infinite-scroll wiring</td></tr><tr><td><a href="../packages/design-system/src/components/combobox.tsx">src/components/combobox.tsx</a></td><td><code>@syndigo/design-system</code></td><td>Adds <code>ComboboxButtonTrigger</code> (select-style trigger that displays the current value with optional clear button) and exports <code>ComboboxClear</code></td></tr><tr><td><a href="../apps/pxc-retail/src/components/query-combobox.tsx">src/components/query-combobox.tsx</a></td><td><code>pxc-retail</code></td><td>TanStack-Query adapter for <code>SearchableCombobox</code> — owns the 300ms debounce, the open-gated <code>useInfiniteQuery</code>, and page flattening</td></tr></tbody></table></div><h3 id="appspxc-retailsrccomponentsattribute-manager-current-status">apps/pxc-retail/src/components/attribute-manager — current status<a class="anchor" href="#appspxc-retailsrccomponentsattribute-manager-current-status" aria-hidden="true">#</a></h3>
+<h4 id="done">Done ✅<a class="anchor" href="#done" aria-hidden="true">#</a></h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">apps/pxc-retail/src/components/attribute-manager/
+  types.ts                         → AttributeModelProperties, NormalizedAttributeValue, etc.
+
+  test/
+    setup.ts                       → @testing-library/jest-dom/vitest
+    test-utils.tsx                 → renderWithProviders, i18n stub, QueryClientProvider
+
+  context/
+    AttributeManageContext.tsx     → context + useReducer + provider, all action types,
+                                     valueContexts wired through. Also exposes the
+                                     `AttributeBinding` override: `AttributeBindingProvider`
+                                     + `useAttributeBinding(model)` let a parent supply
+                                     {values, messages, isChanged, isReadOnly, onChange,
+                                     onRevert} for a single attribute. AttributeItem,
+                                     AttributeLov, UomInput and UomDisplay all read through
+                                     this hook, so the same components render against a
+                                     cell deep inside a DNA tree (no separate input
+                                     implementations). When no override is in scope the
+                                     hook falls through to store-backed defaults, so
+                                     existing call sites need no changes.
+    AttributeManageStore.ts        → `attributeChanged` is content-aware: if the new
+                                     values deep-equal the entity baseline it drops the
+                                     entry from `changedAttributes` instead of pinning it.
+                                     Editing a value and then typing it back to the
+                                     original correctly leaves the attribute clean.
+                                     `acceptServerValues` patches `entity` +
+                                     `originalEntity` with `serverValues` from each
+                                     `AttributeConflict` in a single atomic update, then
+                                     clears `changedAttributes` and `conflictData` — used
+                                     by the &quot;Use System Values&quot; conflict resolution path.
+    AttributeManageContext.test.ts → 32 tests: full reducer + buildContextValue coverage
+
+  components/
+    AttributeManage/
+      AttributeManage.tsx          → context provider, data hooks wired, save/revert handlers,
+                                     success/error toasts on save. `_devConflict` prop
+                                     (dev/POC only) seeds the conflict dialog with mock
+                                     `AttributeConflict[]` via a `useEffect` → `setConflict`
+                                     call; used by the product-catalog POC page to exercise
+                                     the conflict dialog without a live WebSocket push.
+      SaveCancelBar.tsx            → save / cancel buttons; cancel triggers a
+                                     &quot;Discard changes?&quot; confirmation dialog before
+                                     dispatching REVERT_ALL
+      hooks/
+        useEntityData.ts           → TanStack Query: fetch entity + govern data (op 1)
+        useAttributeModels.ts      → TanStack Query: fetch composite models (op 2)
+        useSyncValidation.ts       → debounced server validation (op 6, 300ms)
+        useEntitySave.ts           → TanStack Mutation: update/create entity (op 3/4)
+
+    AttributeList/
+      AttributeList.tsx            → dispatches between two paths — non-PDP renders
+                                     card-style AttributeGroup components inside a
+                                     flex-1 overflow-y-auto container; PDP delegates
+                                     to PDPAttributeList (virtualized via @tanstack/
+                                     react-virtual: flat row model of header + attribute
+                                     rows, lifted group-collapse state, scrollToIndex
+                                     used by the header for group navigation)
+      AttributeListHeader.tsx      → PDP layout header — group navigation dropdown (with
+                                     scroll-to-group via index when virtualized, DOM-id
+                                     fallback otherwise), debounced search, filter popover
+                                     (empty / mandatory / error), filter count chip
+      AttributeGroup.tsx           → AttributeGroup: collapsible card panel (ghost Button
+                                     + ChevronDown icon), error count badge, anchor `id`
+                                     for scroll-to-group, switches inner layout for PDP.
+                                     AttributeGroupHeader: stateless header row used by
+                                     the virtualized PDP list (collapse state owned by
+                                     the parent so virtualization can elide rows)
+      hooks/
+        useAttributeGrouping.ts    → group + text filter; supports activeFilters
+                                     (empty / mandatory / error) and entityAttributes
+                                     for the empty-attribute predicate
+
+    AttributeItem/
+      AttributeItem.tsx            → input router: text, number, boolean, dropdown,
+                                     referencelist, nested, deeplynested; revert button;
+                                     validation display. Reads its data through
+                                     `useAttributeBinding(model)` — defaults to the
+                                     store, but a parent (e.g. DnaManage) can supply an
+                                     `AttributeBindingProvider` to bind the same input
+                                     UI to a nested-tree cell. In PDP mode: horizontal
+                                     `[label | input | revert]` grid row with per-row
+                                     borders + min-h, padding tuned to source SCSS, and
+                                     inline-edit override (state.mode &#x27;view&#x27; is treated
+                                     as &#x27;edit&#x27;; model.readOnly still wins). Revert
+                                     button reserves space via `invisible` toggling to
+                                     avoid layout shift.
+      AttributeItem.test.tsx       → 18 tests
+      AttributeLov.tsx             → thin shells (single + collection) over QueryCombobox.
+                                     Adapts NormalizedAttributeValue ↔ RefEntity (with _label
+                                     synthesis so the trigger renders without a fetch),
+                                     dispatches ATTRIBUTE_CHANGED, persists referenceDataId +
+                                     referenceEntityType alongside the label, and applies the
+                                     &quot;(no label)&quot; fallback (i18n `attributeManager.missing_label`)
+                                     when neither the stored value nor the fetched entity carries
+                                     a human-readable name. UI behaviors (button/chips trigger,
+                                     in-popover search, virtualized list, scroll/keyboard
+                                     prefetch, fixed-height popup with no-results screen) live in
+                                     SearchableCombobox + QueryCombobox.
+      AttributeValue.tsx           → view-mode value display
+      NestedAttributeGrid.tsx      → nested children grid, view + edit, add/delete rows
+      NestedAttributeGrid.test.tsx → 11 tests
+      DnaManage.tsx                → modal frame for `deeplynested` attributes. Trigger
+                                     button on AttributeItem shows record count; clicking
+                                     opens a Dialog. Owns the modal-level concerns:
+                                     baseline snapshot at open, content-aware dirty
+                                     tracking (deep-equal vs. baseline), cancel vs.
+                                     &quot;Discard changes?&quot; routing, and seeding for
+                                     initially-empty attributes (seed is reverted off
+                                     the store on cancel so empty-then-cancel doesn&#x27;t
+                                     leave a phantom row). Editing is **live-bound**
+                                     to the store on every keystroke so the existing
+                                     `useSyncValidation` picks up the new tree with no
+                                     special plumbing.
+      DnaEditor.tsx                → entry point and layout router. At level 0
+                                     (dialog root): split panel — `DnaTabList` sidebar
+                                     on the left, `DnaForm` on the right. At level &gt; 0
+                                     with `isCollection`: delegates to
+                                     `VerticalRecordStack` so no new side column is
+                                     added per nesting level. At level &gt; 0 without
+                                     `isCollection`: renders `DnaForm` directly.
+                                     `DnaEditor` is only mounted when its parent
+                                     collapsible is opened (controlled open state +
+                                     conditional render), so circular model references
+                                     are safe and nesting is unbounded. Empty
+                                     collections are valid — no phantom row is forced.
+      DnaForm.tsx                  → row field rendering. Flat children (string /
+                                     number / boolean / date / dropdown / LOV / UOM)
+                                     render through `AttributeItem` wrapped in an
+                                     `AttributeBindingProvider` — no duplicate input
+                                     implementations. `deeplynested` children render
+                                     as `DnaNestedSection` collapsibles.
+      DnaNestedSection.tsx         → collapsible wrapper for a nested `deeplynested`
+                                     child attribute. Normalizes value → `DnaRow[]`,
+                                     tracks open state, and delegates to `DnaEditor`
+                                     (which selects the right layout based on level).
+                                     Forms the closing link of the cycle:
+                                     DnaEditor → DnaForm → DnaNestedSection → DnaEditor.
+      DnaVerticalStack.tsx         → `VerticalRecordStack` (list + add button) and
+                                     `VerticalRecord` (collapsible accordion per row)
+                                     used by `DnaEditor` at level &gt; 0. Each record
+                                     lazily mounts its `DnaForm` on expand.
+      DnaTabList.tsx               → record selector for collection-mode DNA. Per-row
+                                     error-count badge counting messages whose path
+                                     begins at this row (cascades through nesting via
+                                     `pathStartsWith`), inline delete button as a real
+                                     sibling button (no nested-button HTML).
+      dna-utils.ts                 → pure helpers (no React): `getChildModels`,
+                                     `emptyRow`, `normalizeStoredValue`, `rowTitle`,
+                                     `describeTrigger`, `rowsEqual`, `cellsEqual`,
+                                     `messagesAt`, `countMessagesUnder`, internal
+                                     `pathEquals` / `pathStartsWith` (string-coerce
+                                     path segments so server-emitted numeric row
+                                     indices and string child names compare correctly)
+      DnaManage.test.tsx           → 19 tests covering happy path, path-keyed
+                                     messages with cascading badge counts (tab +
+                                     section header + dialog title badges without
+                                     expansion; cell-level error with expansion),
+                                     cancel paths (with / without edits, with /
+                                     without pre-existing changes), seed-then-cancel
+                                     cleanup, per-cell revert button on flat +
+                                     nested-DNA children, type-back-to-baseline
+                                     leaves the dialog clean (cancel + save paths),
+                                     recursive nested DNA save round-trip,
+                                     non-collection mode, deleting all records from
+                                     a nested collection leaves it empty (no phantom
+                                     row), add record via vertical stack, circular
+                                     (self-referential) model renders without crashing
+      UomInput.tsx                 → numeric + unit selector for integer/decimal attributes
+                                     with uomAllowedUnitSymbols. Single mode: InputGroup
+                                     with numeric input + inline Select for unit. Multi
+                                     mode (isCollection): chips of &quot;value unit&quot; with
+                                     remove buttons + add row (value + unit + plus icon,
+                                     Enter to commit). Defaults to model.defaultUom; falls
+                                     back to first allowed symbol. Exports UomDisplay for
+                                     read-only rendering (&quot;value unit, value unit, …&quot;).</code></pre></div><h4 id="still-to-implement">Still to implement ❌<a class="anchor" href="#still-to-implement" aria-hidden="true">#</a></h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">  components/
+    AttributeList/
+      hooks/
+        useDependentAttributes.ts  → dependent attr update triggers
+</code></pre></div><h4 id="done-attributemanage-additions">Done ✅ (AttributeManage additions)<a class="anchor" href="#done-attributemanage-additions" aria-hidden="true">#</a></h4>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">      AttributeConflictDialog.tsx  → conflict resolution modal. Dialog (disablePointerDismissal)
+                                     shows a design-system Table of attribute name / your value /
+                                     system value rows. &quot;Use System Values&quot; calls acceptServerValues
+                                     (patches entity + originalEntity, clears changedAttributes).
+                                     &quot;Keep My Changes&quot; calls clearConflict then re-fires handleSave.
+                                     Escape still dismisses via onOpenChange → clearConflict.
+                                     Conflict detection (calling setConflict) requires a WebSocket
+                                     push — see Known Gaps.</code></pre></div><h4 id="known-gaps-future-work">Known gaps / future work<a class="anchor" href="#known-gaps-future-work" aria-hidden="true">#</a></h4>
+<p><strong>Save lifecycle</strong></p>
+<ul>
+<li><strong><code>AttributeConflictDialog</code> implemented, but conflict detection is not wired</strong> — the dialog UI, resolution handlers (&quot;Use System Values&quot; / &quot;Keep My Changes&quot;), and all store actions (<code>setConflict</code> / <code>clearConflict</code>) are complete. Nothing calls <code>setConflict</code> yet because conflict detection requires a real-time notification subscription (see below).</li>
+<li><strong>Conflict detection requires a WebSocket push, not a post-save re-fetch</strong> — in the Lit source, <code>rock-attribute-manage-v2</code> never calls <code>getbyids</code> immediately after save. Instead it waits for a <code>govern-complete</code> notification pushed over Socket.IO. The full chain: RDF backend → HTTP POST <code>/api/notify</code> → Node.js <code>NotificationService</code> → Socket.IO server emits <code>event:notification</code> to the user&#39;s room → <code>bedrock-notification-receiver-v2</code> dispatches <code>dataobject-notification</code> into the ACI bus → <code>bedrock-dataobject-notification-handler-v2</code> maps <code>GovernComplete</code> → <code>govern-complete</code> → <code>rock-attribute-manage-v2.actionCallback</code> → <code>_refreshAttributes</code> → <code>_fetchEntityData</code> → diff fresh values against baseline, filtering out the user&#39;s own changes → populate <code>_autoUpdatedAttributes</code>. The conflict dialog is then shown on the user&#39;s <em>next</em> save attempt if <code>_autoUpdatedAttributes</code> is non-empty. Calling <code>getbyids</code> immediately after the save HTTP response would race the governance engine and return stale data. To wire conflict detection in React, a WebSocket/SSE subscription to the Riversand notification endpoint is needed; on a <code>GovernComplete</code> event for the current entity, re-fetch, diff, and call <code>setConflict</code>.</li>
+<li><strong>Post-save entity is synthesized, not re-fetched</strong> — <code>saveSuccess</code> is dispatched with the merged request attributes rather than a fresh server fetch (<code>getbyids</code>); the server may normalize or transform values differently. This is intentional for now given the async governance timing above.</li>
+<li><strong>Duplicate check not wired</strong> — <code>orpc.attributeManager.duplicate.check</code> procedure exists but is never called; <code>checkDuplicatesOnUpdate</code> feature not implemented</li>
+</ul>
+<p><strong>Attribute inputs</strong></p>
+<ul>
+<li><strong><code>richtexteditor</code> display type</strong> — no <code>RichTextEditor</code> component exists in <code>@syndigo/design-system</code> yet; currently falls through to plain textbox; the lit source renders it in a dialog in list view</li>
+<li><strong><code>revert</code> disabled in view mode</strong> ✅ — revert button is omitted from the DOM when <code>isReadOnly</code> is true. <code>isEditMode = isPDPLayout || mode === &#39;edit&#39;</code> is derived first; <code>isReadOnly = isEditMode ? Boolean(model.readOnly) : true</code>. Both the input renderer and the revert button key off <code>isReadOnly</code>, so PDP inline-edit override, <code>model.readOnly</code>, and view mode are all handled in one place.</li>
+</ul>
+<p><strong>DNA / deeplynested</strong></p>
+<ul>
+<li><strong>Empty collection divergence from source</strong> — the Lit source (<code>rock-dna-tab.js</code>) hardcodes a minimum of 1 row: it disables the delete button when only one new record remains, and re-seeds an empty row if deletion somehow reaches zero. Our implementation deliberately allows truly empty collections; the &quot;new attribute&quot; case is handled by <code>DnaManage.handleOpenChange</code> seeding one row on first open. If Riversand&#39;s API rejects a zero-length DNA collection, this will need to match source behavior.</li>
+</ul>
+<p><strong>List / display</strong></p>
+<ul>
+<li><strong><code>AttributeValue</code> coalesce styling</strong> — view-mode coalesced values (from other locales/contexts) need the blue / italic fallback styling</li>
+<li><strong><code>deeplynested</code> / DNA modal — recursive editor shipped</strong> — covers the common case at any depth via the four-file split (<a href="../apps/pxc-retail/src/components/attribute-manager/components/AttributeItem/DnaManage.tsx">DnaManage</a> modal frame, <a href="../apps/pxc-retail/src/components/attribute-manager/components/AttributeItem/DnaEditor.tsx">DnaEditor</a> recursive trio, <a href="../apps/pxc-retail/src/components/attribute-manager/components/AttributeItem/DnaTabList.tsx">DnaTabList</a> record selector, <a href="../apps/pxc-retail/src/components/attribute-manager/components/AttributeItem/dna-utils.ts">dna-utils</a> pure helpers). Flat children of every supported type (string / textarea / dropdown / integer / decimal / boolean / date / datetime / <strong>LOV / UOM</strong>) render through the existing <code>AttributeItem</code> via an <code>AttributeBindingProvider</code> override — no duplicate input implementations. Nested <code>deeplynested</code> children render inline as <code>Collapsible</code>-wrapped DnaEditors at level+1. Sync validation works through the store (every keystroke live-pushes, so <code>useSyncValidation</code> picks up the tree). Path-keyed govern messages render at the offending cell, with cascading error-count badges on parent tabs + collapsible section headers + dialog title. Cancel routes through the &quot;Discard changes?&quot; confirm dialog when dirty (content-aware: type back to baseline = no prompt). <strong>Not yet ported:</strong> drag-reorder, clone, marketplace integration, source/coalesce info popovers, <code>displaySequence</code>-driven row title resolution</li>
+<li><strong>LOV label resolution on stale data</strong> — when a stored reference value carries no label (bulk import, missing translation), we currently render <code>&lt;id&gt; (no label)</code> matching the source&#39;s &quot;(Missing translation)&quot; pattern. A one-shot <code>orpc.reference.getData({ ids })</code> on mount could batch-resolve missing labels for any synthesized entries; not worth doing until someone reports it</li>
+<li><strong>Locale-switch label refresh</strong> — the lit source re-resolves labels via <code>getReferenceEntityData(refIds, ...)</code> when the user switches locale. We don&#39;t ship multi-locale switching yet; revisit when that lands</li>
+<li><strong>PDP layout — partial parity</strong> — <code>isPDPLayout</code> is wired through <code>AttributeManage → AttributeList → AttributeGroup → AttributeItem</code> and covers: inline header (group nav / search / filters), fixed-header + scrollable groups container, forced single-column, side-by-side row layout with per-row borders + tuned spacing, and inline-edit override. <strong>Not ported:</strong> boolean blur auto-toggle (needs per-attribute focus state), focus tracking / restore (no equivalent infra), <code>noLabelFloat</code> ignore (no float-label feature), AI-generation / marketplace icons in the actions block (those features aren&#39;t ported yet)</li>
+</ul>
+<hr>
+<h2 id="implementation-order">Implementation Order<a class="anchor" href="#implementation-order" aria-hidden="true">#</a></h2>
+<ol>
+<li><strong>Types</strong> — <code>src/api/types.ts</code> and <code>src/components/AttributeItem/types.ts</code> from the type definitions above</li>
+<li><strong>API layer</strong> — <code>requestBuilders.ts</code> (12 ops), <code>responseTransformers.ts</code>, <code>entityApi.ts</code>, <code>referenceApi.ts</code></li>
+<li><strong>Context + reducer</strong> — <code>AttributeManageContext.tsx</code> with full state shape and all action types</li>
+<li><strong><code>AttributeManage</code></strong> — context provider, data hooks, save/revert handlers, conflict dialog</li>
+<li><strong><code>AttributeList</code></strong> — grouping, filtering, virtualized PDP list (<code>@tanstack/react-virtual</code> flat row model, always active in PDP mode regardless of attribute count)</li>
+<li><strong><code>AttributeItem</code></strong> — individual inputs by dataType/displayType, validation display, revert/clear icons</li>
+<li><strong><code>AttributeLov</code></strong> — reference entity lookup, search pagination, tag selection</li>
+</ol>
+<hr>
+<h2 id="verification">Verification<a class="anchor" href="#verification" aria-hidden="true">#</a></h2>
+<ol>
+<li>Render <code>&lt;AttributeManage contextData={...} /&gt;</code> with a real entity — attributes load and group correctly</li>
+<li>Edit an attribute — <code>showSaveCancel</code> appears, <code>changedAttributes</code> updates, dirty DQS callback fires</li>
+<li>Save — correct API request sent, success toast shows, post-save refresh fetches updated values</li>
+<li>Sync validation (if <code>doSyncValidation</code>) — debounce fires 300ms after change, server errors display on attribute</li>
+<li>Revert all — attributes return to original snapshot</li>
+<li>100+ attributes — virtual scrolling renders correctly without DOM overflow</li>
+<li>Conflict dialog — simulate server auto-update race; dialog appears with diff table; resolve works</li>
+<li>Dependent attributes — changing source attribute triggers dependent attribute updates</li>
+<li>Reference/LOV attribute — clicking the button trigger (or chips area, multi mode) opens a fixed-height popover with a search input at the top and a virtualized list below; typing debounces 300ms then re-queries the server; scrolling near the bottom (pointer or keyboard) fetches the next page; selecting commits a value carrying both <code>referenceDataId</code> and <code>referenceEntityType</code>; closing the popover resets the search; an empty result shows the no-results screen with the &quot;Try another keyword&quot; hint</li>
+<li>Locale coalesce — coalesced values show fallback styling (blue <code>#0bb2e8</code> / italic font)</li>
+<li><code>noOfColumns</code> — 1/2/3 column grid layouts render correctly</li>
+<li><code>functionalMode</code> — contentonly / governance / list / grid modes behave differently</li>
+</ol>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

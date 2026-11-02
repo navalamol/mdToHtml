@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>storage-state</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#storage-management">Storage Management</a></li><ol class="toc-sub"><li><a href="#storage-state">Storage State</a></li><ol class="toc-sub"><li><a href="#save-storage-state">Save Storage State</a></li><li><a href="#restore-storage-state">Restore Storage State</a></li><li><a href="#storage-state-file-format">Storage State File Format</a></li></ol><li><a href="#cookies">Cookies</a></li><ol class="toc-sub"><li><a href="#list-all-cookies">List All Cookies</a></li><li><a href="#filter-cookies-by-domain">Filter Cookies by Domain</a></li><li><a href="#filter-cookies-by-path">Filter Cookies by Path</a></li><li><a href="#get-specific-cookie">Get Specific Cookie</a></li><li><a href="#set-a-cookie">Set a Cookie</a></li><li><a href="#delete-a-cookie">Delete a Cookie</a></li><li><a href="#clear-all-cookies">Clear All Cookies</a></li><li><a href="#advanced-multiple-cookies-or-custom-options">Advanced: Multiple Cookies or Custom Options</a></li></ol><li><a href="#local-storage">Local Storage</a></li><ol class="toc-sub"><li><a href="#list-all-localstorage-items">List All localStorage Items</a></li><li><a href="#get-single-value">Get Single Value</a></li><li><a href="#set-value">Set Value</a></li><li><a href="#set-json-value">Set JSON Value</a></li><li><a href="#delete-single-item">Delete Single Item</a></li><li><a href="#clear-all-localstorage">Clear All localStorage</a></li><li><a href="#advanced-multiple-operations">Advanced: Multiple Operations</a></li></ol><li><a href="#session-storage">Session Storage</a></li><ol class="toc-sub"><li><a href="#list-all-sessionstorage-items">List All sessionStorage Items</a></li><li><a href="#get-single-value-1">Get Single Value</a></li><li><a href="#set-value-1">Set Value</a></li><li><a href="#delete-single-item-1">Delete Single Item</a></li><li><a href="#clear-sessionstorage">Clear sessionStorage</a></li></ol><li><a href="#indexeddb">IndexedDB</a></li><ol class="toc-sub"><li><a href="#list-databases">List Databases</a></li><li><a href="#delete-database">Delete Database</a></li></ol><li><a href="#common-patterns">Common Patterns</a></li><ol class="toc-sub"><li><a href="#authentication-state-reuse">Authentication State Reuse</a></li><li><a href="#save-and-restore-roundtrip">Save and Restore Roundtrip</a></li></ol><li><a href="#security-notes">Security Notes</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">storage-state</h1>
+        <p class="page-meta">From <code>storage-state.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="storage-management">Storage Management<a class="anchor" href="#storage-management" aria-hidden="true">#</a></h1>
+<p>Manage cookies, localStorage, sessionStorage, and browser storage state.</p>
+<h2 id="storage-state">Storage State<a class="anchor" href="#storage-state" aria-hidden="true">#</a></h2>
+<p>Save and restore complete browser state including cookies and storage.</p>
+<h3 id="save-storage-state">Save Storage State<a class="anchor" href="#save-storage-state" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># Save to auto-generated filename (storage-state-{timestamp}.json)</span>
+playwright-cli state-save
+
+<span class="hljs-comment"># Save to specific filename</span>
+playwright-cli state-save my-auth-state.json</code></pre></div><h3 id="restore-storage-state">Restore Storage State<a class="anchor" href="#restore-storage-state" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># Load storage state from file</span>
+playwright-cli state-load my-auth-state.json
+
+<span class="hljs-comment"># Reload page to apply cookies</span>
+playwright-cli open https://example.com</code></pre></div><h3 id="storage-state-file-format">Storage State File Format<a class="anchor" href="#storage-state-file-format" aria-hidden="true">#</a></h3>
+<p>The saved file contains:</p>
+<div class="code-block"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;cookies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;session_id&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;abc123&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;domain&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;example.com&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;/&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;expires&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1735689600</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;httpOnly&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;secure&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;sameSite&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Lax&quot;</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;origins&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;origin&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://example.com&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;localStorage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;theme&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;dark&quot;</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;user_id&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;12345&quot;</span> <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span></code></pre></div><h2 id="cookies">Cookies<a class="anchor" href="#cookies" aria-hidden="true">#</a></h2>
+<h3 id="list-all-cookies">List All Cookies<a class="anchor" href="#list-all-cookies" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli cookie-list</code></pre></div><h3 id="filter-cookies-by-domain">Filter Cookies by Domain<a class="anchor" href="#filter-cookies-by-domain" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli cookie-list --domain=example.com</code></pre></div><h3 id="filter-cookies-by-path">Filter Cookies by Path<a class="anchor" href="#filter-cookies-by-path" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli cookie-list --path=/api</code></pre></div><h3 id="get-specific-cookie">Get Specific Cookie<a class="anchor" href="#get-specific-cookie" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli cookie-get session_id</code></pre></div><h3 id="set-a-cookie">Set a Cookie<a class="anchor" href="#set-a-cookie" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># Basic cookie</span>
+playwright-cli cookie-set session abc123
+
+<span class="hljs-comment"># Cookie with options</span>
+playwright-cli cookie-set session abc123 --domain=example.com --path=/ --httpOnly --secure --sameSite=Lax
+
+<span class="hljs-comment"># Cookie with expiration (Unix timestamp)</span>
+playwright-cli cookie-set remember_me token123 --expires=1735689600</code></pre></div><h3 id="delete-a-cookie">Delete a Cookie<a class="anchor" href="#delete-a-cookie" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli cookie-delete session_id</code></pre></div><h3 id="clear-all-cookies">Clear All Cookies<a class="anchor" href="#clear-all-cookies" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli cookie-clear</code></pre></div><h3 id="advanced-multiple-cookies-or-custom-options">Advanced: Multiple Cookies or Custom Options<a class="anchor" href="#advanced-multiple-cookies-or-custom-options" aria-hidden="true">#</a></h3>
+<p>For complex scenarios like adding multiple cookies at once, use <code>run-code</code>:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli run-code <span class="hljs-string">&quot;async page =&gt; {
+  await page.context().addCookies([
+    { name: &#x27;session_id&#x27;, value: &#x27;sess_abc123&#x27;, domain: &#x27;example.com&#x27;, path: &#x27;/&#x27;, httpOnly: true },
+    { name: &#x27;preferences&#x27;, value: JSON.stringify({ theme: &#x27;dark&#x27; }), domain: &#x27;example.com&#x27;, path: &#x27;/&#x27; }
+  ]);
+}&quot;</span></code></pre></div><h2 id="local-storage">Local Storage<a class="anchor" href="#local-storage" aria-hidden="true">#</a></h2>
+<h3 id="list-all-localstorage-items">List All localStorage Items<a class="anchor" href="#list-all-localstorage-items" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli localstorage-list</code></pre></div><h3 id="get-single-value">Get Single Value<a class="anchor" href="#get-single-value" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli localstorage-get token</code></pre></div><h3 id="set-value">Set Value<a class="anchor" href="#set-value" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli localstorage-set theme dark</code></pre></div><h3 id="set-json-value">Set JSON Value<a class="anchor" href="#set-json-value" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli localstorage-set user_settings <span class="hljs-string">&#x27;{&quot;theme&quot;:&quot;dark&quot;,&quot;language&quot;:&quot;en&quot;}&#x27;</span></code></pre></div><h3 id="delete-single-item">Delete Single Item<a class="anchor" href="#delete-single-item" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli localstorage-delete token</code></pre></div><h3 id="clear-all-localstorage">Clear All localStorage<a class="anchor" href="#clear-all-localstorage" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli localstorage-clear</code></pre></div><h3 id="advanced-multiple-operations">Advanced: Multiple Operations<a class="anchor" href="#advanced-multiple-operations" aria-hidden="true">#</a></h3>
+<p>For complex scenarios like setting multiple values at once, use <code>run-code</code>:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli run-code <span class="hljs-string">&quot;async page =&gt; {
+  await page.evaluate(() =&gt; {
+    localStorage.setItem(&#x27;token&#x27;, &#x27;jwt_abc123&#x27;);
+    localStorage.setItem(&#x27;user_id&#x27;, &#x27;12345&#x27;);
+    localStorage.setItem(&#x27;expires_at&#x27;, Date.now() + 3600000);
+  });
+}&quot;</span></code></pre></div><h2 id="session-storage">Session Storage<a class="anchor" href="#session-storage" aria-hidden="true">#</a></h2>
+<h3 id="list-all-sessionstorage-items">List All sessionStorage Items<a class="anchor" href="#list-all-sessionstorage-items" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli sessionstorage-list</code></pre></div><h3 id="get-single-value-1">Get Single Value<a class="anchor" href="#get-single-value-1" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli sessionstorage-get form_data</code></pre></div><h3 id="set-value-1">Set Value<a class="anchor" href="#set-value-1" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli sessionstorage-set step 3</code></pre></div><h3 id="delete-single-item-1">Delete Single Item<a class="anchor" href="#delete-single-item-1" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli sessionstorage-delete step</code></pre></div><h3 id="clear-sessionstorage">Clear sessionStorage<a class="anchor" href="#clear-sessionstorage" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli sessionstorage-clear</code></pre></div><h2 id="indexeddb">IndexedDB<a class="anchor" href="#indexeddb" aria-hidden="true">#</a></h2>
+<h3 id="list-databases">List Databases<a class="anchor" href="#list-databases" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli run-code <span class="hljs-string">&quot;async page =&gt; {
+  return await page.evaluate(async () =&gt; {
+    const databases = await indexedDB.databases();
+    return databases;
+  });
+}&quot;</span></code></pre></div><h3 id="delete-database">Delete Database<a class="anchor" href="#delete-database" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli run-code <span class="hljs-string">&quot;async page =&gt; {
+  await page.evaluate(() =&gt; {
+    indexedDB.deleteDatabase(&#x27;myDatabase&#x27;);
+  });
+}&quot;</span></code></pre></div><h2 id="common-patterns">Common Patterns<a class="anchor" href="#common-patterns" aria-hidden="true">#</a></h2>
+<h3 id="authentication-state-reuse">Authentication State Reuse<a class="anchor" href="#authentication-state-reuse" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># Step 1: Login and save state</span>
+playwright-cli open https://app.example.com/login
+playwright-cli snapshot
+playwright-cli fill e1 <span class="hljs-string">&quot;user@example.com&quot;</span>
+playwright-cli fill e2 <span class="hljs-string">&quot;password123&quot;</span>
+playwright-cli click e3
+
+<span class="hljs-comment"># Save the authenticated state</span>
+playwright-cli state-save auth.json
+
+<span class="hljs-comment"># Step 2: Later, restore state and skip login</span>
+playwright-cli state-load auth.json
+playwright-cli open https://app.example.com/dashboard
+<span class="hljs-comment"># Already logged in!</span></code></pre></div><h3 id="save-and-restore-roundtrip">Save and Restore Roundtrip<a class="anchor" href="#save-and-restore-roundtrip" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># Set up authentication state</span>
+playwright-cli open https://example.com
+playwright-cli <span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;() =&gt; { document.cookie = &#x27;session=abc123&#x27;; localStorage.setItem(&#x27;user&#x27;, &#x27;john&#x27;); }&quot;</span>
+
+<span class="hljs-comment"># Save state to file</span>
+playwright-cli state-save my-session.json
+
+<span class="hljs-comment"># ... later, in a new session ...</span>
+
+<span class="hljs-comment"># Restore state</span>
+playwright-cli state-load my-session.json
+playwright-cli open https://example.com
+<span class="hljs-comment"># Cookies and localStorage are restored!</span></code></pre></div><h2 id="security-notes">Security Notes<a class="anchor" href="#security-notes" aria-hidden="true">#</a></h2>
+<ul>
+<li>Never commit storage state files containing auth tokens</li>
+<li>Add <code>*.auth-state.json</code> to <code>.gitignore</code></li>
+<li>Delete state files after automation completes</li>
+<li>Use environment variables for sensitive data</li>
+<li>By default, sessions run in-memory mode which is safer for sensitive operations</li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

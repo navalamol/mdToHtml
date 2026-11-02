@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLAUDE</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#claudemd">CLAUDE.md</a></li><ol class="toc-sub"><li><a href="#commands">Commands</a></li><li><a href="#architecture">Architecture</a></li><ol class="toc-sub"><li><a href="#apps">Apps</a></li><li><a href="#packages">Packages</a></li><li><a href="#api-layer">API Layer</a></li><li><a href="#error-handling">Error Handling</a></li></ol><li><a href="#observability">Observability</a></li><ol class="toc-sub"><li><a href="#path-aliases">Path Aliases</a></li><li><a href="#environment-variables">Environment Variables</a></li></ol><li><a href="#code-style">Code Style</a></li><li><a href="#internationalization-i18n">Internationalization (i18n)</a></li><li><a href="#forms">Forms</a></li><li><a href="#route-tree-generation">Route Tree Generation</a></li><li><a href="#skill-loading">Skill Loading</a></li><li><a href="#knowledge-base">Knowledge Base</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">CLAUDE</h1>
+        <p class="page-meta">From <code>CLAUDE.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="claudemd">CLAUDE.md<a class="anchor" href="#claudemd" aria-hidden="true">#</a></h1>
+<p>This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.</p>
+<h2 id="commands">Commands<a class="anchor" href="#commands" aria-hidden="true">#</a></h2>
+<p>All commands run from the repo root via Turbo:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm dev                  <span class="hljs-comment"># Start all apps/packages in dev mode</span>
+pnpm build                <span class="hljs-comment"># Build all packages</span>
+pnpm lint                 <span class="hljs-comment"># Lint all packages</span>
+pnpm format               <span class="hljs-comment"># Format with Oxfmt</span>
+pnpm typecheck            <span class="hljs-comment"># Type-check all packages</span></code></pre></div><p>Filter to a specific workspace:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm dev --filter=pxc-retail
+pnpm dev --filter=tenant-management
+pnpm build --filter=@syndigo/design-system
+pnpm <span class="hljs-built_in">test</span> --filter=pxc-retail          <span class="hljs-comment"># Vitest (in apps/pxc-retail)</span>
+pnpm <span class="hljs-built_in">test</span> --filter=tenant-management   <span class="hljs-comment"># Vitest (in apps/tenant-management)</span></code></pre></div><h2 id="architecture">Architecture<a class="anchor" href="#architecture" aria-hidden="true">#</a></h2>
+<p><strong>Monorepo</strong>: pnpm workspaces + Turbo. ESM throughout (<code>&quot;type&quot;: &quot;module&quot;</code>).</p>
+<h3 id="apps">Apps<a class="anchor" href="#apps" aria-hidden="true">#</a></h3>
+<p>Both apps are TanStack Start (SSR framework on Nitro) + React 19, use file-based routing via TanStack Router (<code>src/routes/</code>), and share the shell chrome, permissions engine, navigation types, i18n, and error handling via <strong><code>@syndigo/app-shell</code></strong> (see Packages). <code>routeTree.gen.ts</code> is auto-generated — do not edit. Each app owns its own <code>src/lib/navigation-config.ts</code> and <code>src/lib/permissions/index.ts</code>, which binds app-shell&#39;s permissions engine to that app&#39;s vocabulary (see <code>.claude/knowledge/permissions/</code>). Unauthorized users are redirected to <code>/no-access</code>.</p>
+<ul>
+<li><strong><code>apps/pxc-retail</code></strong> (dev port 3000) — Main retail application. Routes are organized under <code>_shell/</code> with domain subdirectories: <code>merchandising/</code>, <code>vendor-central/</code>, <code>insights/</code>, <code>system-admin/</code>. Use <code>requireModuleAccess</code> in <code>beforeLoad</code> guards and <code>useFilteredMenuGroups</code>/<code>useFilteredSubTabs</code> for nav filtering.</li>
+<li><strong><code>apps/tenant-management</code></strong> (dev port 3001) — Tenant onboarding and feature-set/feature-definition management. Routes under <code>_shell/</code>: <code>onboard</code>, <code>tenant.$tenantId</code>, <code>features</code>, <code>feature-set.*</code>, <code>feature-definition.*</code>. Consumes the same oRPC router and <code>@syndigo/app-shell</code> primitives as pxc-retail.</li>
+</ul>
+<h3 id="packages">Packages<a class="anchor" href="#packages" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong><code>@repo/core-contracts</code></strong> — oRPC contract definitions, Zod schemas, and inferred TypeScript types. Contracts live under <code>src/&lt;domain&gt;/contracts/</code>, schemas under <code>src/schemas/</code>, inferred types under <code>src/types/</code>. Import the top-level contract via <code>@repo/core-contracts</code>, schemas via <code>@repo/core-contracts/schemas/&lt;name&gt;</code>, and inferred types via <code>@repo/core-contracts/types/&lt;name&gt;</code>.</li>
+<li><strong><code>@syndigo/orpc</code></strong> — Type-safe RPC implementations. Implements contracts from <code>@repo/core-contracts</code> using <code>implement(contract)</code>. Exports the router via <code>@syndigo/orpc/router</code>. Consumed by the app API routes and the isomorphic client.</li>
+<li><strong><code>@syndigo/design-system</code></strong> — Component library using CVA + Tailwind CSS 4 + @base-ui/react primitives (shadcn preset: <code>base-nova</code>). Exports components, hooks, utils, and <code>globals.css</code> (OKLch color tokens, dark mode). No barrel files — import individual components via <code>@syndigo/design-system/components/&lt;name&gt;</code>.</li>
+<li><strong><code>@syndigo/app-shell</code></strong> — Shared application shell consumed by both apps. Houses the shell chrome (<code>@syndigo/app-shell/shell</code>), the generic permissions engine (<code>.../permissions</code> — <code>createPermissionsContext</code>, <code>requireModuleAccess</code>, <code>filterMenuGroups</code>, <code>resolveLandingRoute</code>), navigation types (<code>.../navigation</code> — <code>MenuGroup</code>, <code>SubTabItem</code>, <code>buildSubTabResolver</code>), i18n config (<code>.../i18n</code>), query error cache (<code>.../query/error-cache</code>), error-toast helpers, and theme/timezone/date hooks. No barrels — import via the subpath exports declared in its <code>package.json</code>.</li>
+<li><strong><code>@syndigo/telemetry</code></strong> — OpenTelemetry bootstrap. <code>.../instrumentation</code> exports <code>startTelemetry({ serviceName, instrumentations })</code> and is consumed by both apps&#39; <code>instrumentation.mjs</code>. Traces only — see the Observability section. No barrels — import via the subpath exports.</li>
+<li><strong><code>@repo/typescript-config</code></strong> — Shared tsconfig bases (strict mode, <code>verbatimModuleSyntax</code>).</li>
+</ul>
+<h3 id="api-layer">API Layer<a class="anchor" href="#api-layer" aria-hidden="true">#</a></h3>
+<p>Contract-first: Zod schemas + oRPC contracts in <code>@repo/core-contracts</code> → implementations + router in <code>@syndigo/orpc</code> → each app&#39;s <code>/rpc</code> and <code>/openapi</code> routes and isomorphic client (<code>#/integrations/orpc/client</code>, exporting <code>client</code> and the React Query utils <code>orpc</code>). Wiring order, middleware stack and client details: <code>.claude/knowledge/rpc-layer/</code>.</p>
+<h3 id="error-handling">Error Handling<a class="anchor" href="#error-handling" aria-hidden="true">#</a></h3>
+<p><strong>Never expose internal error details to the client.</strong> Use <code>throwError({ code, errorKey, params })</code> from <code>@syndigo/orpc/errors</code> — no raw exception messages, stack traces, or upstream response bodies. Wrap every upstream call in <code>unwrap(context.api.X(...))</code>; <code>mapUpstreamError</code> and the middleware pipeline enforce the rule, so don&#39;t bypass them.</p>
+<p>Payload shape, middleware order, toast overrides (<code>meta.errorToast</code>), <code>RouteErrorComponent</code> branching and the two-step <code>ErrorKey</code> addition: <code>.claude/knowledge/error-handling/</code> and <code>PATTERNS.md</code>.</p>
+<h2 id="observability">Observability<a class="anchor" href="#observability" aria-hidden="true">#</a></h2>
+<p><strong>Traces only.</strong> Metrics and logs are deliberately out of scope for now — no metric reader, no log record processor, no logging library. Server code uses <code>console.*</code>; there is no structured logger to import. Shared implementation in <code>@syndigo/telemetry</code>; each app&#39;s <code>instrumentation.mjs</code> is a thin wrapper loaded via <code>node --import</code> (see its <code>start:local</code> script and the Dockerfile <code>CMD</code>).</p>
+<p><strong>Export is opt-in.</strong> <code>startTelemetry</code> resolves the endpoint from <code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code>, falling back to the generic <code>OTEL_EXPORTER_OTLP_ENDPOINT</code> with <code>/v1/traces</code> appended. With neither set the SDK never starts. Don&#39;t &quot;simplify&quot; this by always constructing the exporter: an exporter built with an undefined URL silently defaults to <code>localhost:4318</code> and floods stderr on every machine without a collector.</p>
+<p><strong>Instrumentation only loads in the built server.</strong> <code>pnpm dev</code> emits nothing. To see traces locally: start the collector (<code>docker compose -f docker-compose.observability.yml up -d</code>), set <code>OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318</code> in <code>.env.local</code>, then <code>pnpm build --filter=&lt;app&gt; &amp;&amp; pnpm --filter=&lt;app&gt; start:local</code>. Grafana is on port 3100 (Explore → Tempo).</p>
+<p><strong>What carries error detail is the span, not a log line.</strong> <code>errorRecordingMiddleware</code> records every escaping error once via <code>recordException</code> + <code>setStatus(ERROR)</code>, and <code>recordValidationError</code> attaches <code>validation.*</code> attributes for schema drift. Prefer adding a span attribute or event over adding a log line.</p>
+<p><code>packages/orpc</code> declares <code>&quot;sideEffects&quot;: false</code> so Rollup can drop the whole BFF graph from the browser bundle: each app&#39;s <code>src/integrations/orpc/client.ts</code> statically imports <code>@syndigo/orpc/router</code> and picks the server or client implementation with <code>createIsomorphicFn()</code>, and the server branch only truly disappears if the graph is provably droppable. Module-scope work that computes exported values is fine — <code>builder.ts</code>&#39;s <code>implement(contract).use(...)</code> qualifies. What breaks the assertion is an observable effect at import: mutating a global, calling into a registry (<code>z.setErrorMap()</code>, plugin registration), or installing a polyfill. If a module genuinely needs one, switch to the allowlist form (<code>&quot;sideEffects&quot;: [&quot;./src/that-module.ts&quot;]</code>) or move the effect into an explicit <code>init()</code> the server entry calls.</p>
+<p><strong>Deployed environments</strong> must inject <code>OTEL_EXPORTER_OTLP_ENDPOINT</code> via Argo CD / Kubernetes config in <code>global-devops-infra</code>; nothing is hardcoded here. <code>OTEL_SDK_DISABLED=true</code> is the no-rebuild kill switch.</p>
+<h3 id="path-aliases">Path Aliases<a class="anchor" href="#path-aliases" aria-hidden="true">#</a></h3>
+<p>In the main app: <code>#/*</code> and <code>@/*</code> both resolve to <code>./src/*</code>. Cross-package imports use <code>@syndigo/design-system/*</code>, <code>@syndigo/orpc/*</code>, and <code>@repo/core-contracts/*</code>.</p>
+<h3 id="environment-variables">Environment Variables<a class="anchor" href="#environment-variables" aria-hidden="true">#</a></h3>
+<p>Validated via T3 Env (<code>src/env/server.ts</code> and <code>src/env/client.ts</code>).</p>
+<h2 id="code-style">Code Style<a class="anchor" href="#code-style" aria-hidden="true">#</a></h2>
+<ul>
+<li>Use explicit type imports (<code>verbatimModuleSyntax</code>)</li>
+<li>Tailwind CSS 4 with CSS variable-based theming (OKLch color space)</li>
+<li>Use <code>cn()</code> from <code>@syndigo/design-system/lib/utils</code> for merging class names</li>
+</ul>
+<h2 id="internationalization-i18n">Internationalization (i18n)<a class="anchor" href="#internationalization-i18n" aria-hidden="true">#</a></h2>
+<p><strong>IMPORTANT</strong>: All user-facing text MUST use translations. Never hard-code text strings in components or error messages.</p>
+<ul>
+<li><strong>Frontend</strong>: Use <code>useTranslation()</code> hook from <code>#/hooks/use-translation</code> in React components</li>
+<li><strong>Backend</strong>: never hard-code a user-facing message. Use <code>throwError({ code, errorKey, params })</code> from <code>@syndigo/orpc/errors</code>; <code>errorKey</code> is typed as <code>ErrorKey</code>. The client renders the message — see the Error Handling section above.</li>
+<li>Translation files: <code>apps/&lt;app&gt;/src/locales/{en,es,fr,de}/translation.ts</code>. Error keys live under <code>errors.&lt;errorKey&gt;</code> — structure mirrors <code>ErrorKey</code> with an <code>errors.</code> prefix.</li>
+<li>Translation keys are written as <strong>selector callbacks</strong> (<code>t($ =&gt; $.foo.bar)</code>), not strings. Selectors give static type-checking and avoid the TS depth-limit issues that nested string keys hit.</li>
+<li>For keys that must be computed at runtime, use <code>dynamicSelector(&#39;foo.bar.baz&#39;)</code> from <code>#/integrations/i18n/config</code>. Prefer a <code>Record&lt;Union, TranslationSelector&gt;</code> lookup over <code>dynamicSelector</code> whenever the union is closed (compile-time-safer and one-shot).</li>
+<li>Use interpolation for dynamic values: <code>t($ =&gt; $.key, { variable: value })</code></li>
+<li>Use number formatting: <code>{{count, number}}</code> in translation strings</li>
+<li>Use pluralization: Define both <code>key</code> (plural/default) and <code>key_one</code> (singular) forms, pass <code>count</code> parameter</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-comment">// ✅ Good — selector callbacks</span>
+<span class="hljs-keyword">const</span> { t } = <span class="hljs-title function_">useTranslation</span>()
+&lt;p&gt;{<span class="hljs-title function_">t</span>($ =&gt; $.errors.<span class="hljs-property">not_found</span>)}&lt;/p&gt;
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{t($ =&gt; $.vendor.display.employees_count, { count: 5 })}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>
+
+<span class="hljs-comment">// ✅ Good — closed-union lookup</span>
+<span class="hljs-keyword">const</span> <span class="hljs-attr">LABELS</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-title class_">Kind</span>, <span class="hljs-title class_">TranslationSelector</span>&gt; = {
+  <span class="hljs-attr">a</span>: $ =&gt; $.kinds.<span class="hljs-property">a</span>,
+  <span class="hljs-attr">b</span>: $ =&gt; $.kinds.<span class="hljs-property">b</span>,
+}
+&lt;p&gt;{<span class="hljs-title function_">t</span>(<span class="hljs-variable constant_">LABELS</span>[kind])}&lt;/p&gt;
+
+<span class="hljs-comment">// ✅ Acceptable — runtime-computed key</span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{t(dynamicSelector(`errors.${key}`))}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>
+
+<span class="hljs-comment">// ❌ Bad — string keys (legacy pattern)</span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{t(&#x27;errors.not_found&#x27;)}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>
+
+<span class="hljs-comment">// ❌ Bad — hard-coded text</span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Page not found<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span></code></pre></div><h2 id="forms">Forms<a class="anchor" href="#forms" aria-hidden="true">#</a></h2>
+<ul>
+<li>Use <strong>TanStack Form</strong> for all form state management.</li>
+<li>Determine dirtiness via <code>!state.isDefaultValue</code> — never use <code>isDirty</code> (it latches <code>true</code>; see <code>PATTERNS.md</code>).</li>
+<li>Use the <strong>Unsaved Changes Guard</strong> to block route navigation when a form has unsaved changes.</li>
+<li>Disable submit buttons when <code>state.isSubmitting</code>, <code>state.isDefaultValue</code>, or <code>!state.isValid</code>.</li>
+</ul>
+<h2 id="route-tree-generation">Route Tree Generation<a class="anchor" href="#route-tree-generation" aria-hidden="true">#</a></h2>
+<ul>
+<li>Run <code>pnpm dev --filter=&lt;app&gt;</code> (<code>pxc-retail</code> or <code>tenant-management</code>) to regenerate that app&#39;s TanStack Router route tree (<code>src/routeTree.gen.ts</code>). This is required after adding, removing, or renaming route files.</li>
+</ul>
+<!-- intent-skills:start --><h2 id="skill-loading">Skill Loading<a class="anchor" href="#skill-loading" aria-hidden="true">#</a></h2>
+<p>Before substantial work:</p>
+<ul>
+<li>Skill check: run <code>pnpm dlx @tanstack/intent@latest list</code>, or use skills already listed in context.</li>
+<li>Skill guidance: if one local skill clearly matches the task, run <code>pnpm dlx @tanstack/intent@latest load &lt;package&gt;#&lt;skill&gt;</code> and follow the returned <code>SKILL.md</code>.</li>
+<li>Monorepos: when working across packages, run the skill check from the workspace root and prefer the local skill for the package being changed.</li>
+<li>Multiple matches: prefer the most specific local skill for the package or concern you are changing; load additional skills only when the task spans multiple packages or concerns.</li>
+</ul>
+<!-- intent-skills:end --><!-- knowledge-sync:begin -->
+<h2 id="knowledge-base">Knowledge Base<a class="anchor" href="#knowledge-base" aria-hidden="true">#</a></h2>
+<p><code>.claude/knowledge/</code> holds the curated map of this codebase. Read it before scanning source.</p>
+<ul>
+<li><strong>Start at <code>.claude/knowledge/INDEX.md</code></strong> — the router. It names the area that owns your question,
+its modules and its entry point. Do not read whole area folders; each area README lists its
+sub-docs and what each one covers.</li>
+<li><strong><code>.claude/knowledge/PATTERNS.md</code></strong> — repo-wide patterns and the rule to extend each. Read it
+before adding a class rather than editing one.</li>
+<li><strong><code>.claude/knowledge/recipes/</code></strong> — task playbooks for changes that span files (none yet; until
+one exists, use the matching project skill, e.g. <code>add-orpc-procedure</code>, <code>error-key</code>, <code>add-route</code>).</li>
+<li><strong><code>.claude/knowledge/kb-index.json</code></strong> — module glob to area registry. To find the owning area of a
+file: <code>python3 .claude/skills/knowledge-sync/scripts/kb_impact.py --files &lt;path&gt;</code>
+(on Windows: <code>py -3 .claude\skills\knowledge-sync\scripts\kb_impact.py --files &lt;path&gt;</code>).</li>
+</ul>
+<p><strong>Required before committing a change under <code>apps/</code> or <code>packages/</code>:</strong> run the <code>knowledge-sync</code>
+skill in mode <code>sync</code> and update the impacted area docs. The skill computes the impacted areas from
+the staged diff and gates on <code>kb_lint.py</code> exiting 0.</p>
+<!-- knowledge-sync:end -->
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

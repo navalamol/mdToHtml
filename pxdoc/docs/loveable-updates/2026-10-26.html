@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026-10-26</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#loveable-update-58b5720ab9bc30">Loveable Update: 58b5720..ab9bc30</a></li><ol class="toc-sub"><li><a href="#commits-descriptive-only-165-wip-changes-commits-omitted">Commits (descriptive only; 165 WIP &quot;Changes&quot; commits omitted)</a></li><li><a href="#changed-files">Changed Files</a></li><li><a href="#ux-changes-by-domain">UX Changes by Domain</a></li><ol class="toc-sub"><li><a href="#validation-framework-new">Validation Framework (new)</a></li><li><a href="#vendor-central">Vendor Central</a></li><li><a href="#admin-roles">Admin &amp; Roles</a></li><li><a href="#layout-navigation">Layout &amp; Navigation</a></li><li><a href="#product-detail-catalog">Product Detail &amp; Catalog</a></li><li><a href="#data-schema-reference-only-pxc-retail-uses-orpcupstream-not-supabasedrizzle">Data / Schema (reference only — pxc-retail uses oRPC/upstream, not Supabase/Drizzle)</a></li></ol><li><a href="#impacted-pxc-retail-pages">Impacted pxc-retail Pages</a></li><ol class="toc-sub"><li><a href="#validation-framework">Validation framework</a></li><li><a href="#vendor-central-1">Vendor Central</a></li><li><a href="#admin-roles-layout-navigation">Admin / Roles / Layout / Navigation</a></li><li><a href="#product-detail-catalog-data">Product Detail &amp; Catalog / Data</a></li></ol><li><a href="#implementation-notes">Implementation Notes</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">2026-10-26</h1>
+        <p class="page-meta">From <code>2026-10-26.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="loveable-update-58b5720ab9bc30">Loveable Update: 58b5720..ab9bc30<a class="anchor" href="#loveable-update-58b5720ab9bc30" aria-hidden="true">#</a></h1>
+<div class="table-wrap"><table><thead><tr><th></th><th>SHA</th><th>Timestamp (UTC)</th><th>Message</th></tr></thead><tbody><tr><td><strong>From</strong></td><td><code>58b5720</code></td><td>2026-09-28 11:05:34</td><td>Removed layout switcher tabs</td></tr><tr><td><strong>To</strong></td><td><code>ab9bc30</code></td><td>2026-10-26 15:59:49</td><td>Moved Retailer Flow to admin</td></tr></tbody></table></div><p>This is a ~4-week rollout: <strong>231 commits</strong> (66 with descriptive messages; 165 are bare &quot;Changes&quot;/&quot;Work in progress&quot; WIP snapshots). The headline themes are a <strong>new client-side vendor validation framework</strong>, <strong>vendor-list pagination/sorting/status</strong>, a <strong>request-new-vendor + duplicate/merge flow</strong>, <strong>bank-change / address-change dual approval</strong>, <strong>PII-reveal auditing</strong>, an <strong>onboarding reviewer workflow with segregation-of-duties</strong>, and relocating <strong>Retailer Flow</strong> and <strong>Address Types</strong> into Admin alongside a real <strong>No-access</strong> screen and a <strong><code>merchant</code> → <code>vendor</code></strong> role rename with vendor self-scoping.</p>
+<hr>
+<h2 id="commits-descriptive-only-165-wip-changes-commits-omitted">Commits (descriptive only; 165 WIP &quot;Changes&quot; commits omitted)<a class="anchor" href="#commits-descriptive-only-165-wip-changes-commits-omitted" aria-hidden="true">#</a></h2>
+<ul>
+<li><code>ab9bc30</code> Moved Retailer Flow to admin</li>
+<li><code>e4a29c0</code> Built Merchandiser guide</li>
+<li><code>c2940b7</code> Added P&amp;L user guide with tabs</li>
+<li><code>80493a9</code> Reviewed Product Detail guide</li>
+<li><code>6b708fd</code> Approved Catalog guide v1.0</li>
+<li><code>dc6b399</code> Completed Word guide audit</li>
+<li><code>19ed6a0</code> Removed attestations from UI</li>
+<li><code>1b1843b</code> Drafted Compliance guide</li>
+<li><code>571b7e2</code> Added preview log entry</li>
+<li><code>309f696</code> Fixed new vendor profile race</li>
+<li><code>d8f07b3</code> Added review indicators UI</li>
+<li><code>c87f985</code> Fixed vendor RLS permissiveness</li>
+<li><code>98ca818</code> Added approve/reject actions</li>
+<li><code>8497802</code> Added editable rules to BPR</li>
+<li><code>9edd87d</code> Added bank-change approval flow</li>
+<li><code>654017f</code> Moved address types to admin</li>
+<li><code>880039e</code> Added Addresses guide</li>
+<li><code>8231e4c</code> Added vendor contact reveal</li>
+<li><code>467d53c</code> Started Contacts module</li>
+<li><code>b48ddfe</code> Fixed sample vendor data</li>
+<li><code>f21cc28</code> Added status view-only for vendors</li>
+<li><code>18f9662</code> Confirmed inputs &amp; draft guide</li>
+<li><code>d9edfb1</code> Updated Vendor Central guide</li>
+<li><code>0ef0dca</code> Saved prompt v4.0 &amp; rules</li>
+<li><code>fc231ed</code> Updated acceptance criteria</li>
+<li><code>a33cba1</code> Wrote Individual Vendor guide</li>
+<li><code>26b95f5</code> Added order volume &amp; hover</li>
+<li><code>a82324b</code> Updated vendor card colours</li>
+<li><code>d3b1f91</code> Drafted Vendor Management guide</li>
+<li><code>cd16973</code> Completed Things to Fix doc</li>
+<li><code>a604d4f</code> Rewrote user guide for v2.0</li>
+<li><code>0d8d426</code> Fixed GAP-TTF-006/007</li>
+<li><code>07d5bfe</code> Implemented BC-01, BC-03 fixes</li>
+<li><code>afd386f</code> Fixed vendor details load</li>
+<li><code>3d9fe6c</code> Added vendor catalog view</li>
+<li><code>bb055ad</code> Restricted Vendor UI access</li>
+<li><code>7647889</code> Enforced vendor record isolation</li>
+<li><code>d20028c</code> Rolled out to List on Approval</li>
+<li><code>ba301d2</code> Added banner to Add Manually</li>
+<li><code>32be019</code> Added form validation</li>
+<li><code>7c391a7</code> Added duplicate check &amp; UX flow</li>
+<li><code>5da33c3</code> Built Page Shell &amp; live list</li>
+<li><code>5bf4d2e</code> Added screen reader labels</li>
+<li><code>aea311d</code> Added 25 vendor profiles</li>
+<li><code>8dd36d0</code> Implemented back button state</li>
+<li><code>389644e</code> Implemented sorting and saved view</li>
+<li><code>77e124a</code> Added Inactive/Blocked &amp; tags</li>
+<li><code>f0ed976</code> Added Sort label, A-Z default</li>
+<li><code>4ca73f6</code> Ignored spaces in vendor search</li>
+<li><code>f69889c</code> Added AC-DASH-001-06</li>
+<li><code>6906f59</code> Added no-access UI &amp; rules</li>
+<li><code>6450146</code> Added paging to vendor list</li>
+<li><code>e38692a</code> Removed Remit-To warning</li>
+<li><code>eb47e1f</code> Added 8 cross-check rules</li>
+<li><code>6c98af4</code> Implemented onboarding rules</li>
+<li><code>24d9b06</code> Added Compliance &amp; Logistics</li>
+<li><code>3306a5a</code> Added schema, tests, upload</li>
+<li><code>836bbe2</code> Added D&amp;B save rules &amp; checks</li>
+<li><code>51f12c1</code> Wired bank validation logic</li>
+<li><code>bd8f6c6</code> Implemented address validation</li>
+<li><code>2b702be</code> Added contact rules &amp; audit</li>
+<li><code>385f203</code> Added error-count badge in menu</li>
+<li><code>5ea15b5</code> Added validation and error UX</li>
+<li><code>4fbc6dd</code> Added field-level validation</li>
+<li><code>8ab5e37</code> Added save/leave validation</li>
+<li><code>17fcc99</code> Generated all 16 sprint guides</li>
+</ul>
+<h2 id="changed-files">Changed Files<a class="anchor" href="#changed-files" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>File</th><th>Change</th><th>Domain</th></tr></thead><tbody><tr><td><code>src/lib/validation/types.ts</code></td><td>A</td><td>Validation framework</td></tr><tr><td><code>src/lib/validation/rules.ts</code></td><td>A</td><td>Validation framework (XS cross-section)</td></tr><tr><td><code>src/lib/validation/validators.ts</code></td><td>A</td><td>Validation framework (shared primitives)</td></tr><tr><td><code>src/lib/validation/audit.ts</code></td><td>A</td><td>Validation framework (mock RBAC + activity log)</td></tr><tr><td><code>src/lib/validation/config.ts</code></td><td>A</td><td>Validation framework (D&amp;B/insurance/sanctions config)</td></tr><tr><td><code>src/lib/validation/mockServices.ts</code></td><td>A</td><td>Validation framework (client-side async stubs)</td></tr><tr><td><code>src/lib/validation/schemas/vendorProfile.ts</code></td><td>A</td><td>Validation framework (VP-001..015)</td></tr><tr><td><code>src/lib/validation/schemas/banking.ts</code></td><td>A</td><td>Validation framework (BK/TX/TT)</td></tr><tr><td><code>src/lib/validation/schemas/businessRisk.ts</code></td><td>A</td><td>Validation framework (BR-001..027)</td></tr><tr><td><code>src/lib/validation/schemas/addresses.ts</code></td><td>A</td><td>Validation framework (AD-001..025)</td></tr><tr><td><code>src/lib/validation/schemas/contacts.ts</code></td><td>A</td><td>Validation framework (CT-001..014)</td></tr><tr><td><code>src/lib/validation/schemas/documents.ts</code></td><td>A</td><td>Validation framework (DC-001..019)</td></tr><tr><td><code>src/lib/validation/schemas/customFields.ts</code></td><td>A</td><td>Validation framework (GEN/CP)</td></tr><tr><td><code>src/lib/validation/schemas/onboarding.ts</code></td><td>A</td><td>Validation framework (OB-001..005)</td></tr><tr><td><code>src/lib/validation/schemas/newVendorRequest.ts</code></td><td>A</td><td>Validation framework (request form)</td></tr><tr><td><code>src/lib/validation/__fixtures__/vnd001.ts</code></td><td>A</td><td>Validation framework (fixtures)</td></tr><tr><td><code>src/lib/validation/**/*.test.ts</code></td><td>A</td><td>Validation framework (tests)</td></tr><tr><td><code>src/components/shared/validation/ValidationSummaryBanner.tsx</code></td><td>A</td><td>Validation UI (sticky banner, jump-to-field)</td></tr><tr><td><code>src/components/shared/validation/FieldMessages.tsx</code></td><td>A</td><td>Validation UI (error/warning/hint)</td></tr><tr><td><code>src/components/shared/validation/AddressFields.tsx</code></td><td>A</td><td>Validation UI (validated address block)</td></tr><tr><td><code>src/components/shared/validation/ValidationDebugDrawer.tsx</code></td><td>A</td><td>Validation UI (dev <code>?debug=1</code>)</td></tr><tr><td><code>src/lib/vendor-field-validators.ts</code></td><td>A</td><td>Validation (field primitives)</td></tr><tr><td><code>src/lib/vendor-business-validations.ts</code></td><td>M</td><td>Vendor (Things-to-Fix BC-01..07)</td></tr><tr><td><code>src/components/vendor/VendorList.tsx</code></td><td>M</td><td>Vendor Central (list)</td></tr><tr><td><code>src/components/vendor/VendorProfile.tsx</code></td><td>M</td><td>Vendor Central (profile, bank/PII)</td></tr><tr><td><code>src/components/vendor/VendorSectionNav.tsx</code></td><td>M</td><td>Vendor Central (section nav + review)</td></tr><tr><td><code>src/components/vendor/VendorWorkflowPanel.tsx</code></td><td>M</td><td>Vendor Central (onboarding reviewer)</td></tr><tr><td><code>src/components/vendor/RequestNewVendorFlow.tsx</code></td><td>M</td><td>Vendor Central (request + dedup)</td></tr><tr><td><code>src/components/vendor/ThingsToFixPanel.tsx</code></td><td>M</td><td>Vendor Central (Things-to-Fix)</td></tr><tr><td><code>src/components/vendor/network/NetworkCampaigns.tsx</code></td><td>M</td><td>Vendor Central (network)</td></tr><tr><td><code>src/components/vendor/network/SupplierListMatching.tsx</code></td><td>M</td><td>Vendor Central (network)</td></tr><tr><td><code>src/pages/VendorPortal.tsx</code></td><td>M</td><td>Vendor Central (page)</td></tr><tr><td><code>src/pages/VendorProfilePage.tsx</code></td><td>M</td><td>Vendor Central (page)</td></tr><tr><td><code>src/lib/added-vendors-store.ts</code></td><td>A</td><td>Vendor Central (Zustand + Supabase realtime)</td></tr><tr><td><code>src/lib/bank-change-store.ts</code></td><td>A</td><td>Vendor Central (dual-approval, localStorage)</td></tr><tr><td><code>src/lib/vendor-pagination.ts</code></td><td>A</td><td>Vendor Central (paginate helper)</td></tr><tr><td><code>src/components/admin/RoleFeatureTogglePanel.tsx</code></td><td>M</td><td>Admin &amp; Roles (merchant→vendor)</td></tr><tr><td><code>src/pages/Admin.tsx</code></td><td>M</td><td>Admin &amp; Roles (Vendor Settings tab)</td></tr><tr><td><code>src/pages/RoleAdmin.tsx</code></td><td>M</td><td>Admin &amp; Roles (default role)</td></tr><tr><td><code>src/lib/address-config-store.ts</code></td><td>A</td><td>Admin &amp; Roles (required address types)</td></tr><tr><td><code>src/lib/role-feature-store.ts</code></td><td>M</td><td>Admin &amp; Roles</td></tr><tr><td><code>src/lib/auth-store.ts</code></td><td>M</td><td>Admin &amp; Roles (role rename, assignedVendorId)</td></tr><tr><td><code>src/lib/users-store.ts</code></td><td>M</td><td>Admin &amp; Roles</td></tr><tr><td><code>src/lib/navigation-config.ts</code></td><td>M</td><td>Layout &amp; Navigation (Retailer Flow → admin)</td></tr><tr><td><code>src/components/layout/AppBreadcrumbs.tsx</code></td><td>M</td><td>Layout &amp; Navigation (vendor crumb collapse)</td></tr><tr><td><code>src/components/layout/AuthGuard.tsx</code></td><td>M</td><td>Layout &amp; Navigation (No-access screen)</td></tr><tr><td><code>src/components/layout/Header.tsx</code></td><td>M</td><td>Layout &amp; Navigation (role label)</td></tr><tr><td><code>src/components/layout/MenuBar.tsx</code></td><td>M</td><td>Layout &amp; Navigation (My Vendor Profile)</td></tr><tr><td><code>src/integrations/supabase/previewAuthStorage.ts</code></td><td>M</td><td>Infra (preview auth broker)</td></tr><tr><td><code>src/components/product-detail/LocaleSelector.tsx</code></td><td>M</td><td>Product Detail (syndication context)</td></tr><tr><td><code>src/components/product-detail/guidance/NextBestActionBar.tsx</code></td><td>M</td><td>Product Detail (collapsed bar)</td></tr><tr><td><code>src/pages/ProductCatalog.tsx</code></td><td>M</td><td>Product Catalog (vendor scoping)</td></tr><tr><td><code>src/pages/ProductDetailPage.tsx</code></td><td>M</td><td>Product Detail (Ask AI copilot)</td></tr><tr><td><code>src/pages/PdpSummarySettings.tsx</code></td><td>M</td><td>Product Detail (role presets)</td></tr><tr><td><code>src/lib/pdp-summary-store.ts</code></td><td>M</td><td>Product Detail (merchant→vendor preset)</td></tr><tr><td><code>src/lib/product-catalog-store.ts</code></td><td>M</td><td>Product Catalog (vendor map)</td></tr><tr><td><code>src/integrations/supabase/types.ts</code></td><td>M</td><td>Data / Schema (added_vendors types)</td></tr><tr><td><code>drizzle.config.ts</code></td><td>A</td><td>Data / Schema (reference only)</td></tr><tr><td><code>drizzle/schema.ts</code></td><td>A</td><td>Data / Schema (blank placeholder)</td></tr><tr><td><code>drizzle/migrations/0000_create_added_vendors.sql</code></td><td>A</td><td>Data / Schema (added_vendors table)</td></tr><tr><td><code>drizzle/migrations/0001_restrict_added_vendors_read.sql</code></td><td>A</td><td>Data / Schema (RLS tightening)</td></tr><tr><td><code>drizzle/migrations/meta/*</code></td><td>A</td><td>Data / Schema (migration meta)</td></tr><tr><td><code>AGENTS.md</code>, <code>roadmap.md</code></td><td>A</td><td>Docs (product rules + guide checklist)</td></tr><tr><td><code>.lovable/memory/*</code></td><td>A</td><td>Lovable tooling (ignore)</td></tr><tr><td><code>bun.lock</code>, <code>package.json</code></td><td>M</td><td>Deps (ignore)</td></tr></tbody></table></div><hr>
+<h2 id="ux-changes-by-domain">UX Changes by Domain<a class="anchor" href="#ux-changes-by-domain" aria-hidden="true">#</a></h2>
+<h3 id="validation-framework-new">Validation Framework (new)<a class="anchor" href="#validation-framework-new" aria-hidden="true">#</a></h3>
+<p>A self-contained, client-only rule engine under <code>src/lib/validation/</code> plus four shared React components, wired into the vendor record editor and the new-vendor request flow. No Zod, no server — pure functions returning a <code>RuleResult { id, severity, message, trigger, section, field }</code> envelope.</p>
+<ul>
+<li><strong>Shared components:</strong> <code>ValidationSummaryBanner</code> (sticky <code>role=&quot;alert&quot;</code> &quot;N errors, M warnings&quot; with buttons that scroll+focus the offending field via <code>data-testid</code>); <code>FieldMessages</code> (<code>FieldError</code>/<code>FieldWarning</code>/<code>FieldHint</code> + <code>RequiredSrLabel</code> + <code>errorInputClass</code>); <code>AddressFields</code> (validated Country→Street→City→State/ZIP block with normalize-on-blur, aria wiring, subdivision selects); <code>ValidationDebugDrawer</code> (dev-only <code>?debug=1</code> Sheet listing pass/fail for the full rule catalog).</li>
+<li><strong>Shared behaviors:</strong> <code>canSave</code> (errors block Save; warnings require acknowledgement), <code>shouldShow</code> (messages appear only after touch or a save attempt), <code>normalizeText</code> (trim + collapse whitespace), stable <code>field-&lt;section&gt;-&lt;name&gt;</code> / <code>msg-&lt;section&gt;-&lt;name&gt;</code> test-ids.</li>
+<li><strong>Validators:</strong> ABA checksum, IBAN mod-97, SWIFT/BIC, EIN prefix + placeholder detection, DUNS, GS1/GLN check digit, SCAC, postal, E.164 phone (libphonenumber-js), email, https URL, 4-digit year.</li>
+<li><strong>Per-section schemas:</strong> <code>vendorProfile</code> (VP-001..015), <code>banking</code> (BK-001..018 + TX tax + TT trade terms), <code>businessRisk</code> (BR-001..027 D&amp;B identity/hierarchy/scores/ownership/diversity), <code>addresses</code> (AD-001..025 incl. PO-box ban, sanctioned-country block, GLN, cold-chain, FFR), <code>contacts</code> (CT-001..014), <code>documents</code> (DC-001..019 incl. COI/FDA/GFSI/W-9 metadata, DocuSign), <code>customFields</code> (GEN/CP — ESG, attestations, SCAC, GDSN), <code>onboarding</code> (OB-001..005 approve/reject gates + segregation-of-duties), <code>newVendorRequest</code>, and <code>rules.ts</code> (XS-001..010 cross-section integrity on save).</li>
+<li><strong>Mocks:</strong> <code>mockServices.ts</code> client-side stubs (explicitly server-side TODOs) for routing lookup, duplicate-vendor, sanctions, TIN match, DUNS, address verify, malware scan, carrier authority; <code>audit.ts</code> mock RBAC + activity log; <code>config.ts</code> D&amp;B/insurance/sanctions/disposable-domain data.</li>
+</ul>
+<h3 id="vendor-central">Vendor Central<a class="anchor" href="#vendor-central" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>Vendor List:</strong> fixed <strong>20/page numbered pager</strong> with &quot;Showing X–Y of N (filtered from M)&quot;; seed grew 10→26 vendors. Sort dropdown gained <strong>Category/Location/Status</strong>; default changed trustScore/desc → <strong>name/asc</strong>; column headers became <strong>clickable sort buttons</strong> with <code>aria-sort</code> and ▲/▼/↕. View mode persisted to localStorage per-user; full list state saved to sessionStorage and <strong>restored on browser Back</strong> only. <strong>Inactive</strong>/<strong>Blocked</strong> statuses + semantic badge colors. Search <strong>trims whitespace</strong>; new removable <strong>Trust Score range</strong> chip; capability &quot;+N more&quot; <strong>hover tooltip</strong>; new <strong>Order Volume</strong> ($X.XM) on cards; <code>?highlight=VND-nnn</code> jumps/scrolls/ring-highlights.</li>
+<li><strong>Request New Vendor:</strong> new <strong>Legal Name</strong> + <strong>D-U-N-S</strong> fields with field-level validation + summary banner. <strong>Duplicate check</strong> on submit (<code>findProbableMatches</code> normalizes names/DUNS) opens a &quot;Possible duplicate vendor&quot; dialog offering <strong>Merge</strong> or edit. <strong>&quot;List on Approval&quot;</strong> creates/merges via <code>addNew</code> then routes to All Vendors with <code>?highlight=</code>.</li>
+<li><strong>Vendor Network:</strong> accepting a request / confirming matches runs the same dedup and <strong>toasts &quot;probably already exists … not added again.&quot;</strong></li>
+<li><strong>Vendor Profile:</strong> <strong>bank-change dual approval</strong> (<code>PendingBankChange</code> in localStorage; Current vs Requested masked; second approver, <code>canApproveBankChange</code> blocks self-approval, callback-verification checkbox, ≥10-char reject reason; account number write-only). <strong>Payment-terms</strong> change on Active requires reason + &quot;Needs approval.&quot; New <strong>Remit-To / Billing address</strong> change control (≥10-char reason + dual-approval warning). <strong>PII reveal hardened</strong> — bank/Tax ID/insurance/contact reveals are permission-checked (<code>pii.reveal</code>/<code>bank.reveal</code>/<code>contact.reveal</code>/<code>compliance.reveal</code>) and <strong>written to the activity log</strong>.</li>
+<li><strong>Things to Fix:</strong> &quot;all clear&quot; empty state; each failing field carries <code>testId</code>/<code>docId</code> so <strong>Fix</strong> focuses the exact input/document; BC-03 now distinguishes &quot;no primary marked&quot; from &quot;no contacts.&quot;</li>
+<li><strong>Section nav / review:</strong> per-section <strong>error-count badges</strong>; warning-toned TIN badge; Documents gained <strong>Awaiting-review / Approved / Rejected</strong> statuses with reviewer <strong>approve/reject (reason)</strong> actions, review filter, and preview activity logging.</li>
+<li><strong>Onboarding workflow:</strong> stage Approve/Complete/Reject gated by aggregated blockers — unresolved validations, <code>approvalBlockers</code>, financial-step block, and <strong>segregation of duties</strong> (can&#39;t approve what you created/last edited); reject requires 10–500 chars; decisions fire <code>onDecision</code> for audit.</li>
+</ul>
+<h3 id="admin-roles">Admin &amp; Roles<a class="anchor" href="#admin-roles" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong><code>merchant</code> role renamed to <code>vendor</code></strong> everywhere; legacy <code>&quot;merchant&quot;</code> maps to <code>&quot;vendor&quot;</code> on login. Vendor modules narrowed to <code>[&quot;vendor-portal&quot;, &quot;product-catalog&quot;]</code>; <code>merchandising</code> <strong>gains</strong> <code>vendor-portal</code>.</li>
+<li><strong>New <code>assignedVendorId</code></strong> on user/auth state (seed Maria Rodriguez → <code>vendor</code> / <code>VND-008</code>; default <code>VND-008</code>). New <code>canVendorOpenPath()</code> allows a vendor only <code>/vendor-portal/&lt;their id&gt;</code> and <code>/product/&lt;id&gt;</code> where the product&#39;s vendor matches.</li>
+<li><strong>New &quot;Vendor Settings&quot; admin sub-tab</strong> (<code>Admin.tsx</code>): Business-Admin system setting listing <strong>required address types</strong> as checkboxes, persisted via the new <code>address-config-store</code> (default <code>[&quot;HQ&quot;,&quot;Billing&quot;]</code>, localStorage).</li>
+<li>RoleAdmin default create role merchant→vendor; <code>hasModuleAccess</code> hardened with a <code>!def</code> guard.</li>
+</ul>
+<h3 id="layout-navigation">Layout &amp; Navigation<a class="anchor" href="#layout-navigation" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>Retailer Flow moved out of the top menu into Admin</strong> as a sub-tab (<code>/retailer-flow</code>); path/sub-tab resolvers updated. <code>vendor-settings</code> sub-tab also added under admin.</li>
+<li><strong>Real No-access screen</strong> in <code>AuthGuard</code> (was a silent redirect to <code>/</code>): full <code>role=&quot;alert&quot;</code> <code>data-testid=&quot;no-access&quot;</code> panel with &quot;Go to my vendor record&quot; (vendors) + &quot;Go to Dashboard&quot;; guard now also blocks vendors via <code>canVendorOpenPath</code>.</li>
+<li><strong>MenuBar</strong> relabels Vendor Management → <strong>&quot;My Vendor Profile&quot;</strong> for vendors (navigates to their record). <strong>Breadcrumbs</strong> collapse to first+last crumb for vendors in the vendor-portal module. <strong>Header</strong> adds the <code>vendor</code> role label.</li>
+<li><code>previewAuthStorage.ts</code> — Lovable-preview auth-broker refactor; infra only, no pxc analog.</li>
+</ul>
+<h3 id="product-detail-catalog">Product Detail &amp; Catalog<a class="anchor" href="#product-detail-catalog" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>LocaleSelector</strong> re-modeled from a flat two-list picker into a three-level <strong>syndication context</strong> (Country → Channels → Languages) driven by a <code>CONTEXT_RULES</code> table (US/CA/UK/MX); channels/languages filtered + pruned by selected countries; new trigger format (&quot;US +1 · Walmart +2 · English (US)&quot;), info hint, chips, &quot;Apply context.&quot;</li>
+<li><strong>NextBestActionBar</strong> gains a <strong>collapsed default</strong> — compact &quot;Next step&quot; bar (severity dot, truncated title, blocker badge, CTA, <strong>Ask AI</strong>, Show details); &quot;Nothing outstanding — retail ready&quot; when clear.</li>
+<li><strong>ProductCatalog vendor scoping:</strong> <code>?vendor=</code> param + role gating — <code>role === &#39;vendor&#39;</code> users see only their <code>assignedVendorId</code> products; create/import actions hidden for vendors. Store adds <code>vendorId</code>, <code>PRODUCT_VENDOR_MAP</code>, filter helpers.</li>
+<li><strong>ProductDetailPage &quot;Ask AI&quot;</strong> now opens the <code>content-copilot</code> agent seeded with product context + quick-action chips.</li>
+<li><strong>PDP summary</strong> role preset key <code>merchant</code> → <code>vendor</code> in <code>ROLE_DEFAULT_PRESETS</code> and settings role options.</li>
+</ul>
+<h3 id="data-schema-reference-only-pxc-retail-uses-orpcupstream-not-supabasedrizzle">Data / Schema (reference only — pxc-retail uses oRPC/upstream, not Supabase/Drizzle)<a class="anchor" href="#data-schema-reference-only-pxc-retail-uses-orpcupstream-not-supabasedrizzle" aria-hidden="true">#</a></h3>
+<ul>
+<li>New <code>added_vendors</code> table: <code>id</code> TEXT PK matching <code>^VND-[0-9]{3,}$</code>, <code>name</code> (not null), <code>legal_name</code>, <code>duns</code>, <code>category</code> (default &#39;Uncategorized&#39;), <code>status</code> (default &#39;Pending&#39;), <code>trust_score</code> int, <code>location</code>, <code>on_time_delivery</code>, <code>order_volume</code>, <code>source</code> CHECK <code>&#39;manual&#39;|&#39;network&#39;</code>, <code>created_at</code>. Added to <code>supabase_realtime</code>.</li>
+<li>RLS migration <code>0001</code> drops public read; restricts SELECT to authenticated (<code>auth.uid() IS NOT NULL</code>); revokes <code>anon</code> SELECT; <strong>anon insert stays open</strong>. <code>supabase/types.ts</code> regenerated for the new table (plus a <code>PostgrestVersion</code> 14.5→14.1 regeneration artifact — ignore).</li>
+<li><code>AGENTS.md</code> codifies two product rules: vendor-wide settings live in <code>src/lib</code> stores edited only in <em>System Administration &gt; Vendor Settings</em>; approval-held changes (bank changes) are pending requests applied only on approval by a <strong>different</strong> user (dual control). <code>roadmap.md</code> is a guide-authoring checklist — no new product direction.</li>
+</ul>
+<hr>
+<h2 id="impacted-pxc-retail-pages">Impacted pxc-retail Pages<a class="anchor" href="#impacted-pxc-retail-pages" aria-hidden="true">#</a></h2>
+<h3 id="validation-framework">Validation framework<a class="anchor" href="#validation-framework" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>Loveable feature</th><th>pxc-retail route / file</th><th>Status</th></tr></thead><tbody><tr><td>Banking schema (BK-001..018 + warnings)</td><td><code>core-contracts/vendor-central/banking-rules.ts</code> + <code>profile/BankingCard.tsx</code></td><td><strong>Already implemented</strong> — near-1:1 ABA/IBAN/EIN/SWIFT + warnings (interim pending RPC-150)</td></tr><tr><td>Addresses schema + validated fields (AD-001..025)</td><td><code>core-contracts/vendor-central/address-rules.ts</code> + <code>profile/AddressDialog.tsx</code></td><td><strong>Already implemented</strong> — PO-box/city/postal/state; ZIP-vs-state, GLN, cold-chain, FFR deferred to backend</td></tr><tr><td>Contacts schema (CT-001..014)</td><td><code>vendor/_shared/forms/schemas.ts</code> + <code>_shared/contact-validation.ts</code></td><td><strong>Already implemented</strong> — format + advisory warnings; role-contact recommendations absent</td></tr><tr><td>Documents validation (DC-001..019)</td><td><code>profile/DocumentUploadDialog.tsx</code> + <code>tenant-vendor-schema.ts</code></td><td><strong>Already implemented</strong> — type/size/expiry + COI/FDA/GFSI/W-9; DocuSign checks unconfirmed</td></tr><tr><td>Vendor Profile schema (VP-001..015)</td><td><code>profile/vendor-profile-schema.ts</code></td><td><strong>Stub only</strong> — thin Zod; no entity-suffix match, DC master list, warehouse-format, D&amp;B cross-checks</td></tr><tr><td>Field-level inline error UI</td><td><code>vendor/_shared/forms/FormField.tsx</code> → design-system <code>Field</code>/<code>FieldError</code></td><td><strong>Already implemented</strong> (errors). Inline <code>FieldWarning</code>/<code>FieldHint</code> <strong>Not implemented</strong> — warnings use acknowledge dialogs</td></tr><tr><td>Business Profile &amp; Risk / D&amp;B (BR-001..027)</td><td><code>profile/vendor-compliance.ts</code> (badges only)</td><td><strong>Not implemented</strong> — only badge flags; no hierarchy/scores/ownership/diversity validation</td></tr><tr><td>Trade Terms validation (TT-001..010)</td><td><code>profile/TradeTermsDialog.tsx</code></td><td><strong>Stub only</strong> — dialog with no validation logic</td></tr><tr><td>Tax Identifiers validation (TX-001..006)</td><td><code>profile/TaxInfoDialog.tsx</code> / <code>TaxInfoCard.tsx</code></td><td><strong>Stub only</strong> — UI only, no per-country format/dup/badge rules</td></tr><tr><td>Custom Fields (GEN/CP: ESG, attestations, SCAC, GDSN)</td><td>none found</td><td><strong>Not implemented</strong></td></tr><tr><td>Cross-section integrity (XS-001..010)</td><td>none found</td><td><strong>Not implemented</strong></td></tr><tr><td>Onboarding approval / SoD gates (OB-001..005)</td><td>none found</td><td><strong>Not implemented</strong></td></tr><tr><td><code>ValidationSummaryBanner</code> (jump-to-field)</td><td>none</td><td><strong>Not implemented</strong> — pxc uses focus-first-error + acknowledge dialogs</td></tr><tr><td><code>ValidationDebugDrawer</code> (<code>?debug=1</code>)</td><td>none</td><td><strong>Not implemented</strong> (dev-only; likely out of scope)</td></tr><tr><td><code>mockServices.ts</code> async checks</td><td>warning inputs exist; lookups deferred</td><td><strong>Not implemented</strong> client-side — server concern by design</td></tr></tbody></table></div><h3 id="vendor-central-1">Vendor Central<a class="anchor" href="#vendor-central-1" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>Loveable feature</th><th>pxc-retail route / file</th><th>Status</th></tr></thead><tbody><tr><td>Vendor list pagination</td><td><code>vendor-management/vendors.tsx</code></td><td><strong>Already implemented</strong> — cursor &quot;Load more&quot; (limit 12), not 20/page numbered pager</td></tr><tr><td>Sort dropdown (category/location/status/volume)</td><td><code>vendor/VendorFilterBar.tsx</code></td><td><strong>Stub only</strong> — only name/createdAt/employeeCount sortable</td></tr><tr><td>Clickable sortable table headers</td><td><code>vendor/VendorTable.tsx</code></td><td><strong>Not implemented</strong> — no header sort / aria-sort</td></tr><tr><td>View-mode persistence</td><td><code>vendors.tsx</code> (ViewToggle)</td><td><strong>Already implemented</strong> — via URL <code>view</code> param (not localStorage)</td></tr><tr><td>List-state restore on Back</td><td><code>vendors.tsx</code></td><td><strong>Not verified</strong> — URL params preserve filters; no sessionStorage snapshot</td></tr><tr><td>Inactive / Blocked statuses + tags</td><td><code>vendor/vendor-status-variant.ts</code></td><td><strong>Already implemented</strong> — variants + i18n labels</td></tr><tr><td>Search ignoring spaces (trim)</td><td><code>VendorFilterBar.tsx</code> / backend</td><td><strong>Not verified</strong> — <code>q</code> passed to backend; no explicit client trim</td></tr><tr><td>Order Volume on card + capabilities &quot;+N more&quot; hover</td><td><code>vendor/VendorTileCard.tsx</code></td><td><strong>Already implemented</strong> — order volume + capabilities Popover</td></tr><tr><td><code>?highlight=</code> List-on-Approval highlight</td><td><code>vendors.tsx</code> + <code>VendorGrid.tsx</code></td><td><strong>Already implemented</strong> — <code>highlightVendorId</code> param + grid highlight</td></tr><tr><td>Request-New-Vendor flow (Legal Name + DUNS)</td><td><code>vendor-management/onboarding.tsx</code> + <code>vendor/onboarding/*</code></td><td><strong>Not implemented</strong> — pxc opens an onboarding wizard, not a request→approval form</td></tr><tr><td>Duplicate check + Merge dialog</td><td>none</td><td><strong>Not implemented</strong> — no <code>findProbableMatches</code>/merge dialog</td></tr><tr><td>Shared added-vendors store (realtime)</td><td>oRPC <code>vendorCentral.tenantVendor.list</code></td><td><strong>Already implemented</strong> via real API — client Zustand/Supabase store + dedup toast <strong>Not implemented</strong></td></tr><tr><td>Network accept → add vendor + dup toast</td><td><code>vendor/network/*</code></td><td><strong>Not verified</strong> — network tabs exist; <code>addNetworkVendor</code> dedup toast not found</td></tr><tr><td>Bank-change dual approval</td><td><code>profile/PendingBankChangePanel.tsx</code>, <code>lib/vendor/banking-profile-store.ts</code></td><td><strong>Already implemented</strong> — client-side (localStorage) per Bolt 38; callback-gated, self-approval blocked, ≥10-char reason</td></tr><tr><td>Payment-terms change &quot;Needs approval&quot; + reason</td><td><code>profile/BankingCard.tsx</code></td><td><strong>Already implemented</strong> — <code>paymentTermsReason</code> / <code>paymentTermsNeedsApproval</code></td></tr><tr><td>Remit-To / Billing address change control</td><td><code>profile/AddressesCard.tsx</code> / <code>AddressDialog.tsx</code></td><td><strong>Not implemented</strong> — no dual-approval/callback on address change</td></tr><tr><td>Contact / banking PII reveal auditing</td><td><code>profile/ContactsCard.tsx</code>, <code>_shared/MaskedText.tsx</code></td><td><strong>Stub only</strong> — reveal/mask works but not gated by <code>*.reveal</code> permission nor logged</td></tr><tr><td>Things-to-Fix panel + BC-01..07 + Fix-to-field</td><td>none</td><td><strong>Not implemented</strong> — no <code>evaluateBusinessValidations</code>/ThingsToFix/section badges</td></tr><tr><td>Onboarding stage approve/reject + SoD + blockers</td><td><code>onboarding.tsx</code></td><td><strong>Not implemented</strong> — pxc onboarding is a submission wizard; no reviewer panel</td></tr><tr><td>Document review indicators (Awaiting-review + filter)</td><td><code>profile/document-status.ts</code>, <code>DocumentsCard.tsx</code></td><td><strong>Already implemented</strong> — <code>awaiting_review</code> status + filter + preview</td></tr><tr><td>Document reviewer approve/reject (reason)</td><td><code>DocumentsCard.tsx</code> / <code>DocumentPreviewPanel.tsx</code></td><td><strong>Not implemented</strong> — Bolt 40 territory</td></tr><tr><td>Vendor RLS / record isolation</td><td>backend / oRPC</td><td><strong>Not implemented (backend-blocked)</strong> — pxc vendor-scoping RPC-142 deferred</td></tr></tbody></table></div><h3 id="admin-roles-layout-navigation">Admin / Roles / Layout / Navigation<a class="anchor" href="#admin-roles-layout-navigation" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>Loveable feature</th><th>pxc-retail route / file</th><th>Status</th></tr></thead><tbody><tr><td><code>merchant</code> → <code>vendor</code> role rename</td><td><code>core-contracts/schemas/permission-schema.ts</code> (<code>ALL_ROLES</code>)</td><td><strong>Not implemented</strong> — role is still <code>merchant</code></td></tr><tr><td>Vendor modules narrowed; <code>vendor-portal</code> module</td><td><code>permission-schema.ts</code> <code>ALL_MODULES</code>, <code>navigation-config.ts</code></td><td><strong>Not implemented</strong> — no <code>vendor-portal</code> module</td></tr><tr><td><code>assignedVendorId</code> + <code>canVendorOpenPath</code> self-scoping</td><td><code>apps/pxc-retail/src</code> (auth/session)</td><td><strong>Not implemented</strong> — matches MEMORY (RPC-142/134 backend-blocked)</td></tr><tr><td>Move Retailer Flow into Admin sub-tab</td><td><code>lib/navigation-config.ts</code></td><td><strong>Not implemented</strong> — no <code>retailer-flow</code> route/module exists in pxc</td></tr><tr><td>Vendor Settings admin tab (required address types)</td><td><code>routes/_shell/system-admin/*</code></td><td><strong>Not implemented</strong> — sub-tabs are users/roles/ui-config only</td></tr><tr><td><code>address-config-store</code> (configurable required types)</td><td><code>profile/AddressDialog.tsx</code></td><td><strong>Not implemented</strong> — <code>ADDRESS_TYPES</code> hardcoded; no store/admin setting</td></tr><tr><td>No-access screen with recovery links</td><td><code>routes/no-access.tsx</code></td><td><strong>Already implemented</strong> (partial) — <code>/no-access</code> 403 route; vendor-specific link deferred to RPC-134</td></tr><tr><td>AuthGuard renders No-access vs silent redirect</td><td><code>requireModuleAccess(..., &#39;/no-access&#39;)</code> in <code>lib/permissions/index.ts</code></td><td><strong>Already implemented</strong> — redirect via app-shell permissions engine</td></tr><tr><td>Per-role feature-toggle panel</td><td><code>admin/RolesPermissionsPanel.tsx</code> + <code>system-admin/roles.tsx</code></td><td><strong>Already implemented</strong> (different model) — merchant→vendor rename not reflected</td></tr><tr><td>MenuBar &quot;My Vendor Profile&quot; for vendors</td><td><code>navigation-config.ts</code> / shell MenuBar</td><td><strong>Not implemented</strong> — depends on absent vendor role</td></tr><tr><td>Breadcrumb collapse for vendors</td><td>app-shell breadcrumbs</td><td><strong>Not implemented</strong> — depends on absent vendor role</td></tr><tr><td>previewAuthStorage broker refactor</td><td>—</td><td><strong>N/A</strong> — Lovable-preview infra only</td></tr></tbody></table></div><h3 id="product-detail-catalog-data">Product Detail &amp; Catalog / Data<a class="anchor" href="#product-detail-catalog-data" aria-hidden="true">#</a></h3>
+<div class="table-wrap"><table><thead><tr><th>Loveable feature</th><th>pxc-retail route / file</th><th>Status</th></tr></thead><tbody><tr><td>LocaleSelector country/channel/language syndication context</td><td><code>merchandising/product-catalog/$productId.tsx</code> (ENTITY_VALUE_CONTEXTS)</td><td><strong>Not implemented</strong> — value context hard-coded <code>[{ locale: &#39;en-US&#39;, source: &#39;internal&#39; }]</code>; no selector UI</td></tr><tr><td>NextBestActionBar collapsed &quot;Next step&quot; bar + Ask AI</td><td><code>product-detail/summary-widgets/ThingsToDoWidget.tsx</code></td><td><strong>Not verified</strong> — static <code>ThingsToDoWidget</code>; no collapsible bar / Ask-AI toggle</td></tr><tr><td>ProductCatalog vendor scoping (<code>?vendor=</code>, role gating)</td><td><code>merchandising/product-catalog/index.tsx</code></td><td><strong>Not implemented</strong> — <code>EntitySearchPage</code> over oRPC; no vendor param/role (RPC-142 blocked)</td></tr><tr><td>ProductDetailPage &quot;Ask AI&quot; seeds content-copilot</td><td><code>$productId.tsx</code> / <code>product-detail/*</code></td><td><strong>Not verified</strong> — no copilot-seeding wiring found</td></tr><tr><td>PDP summary role presets (merchant→vendor) / settings page</td><td><code>product-detail/hooks/useEntitySummaryConfig.ts</code>; no system-admin PDP route</td><td><strong>Not implemented</strong> — attribute/slot config via oRPC, not role-keyed presets</td></tr><tr><td><code>added_vendors</code> table + RLS</td><td>n/a — maps to oRPC/upstream data shape</td><td><strong>Reference-only</strong> — pxc uses oRPC + upstream API, not Supabase/Drizzle</td></tr></tbody></table></div><hr>
+<h2 id="implementation-notes">Implementation Notes<a class="anchor" href="#implementation-notes" aria-hidden="true">#</a></h2>
+<ul>
+<li><p><strong>Architecture divergence (the recurring theme).</strong> Loveable persists runtime state client-side — Zustand stores (<code>added-vendors-store</code> + Supabase realtime, <code>bank-change-store</code> + localStorage) and per-user local/sessionStorage for list state — and ships one monolithic client-only <code>RuleResult[]</code> engine with English strings baked in. pxc-retail is contract-first: data flows through oRPC (<code>orpc.vendorCentral.tenantVendor.*</code>) with cursor pagination and <code>@repo/core-contracts/schemas/vendor-schema</code>; validation rules are pure functions in <code>core-contracts/vendor-central/*</code> returning <code>{ field, ruleId, key }</code> resolved to text via i18n selectors. <strong>Any port of VP/BR/TT/TX/CP rules must follow that split</strong> (rules in core-contracts, messages as <code>ErrorKey</code>/translation selectors) — Loveable&#39;s inline strings would violate the i18n rule in CLAUDE.md.</p>
+</li>
+<li><p><strong>Backend-first posture / mocks → tickets.</strong> pxc already annotates <code>banking-rules.ts</code> as interim pending RPC-150 and defers ZIP-vs-state, GLN, address verify, TIN uniqueness, ABA/sanctions/DUNS lookups to the backend. Loveable&#39;s <code>mockServices.ts</code> is the client stand-in for exactly those; in pxc they stay oRPC procedures, with warning inputs populated from server data. Per the &quot;ticket every mock&quot; rule, any new async check gets a Jira ticket + backend discussion.</p>
+</li>
+<li><p><strong>Contract-shaped gaps to extend before porting:</strong></p>
+<ul>
+<li><strong>Pagination:</strong> Loveable&#39;s 20/page numbered pager vs pxc&#39;s cursor <code>useSuspenseInfiniteQuery</code> + &quot;Load more&quot; — needs a page/offset contract param or client slicing (backend exposes <code>nextCursor</code> only).</li>
+<li><strong>Sort:</strong> <code>VendorSortFieldSchema</code> only offers name/createdAt/employeeCountEstimate — category/location/status/volume/trust-score sort + clickable headers require contract + server extension.</li>
+<li><strong>PII-reveal auditing:</strong> Loveable introduced finer <code>pii.reveal</code>/<code>bank.reveal</code>/<code>contact.reveal</code>/<code>compliance.reveal</code> permissions + reveal audit-logging; pxc gates only <code>vendor-management:write</code> and does not log reveals — a gap if reveal auditing is required.</li>
+</ul>
+</li>
+<li><p><strong>Biggest net-new clusters for pxc</strong> (each backed by a Loveable <code>validation/schemas/*</code> with no pxc counterpart, and most needing new BFF fields):</p>
+<ol>
+<li>Business Profile &amp; Risk / D&amp;B validation (BR-001..027) — only compliance badges exist today.</li>
+<li>Trade Terms (TT) + Tax Identifiers (TX) rule validation — dialogs exist but validate nothing.</li>
+<li>Custom Fields / ESG / attestations (CP/GEN) — absent entirely.</li>
+<li>Cross-section (XS) + onboarding approval/SoD (OB) — absent.</li>
+<li>Request-new-vendor + duplicate/merge flow, Things-to-Fix business-validation engine + section error badges, onboarding reviewer workflow with segregation-of-duties, document reviewer approve/reject, and address-change dual approval.</li>
+</ol>
+</li>
+<li><p><strong>Vendor self-scoping stays blocked.</strong> The whole <code>vendor</code> role + <code>assignedVendorId</code> + <code>canVendorOpenPath</code> + &quot;My Vendor Profile&quot; + breadcrumb-collapse + catalog <code>?vendor=</code> cluster depends on the session exposing <code>role</code>/<code>assignedVendorId</code>, which pxc does not have (RPC-142 deferred to RPC-134). Only permission-gating works today; the <code>merchant</code>→<code>vendor</code> naming is worth aligning in pxc&#39;s role vocabulary if/when that lands.</p>
+</li>
+<li><p><strong>Design-system mappings.</strong> Loveable raw shadcn (<code>@/components/ui/*</code>) → <code>@syndigo/design-system/components/*</code> (no barrels): Tooltip → <strong>Popover</strong> for &quot;+N more&quot;; <code>Badge variant=outline</code> → pxc status-variant helper; <code>FieldError/FieldWarning/FieldHint</code> → design-system <code>Field</code>/<code>FieldError</code> (errors only today); <code>ValidationSummaryBanner</code> has no pxc equivalent (current pattern is focus-first-error + <code>*WarningsDialog</code> acknowledge dialogs); <code>AddressFields</code> → composed <code>AddressDialog</code> + <code>CountryCombobox</code>/<code>StateProvinceField</code>. Reusable validators (ABA, IBAN mod-97, EIN prefix/placeholder) already exist in pxc <code>banking-rules.ts</code> — reuse rather than re-import.</p>
+</li>
+<li><p><strong>Ignore for pxc:</strong> <code>previewAuthStorage.ts</code> (Lovable-preview infra), the <code>supabase/types.ts</code> <code>PostgrestVersion</code> 14.5→14.1 regeneration artifact, <code>.lovable/*</code>, <code>drizzle/*</code> (reference data shape only), and <code>bun.lock</code>/<code>package.json</code>.</p>
+</li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

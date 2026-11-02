@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026-05-11</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#loveable-update-ab5b4aea1b0d7cbe">Loveable Update: ab5b4aea..1b0d7cbe</a></li><ol class="toc-sub"><li><a href="#commits">Commits</a></li><li><a href="#changed-files">Changed Files</a></li><li><a href="#ux-changes-by-domain">UX Changes by Domain</a></li><ol class="toc-sub"><li><a href="#dashboard">Dashboard</a></li><li><a href="#shell-header">Shell / Header</a></li><li><a href="#by-network-new-domain">BY Network (new domain)</a></li></ol><li><a href="#impacted-pxc-retail-pages">Impacted pxc-retail Pages</a></li><li><a href="#implementation-notes">Implementation Notes</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">2026-05-11</h1>
+        <p class="page-meta">From <code>2026-05-11.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="loveable-update-ab5b4aea1b0d7cbe">Loveable Update: ab5b4aea..1b0d7cbe<a class="anchor" href="#loveable-update-ab5b4aea1b0d7cbe" aria-hidden="true">#</a></h1>
+<div class="table-wrap"><table><thead><tr><th></th><th>SHA</th><th>Timestamp (UTC)</th><th>Message</th></tr></thead><tbody><tr><td><strong>From</strong></td><td><code>ab5b4ae</code></td><td>2026-04-30 15:37:09</td><td>Added Commerce Optimization tab</td></tr><tr><td><strong>To</strong></td><td><code>1b0d7cb</code></td><td>2026-05-07 09:56:17</td><td>Update site info for publish</td></tr></tbody></table></div><hr>
+<h2 id="commits">Commits<a class="anchor" href="#commits" aria-hidden="true">#</a></h2>
+<ul>
+<li>1b0d7cb Update site info for publish</li>
+<li>776c569 Added cart sheet to BY page</li>
+<li>00c03e5 Changes</li>
+<li>05e0b96 Changes</li>
+<li>7f9d06f Changes</li>
+<li>53961c8 Changes</li>
+<li>b29d32d Changes</li>
+<li>4db10d0 Changes</li>
+<li>8f405ae Added hover availability pill</li>
+<li>04a8746 Changes</li>
+<li>991be13 Changes</li>
+<li>392d56b Added CRO KPIs to dashboard</li>
+<li>0549a99 Changes</li>
+<li>f435c6f Changes</li>
+<li>9e4df79 Changes</li>
+<li>51dea63 Added KPI density toggle</li>
+<li>b5eeaba Changes</li>
+<li>6ed46fd Changes</li>
+<li>a3e69ae Changes</li>
+<li>47163c7 Changes</li>
+<li>0d298ec Shrunk KPI cards for more visibility</li>
+<li>65e3c9b Changes</li>
+<li>6893874 Applied navy to BY page only</li>
+<li>ddc2a37 Changes</li>
+<li>25b887f Changes</li>
+<li>7a5274c Replaced Syndigo logo in app</li>
+<li>46a2a21 Changes</li>
+<li>332454f Changes</li>
+<li>c450e65 Added Syndigo logo to header</li>
+<li>a4f5895 Changes</li>
+<li>62232e8 Changes</li>
+<li>2f29d16 Changes</li>
+<li>9f0d586 Replaced logo &amp; fixed catalog</li>
+<li>923b952 Changes</li>
+<li>23e0a92 Changes</li>
+<li>5ff5ce7 Changes</li>
+<li>a4d5348 Added BY Network module</li>
+<li>2e013ac Changes</li>
+<li>9365008 Changes</li>
+<li>a3b110f Changes</li>
+<li>b69de48 Changes</li>
+<li>bbd2586 Changes</li>
+</ul>
+<h2 id="changed-files">Changed Files<a class="anchor" href="#changed-files" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>File</th><th>Change</th><th>Domain</th></tr></thead><tbody><tr><td><code>index.html</code></td><td>M</td><td>site/meta</td></tr><tr><td><code>public/favicon.ico</code></td><td>M</td><td>site/branding</td></tr><tr><td><code>src/App.tsx</code></td><td>M</td><td>shell (routing)</td></tr><tr><td><code>src/assets/blueyonder-logo.png</code></td><td>A</td><td>branding asset</td></tr><tr><td><code>src/assets/syndigo-logo.svg</code></td><td>A</td><td>branding asset</td></tr><tr><td><code>src/components/dashboard/CROMetricsWidget.tsx</code></td><td>A</td><td>dashboard</td></tr><tr><td><code>src/components/dashboard/KPICard.tsx</code></td><td>M</td><td>dashboard</td></tr><tr><td><code>src/components/layout/Header.tsx</code></td><td>M</td><td>shell</td></tr><tr><td><code>src/lib/dashboard-config-store.ts</code></td><td>M</td><td>dashboard config</td></tr><tr><td><code>src/pages/BYNetwork.tsx</code></td><td>A</td><td>page (BY Network)</td></tr><tr><td><code>src/pages/Index.tsx</code></td><td>M</td><td>dashboard page</td></tr></tbody></table></div><hr>
+<h2 id="ux-changes-by-domain">UX Changes by Domain<a class="anchor" href="#ux-changes-by-domain" aria-hidden="true">#</a></h2>
+<h3 id="dashboard">Dashboard<a class="anchor" href="#dashboard" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>KPI density toggle.</strong> A pair of <code>Toggle</code> controls (&quot;Compact&quot; / &quot;Comfortable&quot;) is rendered above the KPI grid on the dashboard. State persists to <code>localStorage</code> under key <code>kpi-density</code> (default <code>compact</code>). Selected density is passed to each <code>KPICard</code> as the new <code>density</code> prop.</li>
+<li><strong>Shrunken KPI cards.</strong> <code>KPICard</code> now accepts <code>density?: &quot;compact&quot; | &quot;comfortable&quot;</code> (default <code>compact</code>). Compact mode uses smaller padding (<code>p-4</code> vs <code>p-6</code>), smaller title (<code>text-xs</code>), smaller value (<code>text-lg</code> vs <code>text-2xl</code>), smaller arrow/lightbulb icons (<code>h-3.5</code> vs <code>h-4</code>), tighter divider (<code>mt-2 pt-2</code> vs <code>mt-4 pt-4</code>), smaller AI suggestion text (<code>text-xs</code>) and a shorter &quot;View Details&quot; button (<code>h-6 px-1.5 text-[11px]</code>). The unused <code>Badge</code> import was removed.</li>
+<li><strong>CRO KPI tiles added.</strong> Four new KPI keys are prepended to the default KPI grid: <code>conversionRate</code> (3.42%, success), <code>addToCartRate</code> (11.8%, success), <code>cartAbandonment</code> (62.1%, destructive), <code>avgOrderValue</code> ($84.20, success). All four currently route to <code>/insights/sku-performance</code>. New labels added to <code>KPI_LABELS</code>.</li>
+<li><strong>CRO Metrics widget.</strong> New widget <code>CROMetricsWidget</code> rendered conditionally (<code>croMetrics.visible</code>) below the ordered widget list on the dashboard. Inside:<ul>
+<li>A 2/3-column grid of 6 metric tiles (Conversion Rate, Add-to-Cart Rate, PDP Bounce Rate, Cart Abandonment, AOV, Revenue per Visitor) each with icon, value, delta with up/down arrow tinted success/destructive, and optional hint.</li>
+<li>A &quot;Conversion Funnel&quot; panel with four <code>Progress</code> rows (Product views 100% → Added to cart 11.8% → Reached checkout 6.4% → Completed purchase 3.42%) plus visitor count.</li>
+<li>An &quot;Active A/B Experiments&quot; panel listing three experiments with lift % and Winning/Losing badge.</li>
+<li>An &quot;AI insight&quot; call-out (primary-tinted card with <code>Sparkles</code> icon) with a recommendation example.</li>
+<li>A &quot;View CRO Analytics&quot; outline button navigating to <code>/insights/sku-performance</code>.</li>
+</ul>
+</li>
+<li><strong>Widget config order shift.</strong> <code>croMetrics</code> inserted at order 8; <code>recentActivity</code> and <code>quickActions</code> shifted to 9 and 10. <code>WIDGET_LABELS.croMetrics = &quot;Conversion Rate Optimization&quot;</code>.</li>
+</ul>
+<h3 id="shell-header">Shell / Header<a class="anchor" href="#shell-header" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>Syndigo logo asset.</strong> Inline SVG + wordmark in <code>Header.tsx</code> replaced with the new <code>src/assets/syndigo-logo.svg</code> raster/SVG asset rendered via <code>&lt;img&gt;</code> at <code>h-6</code>. Logo still falls back to a customer-uploaded <code>logoUrl</code> if branding is set.</li>
+<li><strong>BY Network menu entry.</strong> New <code>DropdownMenuItem</code> (with <code>Network</code> icon) added to the header user/app dropdown that navigates to <code>/by-network</code>. Bracketed by <code>DropdownMenuSeparator</code>s.</li>
+<li><strong>Site meta refresh.</strong> <code>index.html</code> description and OG/Twitter cards updated for the publish; title block reordered. No app behavior change.</li>
+</ul>
+<h3 id="by-network-new-domain">BY Network (new domain)<a class="anchor" href="#by-network-new-domain" aria-hidden="true">#</a></h3>
+<ul>
+<li><strong>New full-screen page</strong> at <code>/by-network</code> (route registered in <code>App.tsx</code>, guarded by <code>AuthGuard</code>). Has its own scoped brand color (navy <code>hsl(228 100% 15%)</code>) applied via inline <code>--primary</code> CSS-var overrides — does <em>not</em> leak into the main app palette.</li>
+<li><strong>App bar.</strong> Back arrow, BlueYonder × Syndigo lockup, two <code>Select</code> menus (active module: Asset Dashboard / Item Catalog / Orders / Suppliers; sub-view: Item Catalog / Favorites / Recently Viewed), wishlist button, cart button with item-count badge, customer name (from <code>useBrandingStore</code>, fallback &quot;PHX Buyer Supply Co.&quot;), &quot;BY&quot; avatar.</li>
+<li><strong>Slim left rail</strong> with icon buttons (Catalog, Search, Filters, Cart) painted in the navy brand color.</li>
+<li><strong>Catalog body.</strong><ul>
+<li>Search header with input, &quot;Search&quot; button, and grid/list view toggle.</li>
+<li>Tile grid (2→6 cols responsive) of 20 hard-coded <code>PRODUCT_DATA</code> items (apparel, accessories, electronics, smart home, personal care, wellness, bedding). Each tile: image, 5-star rating (4/5 filled), name (2-line clamp), vendor + product group line, USD price, &quot;Add To Cart&quot; button, <strong>hoverable Availability pill</strong> (<code>HoverCard</code>) showing a vendor matrix table (Vendor / Price / Qty / UOM) with a &quot;primary vendor&quot; <code>CheckCircle2</code> marker, and a &quot;Compare&quot; checkbox.</li>
+<li>Pagination footer.</li>
+</ul>
+</li>
+<li><strong>Right filter panel.</strong> Sort by (price asc/desc, name), Product Group, Vendors, Item Type, Item Category selects; filter count badge; Clear and Reset/Apply controls. Note: instruction text &quot;You must select at least one filter option.&quot;</li>
+<li><strong>Cart sheet.</strong> Right-side <code>Sheet</code> opened from the cart icon. Empty state shows cart icon + &quot;Your shopping list is empty.&quot; Populated state lists each item with thumbnail, name, qty stepper (- / numeric input / +), Remove and Edit buttons, line total. Footer &quot;Create Order&quot; button (resets cart, fires success toast) and grand total. State is in-memory only.</li>
+</ul>
+<hr>
+<h2 id="impacted-pxc-retail-pages">Impacted pxc-retail Pages<a class="anchor" href="#impacted-pxc-retail-pages" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Loveable feature</th><th>pxc-retail route / file</th><th>Status</th></tr></thead><tbody><tr><td>BY Network page (<code>/by-network</code>)</td><td>none</td><td><strong>Not implemented</strong> — no route, no components, no <code>blueyonder-logo.png</code> asset. Whole module missing.</td></tr><tr><td>CRO Metrics widget on dashboard</td><td><a href="apps/pxc-retail/src/routes/_shell/index.tsx">_shell/index.tsx</a></td><td><strong>Not implemented</strong> — pxc-retail dashboard is a placeholder (<code>t(&#39;pages.dashboard.welcome&#39;)</code>); no widgets at all.</td></tr><tr><td>KPI cards with density toggle</td><td><a href="apps/pxc-retail/src/routes/_shell/index.tsx">_shell/index.tsx</a></td><td><strong>Not implemented</strong> — no <code>KPICard</code> component or dashboard-config store in the app.</td></tr><tr><td>New CRO KPI keys (conversionRate, addToCartRate, cartAbandonment, avgOrderValue)</td><td>none</td><td><strong>Not implemented</strong> — no dashboard config exists.</td></tr><tr><td>Header → BY Network menu item</td><td><a href="apps/pxc-retail/src/components/layout/AppHeader.tsx">components/layout/AppHeader.tsx</a></td><td><strong>Not implemented</strong> — dropdown does not include a BY Network entry.</td></tr><tr><td>Syndigo logo asset in header</td><td><a href="apps/pxc-retail/src/components/layout/AppHeader.tsx">components/layout/AppHeader.tsx</a></td><td><strong>Already implemented</strong> — <code>#/assets/syndigo-logo.svg</code> is already imported and used (line 2).</td></tr><tr><td>Site/meta tag refresh</td><td>n/a (TanStack Start handles <code>&lt;head&gt;</code>)</td><td><strong>Not verified</strong> — check whether app description/OG meta should match loveable&#39;s new copy.</td></tr></tbody></table></div><hr>
+<h2 id="implementation-notes">Implementation Notes<a class="anchor" href="#implementation-notes" aria-hidden="true">#</a></h2>
+<ul>
+<li><strong>BY Network needs API + permissions.</strong> Loveable&#39;s page uses hard-coded <code>PRODUCT_DATA</code> and an in-memory cart. For pxc-retail this would need:<ul>
+<li>A new top-level route (likely outside <code>_shell</code> since it is full-screen with its own header) or a sibling layout.</li>
+<li>oRPC contracts under <code>@repo/core-contracts</code> for catalog item listing, filtering, vendor availability, and order/cart creation. Until the BFF exists, mock fixtures should match the loveable shape.</li>
+<li>A permission key in <code>src/lib/permissions/</code> (e.g. <code>by-network</code>) so the menu entry and route are filtered for unauthorized users — loveable&#39;s <code>AuthGuard</code> is coarser than pxc-retail&#39;s <code>requireModuleAccess</code>.</li>
+<li>Branding tokens: loveable scopes the navy brand by overriding <code>--primary</code> inline. In pxc-retail this should be done via the Tailwind 4 / OKLch token system (<code>globals.css</code>) on a wrapper class rather than inline <code>style</code>.</li>
+</ul>
+</li>
+<li><strong>Design-system mappings.</strong> Loveable uses <code>HoverCard</code>, <code>Sheet</code>, <code>Toggle</code>, <code>Progress</code>, <code>Checkbox</code>, <code>Select</code>, <code>Badge</code>, <code>Card</code>, <code>Input</code>, <code>Button</code>, <code>DropdownMenu</code>. All exist in <code>@syndigo/design-system/components/*</code>; verify variants match (<code>@base-ui/react</code> primitives vs. shadcn defaults).</li>
+<li><strong>Image assets.</strong> <code>blueyonder-logo.png</code> is new in loveable. Add as <code>apps/pxc-retail/src/assets/blueyonder-logo.png</code> if BY Network is implemented.</li>
+<li><strong>i18n is required.</strong> Every loveable string (&quot;Search Results&quot;, &quot;Add To Cart&quot;, &quot;Shopping List&quot;, &quot;Conversion Funnel&quot;, &quot;AI insight&quot;, filter labels, density toggle labels, etc.) must be moved into <code>apps/pxc-retail/src/locales/{en,es,fr,de}/translation.ts</code>. Hard-coded text is not allowed per CLAUDE.md.</li>
+<li><strong>Dashboard config store.</strong> Loveable uses <code>useDashboardConfigStore</code> (<code>src/lib/dashboard-config-store.ts</code>) with <code>localStorage</code>-backed visibility/order + KPI list. pxc-retail has no equivalent yet; if dashboard is to be built, decide whether to mirror that store or move config to user-prefs via oRPC.</li>
+<li><strong>Routing convention.</strong> TanStack Router file-based routing in pxc-retail will need <code>src/routes/_shell/by-network.tsx</code> (or a route outside <code>_shell</code> if the custom chrome is preferred). Remember <code>routeTree.gen.ts</code> is autogenerated.</li>
+<li><strong>Density preference.</strong> Loveable persists per-browser via <code>localStorage</code>. In pxc-retail consider whether this belongs on the user record (oRPC) for cross-device parity.</li>
+<li><strong>Routes referenced by new KPIs.</strong> All four new CRO KPIs target <code>/insights/sku-performance</code>, which does not exist in pxc-retail (<code>_shell/insights/</code> only contains <code>content-quality.tsx</code>). Either create the route or repoint the KPIs.</li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

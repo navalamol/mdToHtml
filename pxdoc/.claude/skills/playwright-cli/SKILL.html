@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKILL</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#name-playwright-cli-description-automate-browser-interactions-test-web-pages-and-work-with-playwright-tests-allowed-tools-bashplaywright-cli-bashnpx-bashnpm">name: playwright-cli
+description: Automate browser interactions, test web pages and work with Playwright tests.
+allowed-tools: Bash(playwright-cli:) Bash(npx:) Bash(npm:*)</a></li></ol><li><a href="#browser-automation-with-playwright-cli">Browser Automation with playwright-cli</a></li><ol class="toc-sub"><li><a href="#quick-start">Quick start</a></li><li><a href="#commands">Commands</a></li><ol class="toc-sub"><li><a href="#core">Core</a></li><li><a href="#navigation">Navigation</a></li><li><a href="#keyboard">Keyboard</a></li><li><a href="#mouse">Mouse</a></li><li><a href="#save-as">Save as</a></li><li><a href="#tabs">Tabs</a></li><li><a href="#storage">Storage</a></li><li><a href="#network">Network</a></li><li><a href="#devtools">DevTools</a></li></ol><li><a href="#raw-output">Raw output</a></li><li><a href="#open-parameters">Open parameters</a></li><li><a href="#snapshots">Snapshots</a></li><li><a href="#targeting-elements">Targeting elements</a></li><li><a href="#browser-sessions">Browser Sessions</a></li><li><a href="#installation">Installation</a></li><li><a href="#example-form-submission">Example: Form submission</a></li><li><a href="#example-multi-tab-workflow">Example: Multi-tab workflow</a></li><li><a href="#example-debugging-with-devtools">Example: Debugging with DevTools</a></li><li><a href="#specific-tasks">Specific tasks</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">SKILL</h1>
+        <p class="page-meta">From <code>SKILL.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <hr>
+<h2 id="name-playwright-cli-description-automate-browser-interactions-test-web-pages-and-work-with-playwright-tests-allowed-tools-bashplaywright-cli-bashnpx-bashnpm">name: playwright-cli
+description: Automate browser interactions, test web pages and work with Playwright tests.
+allowed-tools: Bash(playwright-cli:<em>) Bash(npx:</em>) Bash(npm:*)<a class="anchor" href="#name-playwright-cli-description-automate-browser-interactions-test-web-pages-and-work-with-playwright-tests-allowed-tools-bashplaywright-cli-bashnpx-bashnpm" aria-hidden="true">#</a></h2>
+<h1 id="browser-automation-with-playwright-cli">Browser Automation with playwright-cli<a class="anchor" href="#browser-automation-with-playwright-cli" aria-hidden="true">#</a></h1>
+<h2 id="quick-start">Quick start<a class="anchor" href="#quick-start" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># open new browser</span>
+playwright-cli open
+<span class="hljs-comment"># navigate to a page</span>
+playwright-cli goto https://playwright.dev
+<span class="hljs-comment"># interact with the page using refs from the snapshot</span>
+playwright-cli click e15
+playwright-cli <span class="hljs-built_in">type</span> <span class="hljs-string">&quot;page.click&quot;</span>
+playwright-cli press Enter
+<span class="hljs-comment"># take a screenshot (rarely used, as snapshot is more common)</span>
+playwright-cli screenshot
+<span class="hljs-comment"># close the browser</span>
+playwright-cli close</code></pre></div><h2 id="commands">Commands<a class="anchor" href="#commands" aria-hidden="true">#</a></h2>
+<h3 id="core">Core<a class="anchor" href="#core" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli open
+<span class="hljs-comment"># open and navigate right away</span>
+playwright-cli open https://example.com/
+playwright-cli goto https://playwright.dev
+playwright-cli <span class="hljs-built_in">type</span> <span class="hljs-string">&quot;search query&quot;</span>
+playwright-cli click e3
+playwright-cli dblclick e7
+<span class="hljs-comment"># --submit presses Enter after filling the element</span>
+playwright-cli fill e5 <span class="hljs-string">&quot;user@example.com&quot;</span>  --submit
+playwright-cli drag e2 e8
+playwright-cli hover e4
+playwright-cli <span class="hljs-keyword">select</span> e9 <span class="hljs-string">&quot;option-value&quot;</span>
+playwright-cli upload ./document.pdf
+playwright-cli check e12
+playwright-cli uncheck e12
+playwright-cli snapshot
+playwright-cli <span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;document.title&quot;</span>
+playwright-cli <span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;el =&gt; el.textContent&quot;</span> e5
+<span class="hljs-comment"># get element id, class, or any attribute not visible in the snapshot</span>
+playwright-cli <span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;el =&gt; el.id&quot;</span> e5
+playwright-cli <span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;el =&gt; el.getAttribute(&#x27;data-testid&#x27;)&quot;</span> e5
+playwright-cli dialog-accept
+playwright-cli dialog-accept <span class="hljs-string">&quot;confirmation text&quot;</span>
+playwright-cli dialog-dismiss
+playwright-cli resize 1920 1080
+playwright-cli close</code></pre></div><h3 id="navigation">Navigation<a class="anchor" href="#navigation" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli go-back
+playwright-cli go-forward
+playwright-cli reload</code></pre></div><h3 id="keyboard">Keyboard<a class="anchor" href="#keyboard" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli press Enter
+playwright-cli press ArrowDown
+playwright-cli keydown Shift
+playwright-cli keyup Shift</code></pre></div><h3 id="mouse">Mouse<a class="anchor" href="#mouse" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli mousemove 150 300
+playwright-cli mousedown
+playwright-cli mousedown right
+playwright-cli mouseup
+playwright-cli mouseup right
+playwright-cli mousewheel 0 100</code></pre></div><h3 id="save-as">Save as<a class="anchor" href="#save-as" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli screenshot
+playwright-cli screenshot e5
+playwright-cli screenshot --filename=page.png
+playwright-cli pdf --filename=page.pdf</code></pre></div><h3 id="tabs">Tabs<a class="anchor" href="#tabs" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli tab-list
+playwright-cli tab-new
+playwright-cli tab-new https://example.com/page
+playwright-cli tab-close
+playwright-cli tab-close 2
+playwright-cli tab-select 0</code></pre></div><h3 id="storage">Storage<a class="anchor" href="#storage" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli state-save
+playwright-cli state-save auth.json
+playwright-cli state-load auth.json
+
+<span class="hljs-comment"># Cookies</span>
+playwright-cli cookie-list
+playwright-cli cookie-list --domain=example.com
+playwright-cli cookie-get session_id
+playwright-cli cookie-set session_id abc123
+playwright-cli cookie-set session_id abc123 --domain=example.com --httpOnly --secure
+playwright-cli cookie-delete session_id
+playwright-cli cookie-clear
+
+<span class="hljs-comment"># LocalStorage</span>
+playwright-cli localstorage-list
+playwright-cli localstorage-get theme
+playwright-cli localstorage-set theme dark
+playwright-cli localstorage-delete theme
+playwright-cli localstorage-clear
+
+<span class="hljs-comment"># SessionStorage</span>
+playwright-cli sessionstorage-list
+playwright-cli sessionstorage-get step
+playwright-cli sessionstorage-set step 3
+playwright-cli sessionstorage-delete step
+playwright-cli sessionstorage-clear</code></pre></div><h3 id="network">Network<a class="anchor" href="#network" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli route <span class="hljs-string">&quot;**/*.jpg&quot;</span> --status=404
+playwright-cli route <span class="hljs-string">&quot;https://api.example.com/**&quot;</span> --body=<span class="hljs-string">&#x27;{&quot;mock&quot;: true}&#x27;</span>
+playwright-cli route-list
+playwright-cli unroute <span class="hljs-string">&quot;**/*.jpg&quot;</span>
+playwright-cli unroute</code></pre></div><h3 id="devtools">DevTools<a class="anchor" href="#devtools" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli console
+playwright-cli console warning
+playwright-cli network
+playwright-cli run-code <span class="hljs-string">&quot;async page =&gt; await page.context().grantPermissions([&#x27;geolocation&#x27;])&quot;</span>
+playwright-cli run-code --filename=script.js
+playwright-cli tracing-start
+playwright-cli tracing-stop
+playwright-cli video-start video.webm
+playwright-cli video-chapter <span class="hljs-string">&quot;Chapter Title&quot;</span> --description=<span class="hljs-string">&quot;Details&quot;</span> --duration=2000
+playwright-cli video-stop</code></pre></div><h2 id="raw-output">Raw output<a class="anchor" href="#raw-output" aria-hidden="true">#</a></h2>
+<p>The global <code>--raw</code> option strips page status, generated code, and snapshot sections from the output, returning only the result value. Use it to pipe command output into other tools. Commands that don&#39;t produce output return nothing.</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli --raw <span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;JSON.stringify(performance.timing)&quot;</span> | jq <span class="hljs-string">&#x27;.loadEventEnd - .navigationStart&#x27;</span>
+playwright-cli --raw <span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;JSON.stringify([...document.querySelectorAll(&#x27;a&#x27;)].map(a =&gt; a.href))&quot;</span> &gt; links.json
+playwright-cli --raw snapshot &gt; before.yml
+playwright-cli click e5
+playwright-cli --raw snapshot &gt; after.yml
+diff before.yml after.yml
+TOKEN=$(playwright-cli --raw cookie-get session_id)
+playwright-cli --raw localstorage-get theme</code></pre></div><h2 id="open-parameters">Open parameters<a class="anchor" href="#open-parameters" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># Use specific browser when creating session</span>
+playwright-cli open --browser=chrome
+playwright-cli open --browser=firefox
+playwright-cli open --browser=webkit
+playwright-cli open --browser=msedge
+
+<span class="hljs-comment"># Use persistent profile (by default profile is in-memory)</span>
+playwright-cli open --persistent
+<span class="hljs-comment"># Use persistent profile with custom directory</span>
+playwright-cli open --profile=/path/to/profile
+
+<span class="hljs-comment"># Connect to browser via extension</span>
+playwright-cli attach --extension
+
+<span class="hljs-comment"># Connect to a running Chrome or Edge by channel name</span>
+playwright-cli attach --cdp=chrome
+playwright-cli attach --cdp=msedge
+
+<span class="hljs-comment"># Connect to a running browser via CDP endpoint</span>
+playwright-cli attach --cdp=http://localhost:9222
+
+<span class="hljs-comment"># Start with config file</span>
+playwright-cli open --config=my-config.json
+
+<span class="hljs-comment"># Close the browser</span>
+playwright-cli close
+<span class="hljs-comment"># Delete user data for the default session</span>
+playwright-cli delete-data</code></pre></div><h2 id="snapshots">Snapshots<a class="anchor" href="#snapshots" aria-hidden="true">#</a></h2>
+<p>After each command, playwright-cli provides a snapshot of the current browser state.</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">&gt; playwright-cli goto https://example.com
+<span class="hljs-comment">### Page</span>
+- Page URL: https://example.com/
+- Page Title: Example Domain
+<span class="hljs-comment">### Snapshot</span>
+[Snapshot](.playwright-cli/page-2026-02-14T19-22-42-679Z.yml)</code></pre></div><p>You can also take a snapshot on demand using <code>playwright-cli snapshot</code> command. All the options below can be combined as needed.</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># default - save to a file with timestamp-based name</span>
+playwright-cli snapshot
+
+<span class="hljs-comment"># save to file, use when snapshot is a part of the workflow result</span>
+playwright-cli snapshot --filename=after-click.yaml
+
+<span class="hljs-comment"># snapshot an element instead of the whole page</span>
+playwright-cli snapshot <span class="hljs-string">&quot;#main&quot;</span>
+
+<span class="hljs-comment"># limit snapshot depth for efficiency, take a partial snapshot afterwards</span>
+playwright-cli snapshot --depth=4
+playwright-cli snapshot e34</code></pre></div><h2 id="targeting-elements">Targeting elements<a class="anchor" href="#targeting-elements" aria-hidden="true">#</a></h2>
+<p>By default, use refs from the snapshot to interact with page elements.</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># get snapshot with refs</span>
+playwright-cli snapshot
+
+<span class="hljs-comment"># interact using a ref</span>
+playwright-cli click e15</code></pre></div><p>You can also use css selectors or Playwright locators.</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># css selector</span>
+playwright-cli click <span class="hljs-string">&quot;#main &gt; button.submit&quot;</span>
+
+<span class="hljs-comment"># role locator</span>
+playwright-cli click <span class="hljs-string">&quot;getByRole(&#x27;button&#x27;, { name: &#x27;Submit&#x27; })&quot;</span>
+
+<span class="hljs-comment"># test id</span>
+playwright-cli click <span class="hljs-string">&quot;getByTestId(&#x27;submit-button&#x27;)&quot;</span></code></pre></div><h2 id="browser-sessions">Browser Sessions<a class="anchor" href="#browser-sessions" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash"><span class="hljs-comment"># create new browser session named &quot;mysession&quot; with persistent profile</span>
+playwright-cli -s=mysession open example.com --persistent
+<span class="hljs-comment"># same with manually specified profile directory (use when requested explicitly)</span>
+playwright-cli -s=mysession open example.com --profile=/path/to/profile
+playwright-cli -s=mysession click e6
+playwright-cli -s=mysession close  <span class="hljs-comment"># stop a named browser</span>
+playwright-cli -s=mysession delete-data  <span class="hljs-comment"># delete user data for persistent session</span>
+
+playwright-cli list
+<span class="hljs-comment"># Close all browsers</span>
+playwright-cli close-all
+<span class="hljs-comment"># Forcefully kill all browser processes</span>
+playwright-cli kill-all</code></pre></div><h2 id="installation">Installation<a class="anchor" href="#installation" aria-hidden="true">#</a></h2>
+<p>If global <code>playwright-cli</code> command is not available, try a local version via <code>npx playwright-cli</code>:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">npx --no-install playwright-cli --version</code></pre></div><p>When local version is available, use <code>npx playwright-cli</code> in all commands. Otherwise, install <code>playwright-cli</code> as a global command:</p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">npm install -g @playwright/cli@latest</code></pre></div><h2 id="example-form-submission">Example: Form submission<a class="anchor" href="#example-form-submission" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli open https://example.com/form
+playwright-cli snapshot
+
+playwright-cli fill e1 <span class="hljs-string">&quot;user@example.com&quot;</span>
+playwright-cli fill e2 <span class="hljs-string">&quot;password123&quot;</span>
+playwright-cli click e3
+playwright-cli snapshot
+playwright-cli close</code></pre></div><h2 id="example-multi-tab-workflow">Example: Multi-tab workflow<a class="anchor" href="#example-multi-tab-workflow" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli open https://example.com
+playwright-cli tab-new https://example.com/other
+playwright-cli tab-list
+playwright-cli tab-select 0
+playwright-cli snapshot
+playwright-cli close</code></pre></div><h2 id="example-debugging-with-devtools">Example: Debugging with DevTools<a class="anchor" href="#example-debugging-with-devtools" aria-hidden="true">#</a></h2>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli open https://example.com
+playwright-cli click e4
+playwright-cli fill e7 <span class="hljs-string">&quot;test&quot;</span>
+playwright-cli console
+playwright-cli network
+playwright-cli close</code></pre></div><div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">playwright-cli open https://example.com
+playwright-cli tracing-start
+playwright-cli click e4
+playwright-cli fill e7 <span class="hljs-string">&quot;test&quot;</span>
+playwright-cli tracing-stop
+playwright-cli close</code></pre></div><h2 id="specific-tasks">Specific tasks<a class="anchor" href="#specific-tasks" aria-hidden="true">#</a></h2>
+<ul>
+<li><strong>Running and Debugging Playwright tests</strong> <a href="references/playwright-tests.md">references/playwright-tests.md</a></li>
+<li><strong>Request mocking</strong> <a href="references/request-mocking.md">references/request-mocking.md</a></li>
+<li><strong>Running Playwright code</strong> <a href="references/running-code.md">references/running-code.md</a></li>
+<li><strong>Browser session management</strong> <a href="references/session-management.md">references/session-management.md</a></li>
+<li><strong>Storage state (cookies, localStorage)</strong> <a href="references/storage-state.md">references/storage-state.md</a></li>
+<li><strong>Test generation</strong> <a href="references/test-generation.md">references/test-generation.md</a></li>
+<li><strong>Tracing</strong> <a href="references/tracing.md">references/tracing.md</a></li>
+<li><strong>Video recording</strong> <a href="references/video-recording.md">references/video-recording.md</a></li>
+<li><strong>Inspecting element attributes</strong> <a href="references/element-attributes.md">references/element-attributes.md</a></li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

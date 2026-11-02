@@ -1,0 +1,15 @@
+{
+  "$comment": "Registry mapping source paths to knowledge areas. Paths are globs relative to the repository root. Consumed by the knowledge-sync skill scripts kb_impact.py and kb_lint.py.",
+  "version": 1,
+  "knowledge_root": ".claude/knowledge",
+  "source_root": "src",
+  "source_extensions": [".java", ".json", ".properties", ".yml", ".yaml", ".xml"],
+  "symbol_extensions": [".java"],
+  "areas": {
+    "example-area": {
+      "title": "One line: what behavior this area owns",
+      "primary": ["src/<module>/**"],
+      "secondary": ["src/<shared-module>/**"]
+    }
+  }
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>README</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#error-handling-knowledge-base">Error Handling — Knowledge Base</a></li><ol class="toc-sub"><li><a href="#files">Files</a></li><li><a href="#scope">Scope</a></li><li><a href="#architecture">Architecture</a></li><li><a href="#flow">Flow</a></li><li><a href="#design-patterns">Design Patterns</a></li><li><a href="#reusable-components">Reusable Components</a></li><li><a href="#related-kb">Related KB</a></li><li><a href="#last-verified">Last verified</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">README</h1>
+        <p class="page-meta">From <code>README.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="error-handling-knowledge-base">Error Handling — Knowledge Base<a class="anchor" href="#error-handling-knowledge-base" aria-hidden="true">#</a></h1>
+<p><strong>Modules owned:</strong> <code>packages/orpc/src/errors.ts</code>, <code>packages/orpc/src/upstream-error.ts</code>, <code>packages/orpc/src/middleware/error-recording.ts</code>, <code>packages/orpc/src/middleware/validation-error.ts</code>, <code>packages/app-shell/src/error-toast.ts</code>, <code>packages/app-shell/src/query/error-cache.ts</code>, <code>apps/*/src/lib/error-toast.ts</code>, <code>apps/*/src/integrations/tanstack-query/error-cache.ts</code>, <code>apps/*/src/components/RouteErrorComponent.tsx</code>
+<strong>Entry points:</strong> <code>throwError</code> (server), <code>getErrorToast</code> (client), <code>makeMutationCache</code> (client)
+<strong>Last verified:</strong> 2026-09-30 | commit <code>1cb0369</code> | branch <code>dev/jmarquardt/kb-bootstrap-2</code></p>
+<p>Typed, end-to-end error pipeline. Server procedures throw <code>ORPCError</code> via <code>throwError</code>; <code>errorRecordingMiddleware</code> records the span exactly once; the client deserializes <code>ORPCError.data</code> as <code>ErrorPayload</code> and renders a localized toast or a <code>RouteErrorComponent</code> branch depending on where the error surfaces.</p>
+<h2 id="files">Files<a class="anchor" href="#files" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Doc</th><th>Covers</th></tr></thead><tbody><tr><td><code>README.md</code></td><td>scope, architecture, flow, reusable surface, related KB</td></tr><tr><td><code>contracts.md</code></td><td><code>ErrorPayload</code> shape, <code>ErrorKey</code> union, <code>ErrorToastConfig</code>, sample payloads</td></tr></tbody></table></div><h2 id="scope">Scope<a class="anchor" href="#scope" aria-hidden="true">#</a></h2>
+<p><strong>In scope:</strong> <code>throwError</code>, <code>ErrorPayload</code>, <code>ErrorKey</code>, <code>mapUpstreamError</code>, <code>errorRecordingMiddleware</code>, <code>validationErrorMiddleware</code>, <code>getErrorToast</code>, <code>makeMutationCache</code>, <code>RouteErrorComponent</code> branching logic.
+<strong>Out of scope:</strong> procedure implementation details (→ <code>rpc-layer</code>), RBAC errors (→ <code>permissions</code>), OTel bootstrap (→ <code>@syndigo/telemetry</code>), i18n translation files (→ <code>PATTERNS.md</code> ErrorKey pattern).</p>
+<h2 id="architecture">Architecture<a class="anchor" href="#architecture" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Layer</th><th>Module</th><th>Export</th><th>Responsibility</th></tr></thead><tbody><tr><td>Construction</td><td><code>@syndigo/orpc/errors</code></td><td><code>throwError</code></td><td>Only path for BFF-originated errors; attaches trace context; pure factory</td></tr><tr><td>Recording</td><td><code>@syndigo/orpc/middleware/error-recording</code></td><td><code>errorRecordingMiddleware</code></td><td>Records every escaping <code>ORPCError</code> on the OTel span exactly once; re-throws</td></tr><tr><td>Validation</td><td><code>@syndigo/orpc/middleware/validation-error</code></td><td><code>validationErrorMiddleware</code></td><td>Rewraps Zod <code>ValidationError</code> as <code>ORPCError</code> with <code>errorKey: &#39;upstream.validation&#39;</code></td></tr><tr><td>Client parse</td><td><code>@syndigo/app-shell/error-toast</code></td><td><code>getErrorToast</code>, <code>parseErrorPayload</code></td><td>Resolves <code>ORPCError</code> → <code>ErrorToastConfig</code> with a <code>TranslationSelector</code> title</td></tr><tr><td>Mutation cache</td><td><code>@syndigo/app-shell/query/error-cache</code></td><td><code>makeMutationCache</code></td><td>Global <code>MutationCache.onError</code> → toast; supports <code>meta.errorToast</code> overrides</td></tr></tbody></table></div><h2 id="flow">Flow<a class="anchor" href="#flow" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Hop</th><th>Condition</th><th>Envelope</th><th>Mutates</th></tr></thead><tbody><tr><td>Procedure calls <code>throwError({ code, errorKey, params })</code></td><td>error condition</td><td><code>ThrowErrorOptions</code></td><td>no</td></tr><tr><td><code>throwError</code> reads <code>getTraceContext()</code></td><td>always</td><td>adds <code>traceId</code>, <code>spanId</code> to <code>ErrorPayload</code></td><td>no</td></tr><tr><td><code>throwError</code> constructs and throws <code>ORPCError</code></td><td>always</td><td><code>ORPCError { code, data: ErrorPayload }</code></td><td>no</td></tr><tr><td><code>errorRecordingMiddleware</code> catches</td><td>error escape from any inner hop</td><td>calls <code>recordErrorOnSpan</code>; sets <code>error.code</code>, <code>error.key</code> attributes</td><td>span</td></tr><tr><td><code>errorRecordingMiddleware</code> re-throws</td><td>always</td><td><code>ORPCError</code> unchanged</td><td>no</td></tr><tr><td><code>RPCHandler</code> serializes error</td><td>always</td><td>HTTP error response; <code>error.data</code> included in body</td><td>no</td></tr><tr><td><code>MutationCache.onError</code> (mutation)</td><td>client receives error</td><td>calls <code>getErrorToast(error)</code></td><td>no</td></tr><tr><td><code>getErrorToast</code> resolves title</td><td><code>ORPCError</code> with <code>errorKey</code></td><td><code>dynamicSelector(&#39;errors.${errorKey}&#39;)</code></td><td>no</td></tr><tr><td><code>getErrorToast</code> falls back</td><td>no <code>errorKey</code></td><td><code>ERROR_KEY_BY_CODE[error.code]</code> or generic</td><td>no</td></tr><tr><td><code>toast.error(translate(titleKey))</code></td><td>always</td><td>localized string rendered in toast</td><td>no</td></tr><tr><td><code>RouteErrorComponent</code> (query failure)</td><td><code>code === &#39;UNAUTHORIZED&#39;/&#39;FORBIDDEN&#39;</code></td><td>access-denied UI</td><td>no</td></tr><tr><td><code>RouteErrorComponent</code></td><td><code>code === &#39;NOT_FOUND&#39;</code></td><td>404 UI</td><td>no</td></tr><tr><td><code>RouteErrorComponent</code></td><td>other codes</td><td>generic error UI + trace ID for support</td><td>no</td></tr></tbody></table></div><h2 id="design-patterns">Design Patterns<a class="anchor" href="#design-patterns" aria-hidden="true">#</a></h2>
+<p><strong><code>throwError</code> is the only BFF error construction path</strong> — never <code>throw new ORPCError(...)</code> directly in a procedure. <code>throwError</code> is typed to return <code>never</code>, so no <code>throw</code> keyword at the call site, and it attaches the trace context automatically.</p>
+<p><strong><code>errorRecordingMiddleware</code> records once</strong> — it sits outermost on <code>os</code> and records every escaping error exactly once. Inner middleware and handlers should not call <code>recordErrorOnSpan</code> on errors they re-throw — only on errors they swallow or on the <code>routes/rpc/$.ts</code> outer <code>try/catch</code> for pre-handler throws.</p>
+<p><strong><code>meta.errorToast</code> overrides</strong> — to suppress a toast for a specific mutation: <code>useMutation({ ..., meta: { errorToast: false } })</code>. To override the title: <code>meta: { errorToast: { titleKey: $ =&gt; $.myKey } }</code>. <code>titleKey</code> is typed as <code>TranslationSelector</code> — compile-time-checked.</p>
+<p><strong>ErrorKey two-step</strong> — see <code>PATTERNS.md</code>.</p>
+<h2 id="reusable-components">Reusable Components<a class="anchor" href="#reusable-components" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Export</th><th>From</th><th>Use</th></tr></thead><tbody><tr><td><code>throwError</code></td><td><code>@syndigo/orpc/errors</code></td><td>Only BFF error construction path</td></tr><tr><td><code>recordErrorOnSpan</code></td><td><code>@syndigo/orpc/errors</code></td><td>Route-level outer <code>try/catch</code> only</td></tr><tr><td><code>getErrorToast</code></td><td><code>@syndigo/app-shell/error-toast</code> (re-exported via <code>apps/*/src/lib/error-toast.ts</code>)</td><td>Resolve <code>ORPCError</code> → <code>ErrorToastConfig</code></td></tr><tr><td><code>parseErrorPayload</code></td><td>same re-export</td><td>Safely parse <code>ORPCError.data</code> as <code>ErrorPayload</code></td></tr><tr><td><code>makeMutationCache</code></td><td><code>apps/*/src/integrations/tanstack-query/error-cache.ts</code></td><td>Build the app&#39;s <code>MutationCache</code> with global toast behavior</td></tr><tr><td><code>ErrorToastMeta</code></td><td>same</td><td>Type for <code>mutation.meta.errorToast</code></td></tr></tbody></table></div><h2 id="related-kb">Related KB<a class="anchor" href="#related-kb" aria-hidden="true">#</a></h2>
+<ul>
+<li><code>rpc-layer</code> — builder stack (<code>os</code>, <code>authed</code>) and how <code>errorRecordingMiddleware</code> + <code>validationErrorMiddleware</code> are wired into the middleware chain</li>
+<li><code>permissions</code> — <code>UNAUTHORIZED</code> / <code>FORBIDDEN</code> codes are produced by <code>authMiddleware</code>; <code>RouteErrorComponent</code> branches on them</li>
+</ul>
+<h2 id="last-verified">Last verified<a class="anchor" href="#last-verified" aria-hidden="true">#</a></h2>
+<p>2026-09-30 | commit <code>1cb0369</code> | branch <code>dev/jmarquardt/kb-bootstrap-2</code></p>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

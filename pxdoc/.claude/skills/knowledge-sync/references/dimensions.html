@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dimensions</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#dimension-contract">Dimension contract</a></li><ol class="toc-sub"><li><a href="#1-architecture">1. architecture</a></li><li><a href="#2-patterns">2. patterns</a></li><li><a href="#3-flow">3. flow</a></li><li><a href="#4-reusable">4. reusable</a></li><li><a href="#5-config-forks">5. config-forks</a></li><li><a href="#6-contracts-samples">6. contracts-samples</a></li><li><a href="#7-related-kb">7. related-kb</a></li><li><a href="#writing-rules">Writing rules</a></li><ol class="toc-sub"><li><a href="#anchors-name-symbols-not-lines">Anchors — name symbols, not lines</a></li><li><a href="#size-a-doc-is-a-token-budget">Size — a doc is a token budget</a></li><li><a href="#other">Other</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">dimensions</h1>
+        <p class="page-meta">From <code>dimensions.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="dimension-contract">Dimension contract<a class="anchor" href="#dimension-contract" aria-hidden="true">#</a></h1>
+<p><code>kb_lint.py</code> enforces that each area covers these seven dimensions. This file defines what counts as
+coverage and what gets rejected. A dimension counts as covered when <strong>any</strong> doc in the area covers
+it, so moving content out of the README never breaks the contract.</p>
+<h2 id="1-architecture">1. architecture<a class="anchor" href="#1-architecture" aria-hidden="true">#</a></h2>
+<p><strong>Accept:</strong> module/layer table with responsibilities; the interface-versus-implementation split
+where the repo has one (a contract module and its engine-specific implementations); where a
+synchronous boundary becomes asynchronous.
+<strong>Reject:</strong> restating a naming convention that <code>CLAUDE.md</code> already documents.</p>
+<h2 id="2-patterns">2. patterns<a class="anchor" href="#2-patterns" aria-hidden="true">#</a></h2>
+<p><strong>Accept:</strong> the extension rule a contributor must follow, with the concrete classes that implement
+the pattern. Typical shapes: a component/stage pipeline with a base class per stage, a
+registry-backed strategy lookup, a factory that wires a topology, a template base class subclassed
+per resolver, a visitor over a value tree, a service-provider interface for custom actions, an
+adaptor entry point dispatching on an action string.
+<strong>Reject:</strong> a class list whose names contain &quot;Factory&quot; or &quot;Strategy&quot; with no extension rule.
+A pattern with no &quot;to add one, do X&quot; sentence is not documented.</p>
+<h2 id="3-flow">3. flow<a class="anchor" href="#3-flow" aria-hidden="true">#</a></h2>
+<p><strong>One</strong> ordered walk of the area — one section, one form. Never two sections walking the same hops.</p>
+<p>Pick the denser form for the shape of the area:</p>
+<ul>
+<li><strong>ASCII call chain</strong> when the path is a nested call tree with layer annotations. It costs fewer
+tokens than a table for nesting, and it shows a transport boundary (for example
+<code>= = = KAFKA = = =</code>) in one line. Put the envelope and mutation facts in bullets under the diagram.</li>
+<li><strong>Table</strong> when the path is a linear hop sequence with per-hop conditions:</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>Hop</th><th>Condition</th><th>Envelope</th><th>Mutates</th></tr></thead><tbody><tr><td><code>Class#method</code></td><td>the branch condition that reaches this hop, or <code>—</code></td><td>the type carried in, and the serialization boundary if one is crossed</td><td><code>in place</code> / <code>no</code> / what is added or stripped</td></tr></tbody></table></div><p><strong>Accept:</strong> every branch condition, every terminal state, the error path, the type on each side of a
+serialization boundary, and which hops mutate their input.
+<strong>Reject:</strong> two tables walking the same hops; a call list with no ordering; an envelope column that
+names a class but not what changed.</p>
+<p>Use a second table only when the area genuinely has two different hop sequences (for example a sync
+entry and an async pipeline). Two views of one sequence belong in one section.</p>
+<h2 id="4-reusable">4. reusable<a class="anchor" href="#4-reusable" aria-hidden="true">#</a></h2>
+<p><strong>Accept:</strong> the callable surface for code outside the area, plus preconditions and side effects.
+<strong>Reject:</strong> &quot;this module is shared&quot; with no entry point.</p>
+<h2 id="5-config-forks">5. config-forks<a class="anchor" href="#5-config-forks" aria-hidden="true">#</a></h2>
+<p><strong>Accept:</strong> setting name, exact lookup call, allowed values, behavior per value, class where it
+is read. Method-argument booleans that select a branch count and must be listed.
+<strong>Reject:</strong> a setting name with no behavior on either side of the fork.</p>
+<h2 id="6-contracts-samples">6. contracts-samples<a class="anchor" href="#6-contracts-samples" aria-hidden="true">#</a></h2>
+<p><strong>Accept:</strong> public method signatures plus at least one real JSON payload per entry point,
+each citing the file it came from. See <code>samples-guide.md</code>.
+<strong>Reject:</strong> a hand-written shape, or a signature with no payload.</p>
+<h2 id="7-related-kb">7. related-kb<a class="anchor" href="#7-related-kb" aria-hidden="true">#</a></h2>
+<p><strong>Accept:</strong> links to sibling areas with what each one owns.
+<strong>Reject:</strong> absent — it is the anti-duplication mechanism.</p>
+<h2 id="writing-rules">Writing rules<a class="anchor" href="#writing-rules" aria-hidden="true">#</a></h2>
+<h3 id="anchors-name-symbols-not-lines">Anchors — name symbols, not lines<a class="anchor" href="#anchors-name-symbols-not-lines" aria-hidden="true">#</a></h3>
+<ul>
+<li>The anchor is <code>Class#method</code>, or <code>Class.CONSTANT</code>. It is greppable and it survives edits.</li>
+<li>A line number is allowed <strong>only</strong> for a construct that has no name: a <code>switch</code> arm, a lambda, an
+inline branch, or a specific overload among several. Write it as <code>Class#method</code> first, then the
+line, and only where the reader cannot find the code from the name.</li>
+<li>Never carry line numbers in a table. They are transient, they rot silently, and a reader who has
+the method name can grep for it.</li>
+<li><code>kb_lint.py</code> warns above 3 line references per document.</li>
+</ul>
+<h3 id="size-a-doc-is-a-token-budget">Size — a doc is a token budget<a class="anchor" href="#size-a-doc-is-a-token-budget" aria-hidden="true">#</a></h3>
+<p>The area <code>README.md</code> is loaded on <strong>every</strong> question about the area. Sub-docs load only when the
+question needs them. So the README carries routing and the shape of the area, nothing more.</p>
+<div class="table-wrap"><table><thead><tr><th>Doc</th><th>Limit</th><th>Holds</th></tr></thead><tbody><tr><td><code>README.md</code></td><td><strong>130 lines</strong></td><td>scope, <code>## Files</code> table, architecture table, the one flow table, reusable surface, related KB, stamp</td></tr><tr><td><code>patterns.md</code></td><td>200</td><td>design patterns and the rule to extend each</td></tr><tr><td><code>contracts.md</code></td><td>200</td><td>signatures, JSON samples, config and fork table</td></tr><tr><td>any other doc</td><td>200</td><td>one subject</td></tr></tbody></table></div><ul>
+<li>Over a limit, <strong>move</strong> substance to a sibling doc and link it from <code>## Files</code>. Never delete
+substance to fit.</li>
+<li>Nobody reads a whole area, so total area size does not matter. Per-doc size is what costs tokens
+on every question.</li>
+</ul>
+<h3 id="other">Other<a class="anchor" href="#other" aria-hidden="true">#</a></h3>
+<ul>
+<li>Mark anything you could not confirm from source with <code>UNVERIFIED:</code> and say what you checked.</li>
+<li>Flag name collisions loudly. Where several same-name classes exist in different packages, an area
+that touches one must name the package.</li>
+<li>Prefer a table over prose wherever the content is uniform rows.</li>
+<li>Keep any single doc under ~150 lines. Split into a sub-doc instead of growing one file.</li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKILL</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#name-update-loveable-description-update-the-loveable-submodule-to-the-latest-commit-and-produce-a-structured-summary-of-ux-changes-for-use-as-an-implementation-reference">name: update-loveable
+description: Update the loveable submodule to the latest commit and produce a structured summary of UX changes for use as an implementation reference.</a></li></ol><li><a href="#update-loveable-submodule">Update Loveable Submodule</a></li><ol class="toc-sub"><li><a href="#steps">Steps</a></li><li><a href="#summary-format">Summary Format</a></li><li><a href="#status-values-for-impacted-pxc-retail-pages">Status values for &quot;Impacted pxc-retail Pages&quot;</a></li><li><a href="#domain-map">Domain Map</a></li><li><a href="#rules">Rules</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">SKILL</h1>
+        <p class="page-meta">From <code>SKILL.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <hr>
+<h2 id="name-update-loveable-description-update-the-loveable-submodule-to-the-latest-commit-and-produce-a-structured-summary-of-ux-changes-for-use-as-an-implementation-reference">name: update-loveable
+description: Update the loveable submodule to the latest commit and produce a structured summary of UX changes for use as an implementation reference.<a class="anchor" href="#name-update-loveable-description-update-the-loveable-submodule-to-the-latest-commit-and-produce-a-structured-summary-of-ux-changes-for-use-as-an-implementation-reference" aria-hidden="true">#</a></h2>
+<h1 id="update-loveable-submodule">Update Loveable Submodule<a class="anchor" href="#update-loveable-submodule" aria-hidden="true">#</a></h1>
+<h2 id="steps">Steps<a class="anchor" href="#steps" aria-hidden="true">#</a></h2>
+<ol>
+<li><strong>Capture old SHA</strong>: <code>cd submodules/loveable &amp;&amp; git rev-parse HEAD</code></li>
+<li><strong>Update</strong>: <code>git submodule update --remote submodules/loveable</code></li>
+<li><strong>Get new SHA</strong>. If unchanged, report &quot;Already up to date&quot; and stop.</li>
+<li><strong>Get timestamps</strong>: <code>git log --format=&quot;%H %ai %s&quot; OLD NEW | grep -E &quot;^(OLD_SHORT|NEW_SHORT)&quot;</code> for both SHAs.</li>
+<li><strong>Diff</strong>: <code>git log --oneline OLD..NEW</code> and <code>git diff --name-status OLD NEW</code></li>
+<li><strong>Read changed <code>src/</code> files</strong> (skip lock files, node_modules, config): <code>git diff OLD NEW -- &lt;file&gt;</code></li>
+<li><strong>Check pxc-retail implementation status</strong>: for each changed loveable feature, search <code>apps/pxc-retail/src/</code> to determine if it is already implemented, a stub, or missing entirely.</li>
+<li><strong>Produce summary</strong> (see format below)</li>
+<li><strong>Write summary</strong> to <code>docs/loveable-updates/&lt;YYYY-MM-DD&gt;.md</code></li>
+<li><strong>Stage</strong>: <code>git add submodules/loveable</code> — then ask user to confirm before committing</li>
+</ol>
+<h2 id="summary-format">Summary Format<a class="anchor" href="#summary-format" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext"># Loveable Update: OLD..NEW
+
+| | SHA | Timestamp (UTC) | Message |
+|---|---|---|---|
+| **From** | `OLD_SHORT` | YYYY-MM-DD HH:MM:SS | &lt;message&gt; |
+| **To**   | `NEW_SHORT` | YYYY-MM-DD HH:MM:SS | &lt;message&gt; |
+
+---
+
+## Commits
+- &lt;sha&gt; &lt;message&gt;
+
+## Changed Files
+| File | Change | Domain |
+|------|--------|--------|
+| ...  | ...    | ...    |
+
+---
+
+## UX Changes by Domain
+
+### &lt;Domain&gt;
+- Layout, new/removed components, interactions, data shape
+
+---
+
+## Impacted pxc-retail Pages
+
+| Loveable feature | pxc-retail route / file | Status |
+|---|---|---|
+| &lt;feature&gt; | &lt;route or component path, or —&gt; | **Already implemented** / **Stub only** / **Not implemented** — &lt;one-line reason&gt; |
+
+---
+
+## Implementation Notes
+- API/schema changes needed
+- Design-system component mappings required
+- pxc-retail convention deviations</code></pre></div><h2 id="status-values-for-impacted-pxc-retail-pages">Status values for &quot;Impacted pxc-retail Pages&quot;<a class="anchor" href="#status-values-for-impacted-pxc-retail-pages" aria-hidden="true">#</a></h2>
+<ul>
+<li><strong>Already implemented</strong> — the feature exists and is functionally equivalent</li>
+<li><strong>Stub only</strong> — the route/component exists but renders placeholder content</li>
+<li><strong>Not implemented</strong> — no corresponding route or component exists</li>
+<li><strong>Not verified</strong> — file exists but content was not inspected; note what to check</li>
+</ul>
+<h2 id="domain-map">Domain Map<a class="anchor" href="#domain-map" aria-hidden="true">#</a></h2>
+<p><code>src/pages/</code> → page layout · <code>src/components/&lt;domain&gt;/</code> → domain component · <code>src/components/shared/</code> → shared · <code>src/components/layout/</code> → shell · <code>src/components/ui/</code> → primitive · <code>src/hooks/</code> → behavior</p>
+<h2 id="rules">Rules<a class="anchor" href="#rules" aria-hidden="true">#</a></h2>
+<ul>
+<li><code>submodules/loveable</code> is read-only reference — never modify it</li>
+<li>Do not run <code>pnpm install</code> inside the submodule</li>
+<li>Summary describes what changed in the diff; do not speculate about intent</li>
+<li>Always write the summary to <code>docs/loveable-updates/&lt;YYYY-MM-DD&gt;.md</code> (date = today)</li>
+</ul>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

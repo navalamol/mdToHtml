@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>base-vs-radix</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#base-vs-radix">Base vs Radix</a></li><ol class="toc-sub"><li><a href="#contents">Contents</a></li><li><a href="#composition-aschild-radix-vs-render-base">Composition: asChild (radix) vs render (base)</a></li><li><a href="#button-trigger-as-non-button-element-base-only">Button / trigger as non-button element (base only)</a></li><li><a href="#select">Select</a></li><li><a href="#select-multiple-selection-and-object-values-base-only">Select — multiple selection and object values (base only)</a></li><li><a href="#togglegroup">ToggleGroup</a></li><li><a href="#slider">Slider</a></li><li><a href="#accordion">Accordion</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">base-vs-radix</h1>
+        <p class="page-meta">From <code>base-vs-radix.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="base-vs-radix">Base vs Radix<a class="anchor" href="#base-vs-radix" aria-hidden="true">#</a></h1>
+<p>API differences between <code>base</code> and <code>radix</code>. Check the <code>base</code> field from <code>npx shadcn@latest info</code>.</p>
+<h2 id="contents">Contents<a class="anchor" href="#contents" aria-hidden="true">#</a></h2>
+<ul>
+<li>Composition: asChild vs render</li>
+<li>Button / trigger as non-button element</li>
+<li>Select (items prop, placeholder, positioning, multiple, object values)</li>
+<li>ToggleGroup (type vs multiple)</li>
+<li>Slider (scalar vs array)</li>
+<li>Accordion (type and defaultValue)</li>
+</ul>
+<hr>
+<h2 id="composition-aschild-radix-vs-render-base">Composition: asChild (radix) vs render (base)<a class="anchor" href="#composition-aschild-radix-vs-render-base" aria-hidden="true">#</a></h2>
+<p>Radix uses <code>asChild</code> to replace the default element. Base uses <code>render</code>. Don&#39;t wrap triggers in extra elements.</p>
+<p><strong>Incorrect:</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">DialogTrigger</span>&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Button</span>&gt;</span>Open<span class="hljs-tag">&lt;/<span class="hljs-name">Button</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">DialogTrigger</span>&gt;</code></pre></div><p><strong>Correct (radix):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">DialogTrigger</span> asChild&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Button</span>&gt;</span>Open<span class="hljs-tag">&lt;/<span class="hljs-name">Button</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">DialogTrigger</span>&gt;</code></pre></div><p><strong>Correct (base):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">DialogTrigger</span> render={<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Button</span> /&gt;</span></span>}&gt;<span class="hljs-title class_">Open</span>&lt;/<span class="hljs-title class_">DialogTrigger</span>&gt;</code></pre></div><p>This applies to all trigger and close components: <code>DialogTrigger</code>, <code>SheetTrigger</code>, <code>AlertDialogTrigger</code>, <code>DropdownMenuTrigger</code>, <code>PopoverTrigger</code>, <code>TooltipTrigger</code>, <code>CollapsibleTrigger</code>, <code>DialogClose</code>, <code>SheetClose</code>, <code>NavigationMenuLink</code>, <code>BreadcrumbLink</code>, <code>SidebarMenuButton</code>, <code>Badge</code>, <code>Item</code>.</p>
+<hr>
+<h2 id="button-trigger-as-non-button-element-base-only">Button / trigger as non-button element (base only)<a class="anchor" href="#button-trigger-as-non-button-element-base-only" aria-hidden="true">#</a></h2>
+<p>When <code>render</code> changes an element to a non-button (<code>&lt;a&gt;</code>, <code>&lt;span&gt;</code>), add <code>nativeButton={false}</code>.</p>
+<p><strong>Incorrect (base):</strong> missing <code>nativeButton={false}</code>.</p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Button</span> render={<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;/docs&quot;</span> /&gt;</span></span>}&gt;<span class="hljs-title class_">Read</span> the docs&lt;/<span class="hljs-title class_">Button</span>&gt;</code></pre></div><p><strong>Correct (base):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Button</span> render={<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;/docs&quot;</span> /&gt;</span></span>} nativeButton={<span class="hljs-literal">false</span>}&gt;
+  <span class="hljs-title class_">Read</span> the docs
+&lt;/<span class="hljs-title class_">Button</span>&gt;</code></pre></div><p><strong>Correct (radix):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Button</span> asChild&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;/docs&quot;</span>&gt;</span>Read the docs<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">Button</span>&gt;</code></pre></div><p>Same for triggers whose <code>render</code> is not a <code>Button</code>:</p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-comment">// base.</span>
+&lt;<span class="hljs-title class_">PopoverTrigger</span> render={<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">InputGroupAddon</span> /&gt;</span></span>} nativeButton={<span class="hljs-literal">false</span>}&gt;
+  <span class="hljs-title class_">Pick</span> date
+&lt;/<span class="hljs-title class_">PopoverTrigger</span>&gt;</code></pre></div><hr>
+<h2 id="select">Select<a class="anchor" href="#select" aria-hidden="true">#</a></h2>
+<p><strong>items prop (base only).</strong> Base requires an <code>items</code> prop on the root. Radix uses inline JSX only.</p>
+<p><strong>Incorrect (base):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Select</span>&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">SelectTrigger</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">SelectValue</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">&quot;Select a fruit&quot;</span> /&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">SelectTrigger</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">Select</span>&gt;</code></pre></div><p><strong>Correct (base):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-keyword">const</span> items = [
+  { <span class="hljs-attr">label</span>: <span class="hljs-string">&quot;Select a fruit&quot;</span>, <span class="hljs-attr">value</span>: <span class="hljs-literal">null</span> },
+  { <span class="hljs-attr">label</span>: <span class="hljs-string">&quot;Apple&quot;</span>, <span class="hljs-attr">value</span>: <span class="hljs-string">&quot;apple&quot;</span> },
+  { <span class="hljs-attr">label</span>: <span class="hljs-string">&quot;Banana&quot;</span>, <span class="hljs-attr">value</span>: <span class="hljs-string">&quot;banana&quot;</span> },
+]
+
+&lt;<span class="hljs-title class_">Select</span> items={items}&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">SelectTrigger</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">SelectValue</span> /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SelectTrigger</span>&gt;</span></span>
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">SelectContent</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">SelectGroup</span>&gt;</span>
+      {items.map((item) =&gt; (
+        <span class="hljs-tag">&lt;<span class="hljs-name">SelectItem</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{item.value}</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{item.value}</span>&gt;</span>{item.label}<span class="hljs-tag">&lt;/<span class="hljs-name">SelectItem</span>&gt;</span>
+      ))}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">SelectGroup</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SelectContent</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">Select</span>&gt;</code></pre></div><p><strong>Correct (radix):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Select</span>&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">SelectTrigger</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">SelectValue</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">&quot;Select a fruit&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SelectTrigger</span>&gt;</span></span>
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">SelectContent</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">SelectGroup</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">SelectItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;apple&quot;</span>&gt;</span>Apple<span class="hljs-tag">&lt;/<span class="hljs-name">SelectItem</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">SelectItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;banana&quot;</span>&gt;</span>Banana<span class="hljs-tag">&lt;/<span class="hljs-name">SelectItem</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">SelectGroup</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SelectContent</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">Select</span>&gt;</code></pre></div><p><strong>Placeholder.</strong> Base uses a <code>{ value: null }</code> item in the items array. Radix uses <code>&lt;SelectValue placeholder=&quot;...&quot;&gt;</code>.</p>
+<p><strong>Content positioning.</strong> Base uses <code>alignItemWithTrigger</code>. Radix uses <code>position</code>.</p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-comment">// base.</span>
+&lt;<span class="hljs-title class_">SelectContent</span> alignItemWithTrigger={<span class="hljs-literal">false</span>} side=<span class="hljs-string">&quot;bottom&quot;</span>&gt;
+
+<span class="hljs-comment">// radix.</span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">SelectContent</span> <span class="hljs-attr">position</span>=<span class="hljs-string">&quot;popper&quot;</span>&gt;</span></span></code></pre></div><hr>
+<h2 id="select-multiple-selection-and-object-values-base-only">Select — multiple selection and object values (base only)<a class="anchor" href="#select-multiple-selection-and-object-values-base-only" aria-hidden="true">#</a></h2>
+<p>Base supports <code>multiple</code>, render-function children on <code>SelectValue</code>, and object values with <code>itemToStringValue</code>. Radix is single-select with string values only.</p>
+<p><strong>Correct (base — multiple selection):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Select</span> items={items} multiple defaultValue={[]}&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">SelectTrigger</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">SelectValue</span>&gt;</span>
+      {(value: string[]) =&gt; value.length === 0 ? &quot;Select fruits&quot; : `${value.length} selected`}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">SelectValue</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SelectTrigger</span>&gt;</span></span>
+  ...
+&lt;/<span class="hljs-title class_">Select</span>&gt;</code></pre></div><p><strong>Correct (base — object values):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Select</span> defaultValue={plans[<span class="hljs-number">0</span>]} itemToStringValue={<span class="hljs-function">(<span class="hljs-params">plan</span>) =&gt;</span> plan.<span class="hljs-property">name</span>}&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">SelectTrigger</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">SelectValue</span>&gt;</span>{(value) =&gt; value.name}<span class="hljs-tag">&lt;/<span class="hljs-name">SelectValue</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SelectTrigger</span>&gt;</span></span>
+  ...
+&lt;/<span class="hljs-title class_">Select</span>&gt;</code></pre></div><hr>
+<h2 id="togglegroup">ToggleGroup<a class="anchor" href="#togglegroup" aria-hidden="true">#</a></h2>
+<p>Base uses a <code>multiple</code> boolean prop. Radix uses <code>type=&quot;single&quot;</code> or <code>type=&quot;multiple&quot;</code>.</p>
+<p><strong>Incorrect (base):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">ToggleGroup</span> <span class="hljs-keyword">type</span>=<span class="hljs-string">&quot;single&quot;</span> defaultValue=<span class="hljs-string">&quot;daily&quot;</span>&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroupItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;daily&quot;</span>&gt;</span>Daily<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroupItem</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">ToggleGroup</span>&gt;</code></pre></div><p><strong>Correct (base):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-comment">// Single (no prop needed), defaultValue is always an array.</span>
+&lt;<span class="hljs-title class_">ToggleGroup</span> defaultValue={[<span class="hljs-string">&quot;daily&quot;</span>]} spacing={<span class="hljs-number">2</span>}&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroupItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;daily&quot;</span>&gt;</span>Daily<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroupItem</span>&gt;</span></span>
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroupItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;weekly&quot;</span>&gt;</span>Weekly<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroupItem</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">ToggleGroup</span>&gt;
+
+<span class="hljs-comment">// Multi-selection.</span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroup</span> <span class="hljs-attr">multiple</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroupItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;bold&quot;</span>&gt;</span>Bold<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroupItem</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroupItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;italic&quot;</span>&gt;</span>Italic<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroupItem</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroup</span>&gt;</span></span></code></pre></div><p><strong>Correct (radix):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-comment">// Single, defaultValue is a string.</span>
+&lt;<span class="hljs-title class_">ToggleGroup</span> <span class="hljs-keyword">type</span>=<span class="hljs-string">&quot;single&quot;</span> defaultValue=<span class="hljs-string">&quot;daily&quot;</span> spacing={<span class="hljs-number">2</span>}&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroupItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;daily&quot;</span>&gt;</span>Daily<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroupItem</span>&gt;</span></span>
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroupItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;weekly&quot;</span>&gt;</span>Weekly<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroupItem</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">ToggleGroup</span>&gt;
+
+<span class="hljs-comment">// Multi-selection.</span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroup</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;multiple&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroupItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;bold&quot;</span>&gt;</span>Bold<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroupItem</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">ToggleGroupItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;italic&quot;</span>&gt;</span>Italic<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroupItem</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">ToggleGroup</span>&gt;</span></span></code></pre></div><p><strong>Controlled single value:</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-comment">// base — wrap/unwrap arrays.</span>
+<span class="hljs-keyword">const</span> [value, setValue] = <span class="hljs-title class_">React</span>.<span class="hljs-title function_">useState</span>(<span class="hljs-string">&quot;normal&quot;</span>)
+&lt;<span class="hljs-title class_">ToggleGroup</span> value={[value]} onValueChange={<span class="hljs-function">(<span class="hljs-params">v</span>) =&gt;</span> <span class="hljs-title function_">setValue</span>(v[<span class="hljs-number">0</span>])}&gt;
+
+<span class="hljs-comment">// radix — plain string.</span>
+<span class="hljs-keyword">const</span> [value, setValue] = <span class="hljs-title class_">React</span>.<span class="hljs-title function_">useState</span>(<span class="hljs-string">&quot;normal&quot;</span>)
+&lt;<span class="hljs-title class_">ToggleGroup</span> <span class="hljs-keyword">type</span>=<span class="hljs-string">&quot;single&quot;</span> value={value} onValueChange={setValue}&gt;</code></pre></div><hr>
+<h2 id="slider">Slider<a class="anchor" href="#slider" aria-hidden="true">#</a></h2>
+<p>Base accepts a plain number for a single thumb. Radix always requires an array.</p>
+<p><strong>Incorrect (base):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Slider</span> defaultValue={[<span class="hljs-number">50</span>]} max={<span class="hljs-number">100</span>} step={<span class="hljs-number">1</span>} /&gt;</code></pre></div><p><strong>Correct (base):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Slider</span> defaultValue={<span class="hljs-number">50</span>} max={<span class="hljs-number">100</span>} step={<span class="hljs-number">1</span>} /&gt;</code></pre></div><p><strong>Correct (radix):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Slider</span> defaultValue={[<span class="hljs-number">50</span>]} max={<span class="hljs-number">100</span>} step={<span class="hljs-number">1</span>} /&gt;</code></pre></div><p>Both use arrays for range sliders. Controlled <code>onValueChange</code> in base may need a cast:</p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx"><span class="hljs-comment">// base.</span>
+<span class="hljs-keyword">const</span> [value, setValue] = <span class="hljs-title class_">React</span>.<span class="hljs-title function_">useState</span>([<span class="hljs-number">0.3</span>, <span class="hljs-number">0.7</span>])
+&lt;<span class="hljs-title class_">Slider</span> value={value} onValueChange={<span class="hljs-function">(<span class="hljs-params">v</span>) =&gt;</span> <span class="hljs-title function_">setValue</span>(v <span class="hljs-keyword">as</span> <span class="hljs-built_in">number</span>[])} /&gt;
+
+<span class="hljs-comment">// radix.</span>
+<span class="hljs-keyword">const</span> [value, setValue] = <span class="hljs-title class_">React</span>.<span class="hljs-title function_">useState</span>([<span class="hljs-number">0.3</span>, <span class="hljs-number">0.7</span>])
+&lt;<span class="hljs-title class_">Slider</span> value={value} onValueChange={setValue} /&gt;</code></pre></div><hr>
+<h2 id="accordion">Accordion<a class="anchor" href="#accordion" aria-hidden="true">#</a></h2>
+<p>Radix requires <code>type=&quot;single&quot;</code> or <code>type=&quot;multiple&quot;</code> and supports <code>collapsible</code>. <code>defaultValue</code> is a string. Base uses no <code>type</code> prop, uses <code>multiple</code> boolean, and <code>defaultValue</code> is always an array.</p>
+<p><strong>Incorrect (base):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Accordion</span> <span class="hljs-keyword">type</span>=<span class="hljs-string">&quot;single&quot;</span> collapsible defaultValue=<span class="hljs-string">&quot;item-1&quot;</span>&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">AccordionItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;item-1&quot;</span>&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">AccordionItem</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">Accordion</span>&gt;</code></pre></div><p><strong>Correct (base):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Accordion</span> defaultValue={[<span class="hljs-string">&quot;item-1&quot;</span>]}&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">AccordionItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;item-1&quot;</span>&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">AccordionItem</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">Accordion</span>&gt;
+
+<span class="hljs-comment">// Multi-select.</span>
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Accordion</span> <span class="hljs-attr">multiple</span> <span class="hljs-attr">defaultValue</span>=<span class="hljs-string">{[</span>&quot;<span class="hljs-attr">item-1</span>&quot;, &quot;<span class="hljs-attr">item-2</span>&quot;]}&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">AccordionItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;item-1&quot;</span>&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">AccordionItem</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">AccordionItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;item-2&quot;</span>&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">AccordionItem</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">Accordion</span>&gt;</span></span></code></pre></div><p><strong>Correct (radix):</strong></p>
+<div class="code-block"><span class="code-lang">tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-tsx">&lt;<span class="hljs-title class_">Accordion</span> <span class="hljs-keyword">type</span>=<span class="hljs-string">&quot;single&quot;</span> collapsible defaultValue=<span class="hljs-string">&quot;item-1&quot;</span>&gt;
+  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">AccordionItem</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;item-1&quot;</span>&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">AccordionItem</span>&gt;</span></span>
+&lt;/<span class="hljs-title class_">Accordion</span>&gt;</code></pre></div>
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

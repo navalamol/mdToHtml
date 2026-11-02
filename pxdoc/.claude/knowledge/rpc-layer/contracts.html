@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>contracts</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#rpc-layer-contracts-samples">RPC Layer — Contracts &amp; Samples</a></li><ol class="toc-sub"><li><a href="#contracts-signatures">Contracts &amp; Signatures</a></li><ol class="toc-sub"><li><a href="#getorpccontext-context-constructor">getOrpcContext — context constructor</a></li><li><a href="#client-orpc-isomorphic-client-exports">client / orpc — isomorphic client exports</a></li><li><a href="#oc-contract-builder-with-standard-errors">oc — contract builder with standard errors</a></li><li><a href="#vendorcentralvendorhistoryexport-file-returning-procedure">vendorCentral.vendorHistory.export — file-returning procedure</a></li><li><a href="#sample-tenantvendor-response-shape">Sample: TenantVendor response shape</a></li><li><a href="#tenantvendordocument-read-only-stub-backed-slice">tenantVendorDocument — read-only, stub-backed slice</a></li></ol><li><a href="#config-forks">Config / Forks</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">contracts</h1>
+        <p class="page-meta">From <code>contracts.md</code> &nbsp;·&nbsp; November 2, 2026</p>
+      </header>
+      <h1 id="rpc-layer-contracts-samples">RPC Layer — Contracts &amp; Samples<a class="anchor" href="#rpc-layer-contracts-samples" aria-hidden="true">#</a></h1>
+<p><strong>Last verified:</strong> 2026-10-27 | commit <code>b39592c</code> | branch <code>main</code></p>
+<h2 id="contracts-signatures">Contracts &amp; Signatures<a class="anchor" href="#contracts-signatures" aria-hidden="true">#</a></h2>
+<h3 id="getorpccontext-context-constructor"><code>getOrpcContext</code> — context constructor<a class="anchor" href="#getorpccontext-context-constructor" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-comment">// apps/pxc-retail/src/integrations/orpc/get-orpc-context.ts</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">getOrpcContext</span>(<span class="hljs-params"></span>): <span class="hljs-title class_">Context</span></code></pre></div><p>Reads the incoming HTTP request (via <code>@tanstack/react-start/server</code>), infers <code>tenantId</code> from the <code>x-rdp-tenantId</code> header or the first subdomain of the hostname, validates the auth session cookie, and returns a <code>Context</code> with per-upstream client instances. Throws <code>Error</code> (not <code>ORPCError</code>) when <code>tenantId</code> cannot be inferred or the auth cookie is absent and <code>ALLOW_DEV_FALLBACK_USER</code> is false — the route handler&#39;s outer <code>try/catch</code> calls <code>recordErrorOnSpan</code> and returns HTTP 500.</p>
+<h3 id="client-orpc-isomorphic-client-exports"><code>client</code> / <code>orpc</code> — isomorphic client exports<a class="anchor" href="#client-orpc-isomorphic-client-exports" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-comment">// apps/pxc-retail/src/integrations/orpc/client.ts</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-attr">client</span>: <span class="hljs-title class_">RouterClient</span>&lt;<span class="hljs-keyword">typeof</span> router&gt;  <span class="hljs-comment">// raw typed client</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-attr">orpc</span>: <span class="hljs-title class_">TanstackQueryUtils</span>&lt;<span class="hljs-keyword">typeof</span> client&gt; <span class="hljs-comment">// React Query utils</span></code></pre></div><p><code>client</code> calls the router in-process on the server or via <code>RPCLink</code> over HTTP on the client. <code>orpc</code> wraps it with <code>createTanstackQueryUtils(client)</code>. Standard usage:</p>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-title function_">useSuspenseQuery</span>(orpc.<span class="hljs-property">vendorCentral</span>.<span class="hljs-property">vendor</span>.<span class="hljs-property">list</span>.<span class="hljs-title function_">queryOptions</span>({ <span class="hljs-attr">input</span>: {} }))</code></pre></div><h3 id="oc-contract-builder-with-standard-errors"><code>oc</code> — contract builder with standard errors<a class="anchor" href="#oc-contract-builder-with-standard-errors" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-comment">// packages/core-contracts/src/schemas/standard-errors.ts</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> oc = ocBase.<span class="hljs-title function_">errors</span>(standardErrors)</code></pre></div><p><code>standardErrors</code> pre-applies the nine standard error codes so every procedure inherits them. Individual procedures can chain additional <code>.errors({...})</code> calls — maps merge.</p>
+<h3 id="vendorcentralvendorhistoryexport-file-returning-procedure"><code>vendorCentral.vendorHistory.export</code> — file-returning procedure<a class="anchor" href="#vendorcentralvendorhistoryexport-file-returning-procedure" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-comment">// packages/core-contracts/src/vendor-central/contracts/vendor-history.ts</span>
+<span class="hljs-attr">export</span>: oc.<span class="hljs-title function_">input</span>(<span class="hljs-title class_">VendorHistoryExportInputSchema</span>).<span class="hljs-title function_">output</span>(z.<span class="hljs-title function_">instanceof</span>(<span class="hljs-title class_">File</span>))
+<span class="hljs-comment">// packages/orpc/src/procedures/vendor-central/vendor-history.ts</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> exportVendorHistory <span class="hljs-comment">// requirePermission(&#x27;vendor-management&#x27;, &#x27;read&#x27;)</span></code></pre></div><p>Pages <code>GET /v1/vendors/{vendorId}/history</code> (limit 200) over <code>from</code>/<code>to</code>, applies <code>actorScope</code>, <code>attributes</code> and <code>includeRelationships</code>, and returns an <code>.xlsx</code> or <code>.pdf</code> <code>File</code>. Exceeding <code>EXPORT_ROW_CAP</code> (5000) throws <code>vendor_history.export_too_large</code> before any file is built. Sample input, from <code>packages/orpc/src/__tests__/vendor-history.test.ts</code>:</p>
+<div class="code-block"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-json"><span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;vendorId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&lt;vendor id&gt;&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;format&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;xlsx&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;includeRelationships&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span> <span class="hljs-punctuation">}</span></code></pre></div><p><code>actorScope</code> defaults to <code>&quot;all&quot;</code> and <code>order</code> to <code>&quot;desc&quot;</code>; <code>columnHeaders</code> carries client-translated header labels.</p>
+<h3 id="sample-tenantvendor-response-shape">Sample: <code>TenantVendor</code> response shape<a class="anchor" href="#sample-tenantvendor-response-shape" aria-hidden="true">#</a></h3>
+<p>Source: <code>packages/orpc/src/__tests__/fixtures/tenant-vendors.ts</code></p>
+<div class="code-block"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;aa1b2c3d-e5f6-4a7b-8c9d-e0f1a2b3c4d5&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;tenantId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;11111111-1111-4111-8111-111111111111&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;legalName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Acme Corporation&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;vendorStatus&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;active&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;employeeCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">500</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;websiteUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://acme.com&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2024-02-01T10:00:00.000Z&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2024-02-01T10:00:00.000Z&quot;</span>
+<span class="hljs-punctuation">}</span></code></pre></div><p><strong>Tile-card fields</strong> (<code>category</code>, <code>displayId</code>, <code>location</code>, <code>capabilities</code>, <code>onTimeDeliveryRate</code>, <code>onTimeDeliveryTrend</code>, <code>orderVolume</code>) are declared <code>.nullish()</code>/<code>.optional()</code> on <code>TenantVendorSchema</code> but the upstream API does not supply them yet. <code>listTenantVendors</code> merges a deterministic stub (<code>mockVendorCardFields</code>) over each row only when <code>context.stubsEnabled</code>, tracked by RPC-148 — see the <code>stubsEnabled</code> fork below and the repo-wide stub pattern in <code>PATTERNS.md</code>.</p>
+<p><strong><code>tenantVendor.list</code> query params</strong> — <code>q</code> (keyword), <code>vendorStatus</code> (→ upstream <code>vmvendorstatus</code> attribute filter), <code>sort</code>/<code>sortDir</code>, and <code>cursor</code>/<code>limit</code> (<code>cursor</code> is a stringified <code>offset</code>). <code>sort</code> is <code>VendorSortFieldSchema</code> = <code>name</code> | <code>trustScore</code> | <code>status</code>, mapped in <code>listTenantVendors</code> to the upstream scalar fields <code>vmlegalname</code> / <code>vmvendortrustscore</code> / <code>vmvendorstatus</code> and sent as a single <code>field:dir</code> sort token; it is omitted when <code>sort</code> is unset. Only these three real scalar fields are sortable — the stub-only tile-card fields are not, so they are intentionally absent from <code>VendorSortFieldSchema</code>.</p>
+<h3 id="tenantvendordocument-read-only-stub-backed-slice"><code>tenantVendorDocument</code> — read-only, stub-backed slice<a class="anchor" href="#tenantvendordocument-read-only-stub-backed-slice" aria-hidden="true">#</a></h3>
+<div class="code-block"><span class="code-lang">ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-ts"><span class="hljs-comment">// packages/core-contracts/src/vendor-central/contracts/tenant-vendor-document.ts</span>
+<span class="hljs-attr">list</span>: oc.<span class="hljs-title function_">input</span>({ vendorId, cursor?, limit? }).<span class="hljs-title function_">output</span>({ <span class="hljs-attr">items</span>: <span class="hljs-title class_">TenantVendorDocument</span>[], nextCursor? })
+<span class="hljs-attr">find</span>: oc.<span class="hljs-title function_">input</span>({ id, vendorId }).<span class="hljs-title function_">output</span>(<span class="hljs-title class_">TenantVendorDocument</span>)
+<span class="hljs-comment">// packages/orpc/src/procedures/vendor-central/tenant-vendor-documents.ts</span>
+listTenantVendorDocuments / findTenantVendorDocument <span class="hljs-comment">// requirePermission(&#x27;vendor-management&#x27;, &#x27;read&#x27;)</span></code></pre></div><p>Read-only (<code>list</code> + <code>find</code>). Upload / new-version / preview-log ops are deferred until the upstream upload mechanism is fixed (RPC-155), so no mechanism-dependent shape is baked into the contract — the frontend&#39;s upload dialog does an optimistic client-side cache insert in the meantime. The upstream vendor API has no document endpoints yet, so both procedures are whole-procedure stubs behind <code>context.stubsEnabled</code> (see the fork below). <code>TenantVendorDocumentSchema</code> models a logical document plus an append-only <code>versions[]</code>, with type-specific data (<code>certificateOfInsurance</code> / <code>fdaFsma</code> / <code>gfsiUsda</code> / <code>w9</code>) keyed off <code>documentType</code>; <code>status</code> is derived, not stored. Supersedes the orphaned <code>VendorDocumentSchema</code> in <code>vendor-schema.ts</code>.</p>
+<h2 id="config-forks">Config / Forks<a class="anchor" href="#config-forks" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Setting</th><th>Lookup</th><th>Values</th><th>Behavior</th></tr></thead><tbody><tr><td><code>VITE_BASE</code></td><td><code>getOrpcServerPrefix</code> reads <code>env.VITE_BASE</code></td><td><code>&quot;/&quot;</code> (default) or a path prefix</td><td><code>&quot;/&quot;</code> → URL prefix is <code>/rpc</code>; any other value → URL prefix is <code>${VITE_BASE}/rpc</code>. Applied on the browser client only.</td></tr><tr><td><code>ALLOW_DEV_FALLBACK_USER</code></td><td><code>getOrpcContext</code> calls <code>allowDevFallbackUser(env.ALLOW_DEV_FALLBACK_USER)</code></td><td>falsy (prod) / truthy string (local)</td><td>Falsy → auth session cookie required; auth cookie forwarded to vendor API. Truthy → <code>X_RDP_USER_ID</code> env var used as the signed-in user; service-account headers forwarded to vendor API.</td></tr><tr><td><code>X_RDP_USER_ID</code></td><td><code>getOrpcContext</code> calls <code>devFallbackUser(env.X_RDP_USER_ID)</code></td><td>user ID string</td><td>Used only when <code>ALLOW_DEV_FALLBACK_USER</code> is truthy; provides the fallback user identity.</td></tr><tr><td><code>MARKETPLACE_TENANT_ID</code></td><td><code>getOrpcContext</code> reads <code>env.MARKETPLACE_TENANT_ID</code></td><td>string or undefined</td><td>Injected into <code>Context</code> for procedures that need to call the marketplace tenant&#39;s upstream API.</td></tr><tr><td>Server vs client environment</td><td><code>createIsomorphicFn()</code> branch check</td><td>server process / browser</td><td>Server-side: calls router in-process via <code>createRouterClient</code>. Client-side: calls router via HTTP <code>RPCLink</code>. Determined at build time; no config knob.</td></tr><tr><td><code>stubsEnabled</code></td><td><code>context.stubsEnabled</code> (ADR RPC-43 D8)</td><td>truthy / falsy</td><td>Truthy → <code>listTenantVendors</code> merges <code>mockVendorCardFields(v.id)</code> tile-card fields over each mapped vendor. Falsy → rows pass through with those fields undefined. Stub only; RPC-148 tracks the real upstream fields.</td></tr><tr><td><code>stubsEnabled</code> (document slice)</td><td><code>context.stubsEnabled</code></td><td>truthy / falsy</td><td>Truthy → <code>tenantVendorDocument.list</code>/<code>find</code> return <code>mockVendorDocuments</code>. Falsy → <code>list</code> returns <code>{ items: [] }</code>, <code>find</code> throws <code>vendor.document_not_found</code>. Whole-procedure stub (no upstream endpoint exists); RPC-155 tracks the real endpoints.</td></tr></tbody></table></div>
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>
