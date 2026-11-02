@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROADMAP</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#retail-pxc-roadmap">retail-pxc · Roadmap</a></li><ol class="toc-sub"><li><a href="#project-snapshot">Project snapshot</a></li><li><a href="#current-sprint">Current sprint</a></li><li><a href="#backlog">Backlog</a></li><ol class="toc-sub"><li><a href="#phase-1-stop-do-before-more-features">Phase 1 — Stop (do before more features)</a></li><li><a href="#phase-2-plan-next-quarter">Phase 2 — Plan next quarter</a></li><li><a href="#phase-3-improve-anytime-orthogonal-to-features">Phase 3 — Improve anytime (orthogonal to features)</a></li><li><a href="#phase-4-strategic-watch-12-month-horizon">Phase 4 — Strategic watch (12-month horizon)</a></li></ol><li><a href="#item-detail">Item detail</a></li><ol class="toc-sub"><li><a href="#02-git-pre-commit-hooks">02 · Git pre-commit hooks</a></li><li><a href="#03-test-coverage-gate">03 · Test coverage gate</a></li><li><a href="#04-error-boundary-audit">04 · Error boundary audit</a></li><li><a href="#05-bff-stub-drift">05 · BFF stub drift</a></li><li><a href="#11-bundle-size-gate">11 · Bundle size gate</a></li><li><a href="#01-msw-mock-layer">01 · MSW mock layer</a></li><li><a href="#06-e2e-test-suite">06 · E2E test suite</a></li><li><a href="#07-accessibility-baseline">07 · Accessibility baseline</a></li><li><a href="#08-auth-local-dev">08 · Auth local dev</a></li><li><a href="#09-error-rate-alerting">09 · Error rate alerting</a></li><li><a href="#10-storybook">10 · Storybook</a></li><li><a href="#12-design-token-audit">12 · Design token audit</a></li><li><a href="#13-loveable-submodule">13 · Loveable submodule</a></li><li><a href="#14-performance-monitoring">14 · Performance monitoring</a></li><li><a href="#15-dependency-health">15 · Dependency health</a></li><li><a href="#16-bff-server-side-caching">16 · BFF server-side caching</a></li><li><a href="#17-api-contract-tests">17 · API contract tests</a></li><li><a href="#18-ts6vite8-ecosystem-risk">18 · TS6/Vite8 ecosystem risk</a></li><li><a href="#19-structured-logging">19 · Structured logging</a></li></ol><li><a href="#done">Done</a></li><li><a href="#session-log">Session log</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">ROADMAP</h1>
+        <p class="page-meta">From <code>ROADMAP.md</code> &nbsp;·&nbsp; October 28, 2026</p>
+      </header>
+      <h1 id="retail-pxc-roadmap">retail-pxc · Roadmap<a class="anchor" href="#retail-pxc-roadmap" aria-hidden="true">#</a></h1>
+<!--
+CLAUDE SESSION BOOTSTRAP
+────────────────────────
+When a developer says "continue":
+1. Read CURRENT SPRINT — find the first unchecked [ ] item
+2. Read its linked detail section below for full context + action steps
+3. Execute the work
+4. Mark it [x], move the line to DONE
+5. Append one row to SESSION LOG with today's date, who, and what was completed
+6. If all sprint items are [x]: promote the next 3-4 BACKLOG items to CURRENT SPRINT
+
+When a developer says "continue [item number]" — skip to that specific item.
+When a developer says "status" — summarize what is done, in-progress, and next.
+When a developer says "plan [item]" — show the full detail for that item without executing.
+
+DO NOT re-read all docs on every session. This file + CLAUDE.md is sufficient context.
+Reference docs (read only when the work requires it):
+  - CLAUDE.md                        → project rules (read before any code change)
+  - .claude/knowledge/INDEX.md       → area-specific deep context
+  - docs/LOCAL-DEV-SETUP.md          → env setup + troubleshooting
+  - docs/ARCHITECTURE.md             → architecture details
+  - docs/TECH-EVALUATION.md          → tech stack evaluation
+--><hr>
+<h2 id="project-snapshot">Project snapshot<a class="anchor" href="#project-snapshot" aria-hidden="true">#</a></h2>
+<p><strong>retail-pxc</strong> is Syndigo&#39;s retail intelligence platform — two SSR React apps (<code>pxc-retail</code> on port 3000, <code>tenant-management</code> on port 3001) in a pnpm monorepo. Contract-first oRPC API, TanStack ecosystem (Router / Query / Form), TypeScript 6, Tailwind v4, mandatory i18n (en/es/fr/de), typed error keys. Architecture is sound. What it lacks is safety nets: no mocks, no hooks, no coverage gate, no E2E tests, no alerting.</p>
+<p><strong>Active architect:</strong> <a href="mailto:amol.naval@syndigo.com">amol.naval@syndigo.com</a><br><strong>Roadmap created:</strong> 2026-10-15<br><strong>Last session:</strong> 2026-10-15 — see SESSION LOG</p>
+<hr>
+<h2 id="current-sprint">Current sprint<a class="anchor" href="#current-sprint" aria-hidden="true">#</a></h2>
+<blockquote class="blockquote"><p>Work these in order. Each is self-contained; no dependencies on each other.</p>
+</blockquote><ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>02</strong> · Git pre-commit hooks (<code>simple-git-hooks</code>: typecheck + lint on commit)</li>
+<li><input disabled="" type="checkbox"> <strong>03</strong> · Test coverage gate (measure baseline → set threshold in both <code>vitest.config.ts</code>)</li>
+<li><input disabled="" type="checkbox"> <strong>04</strong> · Error boundary audit (verify all <code>_shell/</code> routes have <code>errorComponent</code> set)</li>
+<li><input disabled="" type="checkbox"> <strong>11</strong> · Bundle size gate (<code>rollup-plugin-visualizer</code> + size budget in CI)</li>
+</ul>
+<hr>
+<h2 id="backlog">Backlog<a class="anchor" href="#backlog" aria-hidden="true">#</a></h2>
+<h3 id="phase-1-stop-do-before-more-features">Phase 1 — Stop (do before more features)<a class="anchor" href="#phase-1-stop-do-before-more-features" aria-hidden="true">#</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>01</strong> · MSW mock layer — credential-free local dev (biggest onboarding blocker)</li>
+<li><input disabled="" type="checkbox"> <strong>05</strong> · BFF stub drift — add schema-validation tests for every <code>*.mock.ts</code> file</li>
+</ul>
+<h3 id="phase-2-plan-next-quarter">Phase 2 — Plan next quarter<a class="anchor" href="#phase-2-plan-next-quarter" aria-hidden="true">#</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>06</strong> · E2E test suite — Playwright golden paths, both apps, runs against MSW</li>
+<li><input disabled="" type="checkbox"> <strong>07</strong> · Accessibility baseline — axe-core audit + <code>eslint-plugin-jsx-a11y</code></li>
+<li><input disabled="" type="checkbox"> <strong>08</strong> · Auth local dev — real <code>auth-session</code> cookie flow testable on localhost</li>
+<li><input disabled="" type="checkbox"> <strong>09</strong> · Error rate alerting — Grafana alert on <code>span.status = ERROR</code> rate spike</li>
+</ul>
+<h3 id="phase-3-improve-anytime-orthogonal-to-features">Phase 3 — Improve anytime (orthogonal to features)<a class="anchor" href="#phase-3-improve-anytime-orthogonal-to-features" aria-hidden="true">#</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>10</strong> · Storybook — design-system top-10 components with variants + dark mode</li>
+<li><input disabled="" type="checkbox"> <strong>12</strong> · Design token audit — grep hardcoded Tailwind colors, replace with semantic tokens</li>
+<li><input disabled="" type="checkbox"> <strong>13</strong> · Loveable submodule — evaluate: remove or document clearly as optional</li>
+<li><input disabled="" type="checkbox"> <strong>14</strong> · Performance monitoring — Web Vitals → OTel + Lighthouse CI on PRs</li>
+<li><input disabled="" type="checkbox"> <strong>15</strong> · Dependency health — Dependabot enabled + quarterly update policy documented</li>
+</ul>
+<h3 id="phase-4-strategic-watch-12-month-horizon">Phase 4 — Strategic watch (12-month horizon)<a class="anchor" href="#phase-4-strategic-watch-12-month-horizon" aria-hidden="true">#</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>16</strong> · BFF server-side caching — Redis + <code>cacheMiddleware</code> in oRPC builder stack</li>
+<li><input disabled="" type="checkbox"> <strong>17</strong> · API contract tests — nightly upstream OpenAPI spec compliance check</li>
+<li><input disabled="" type="checkbox"> <strong>18</strong> · TS6/Vite8 ecosystem — monitor <code>@ts-ignore</code> count, quarterly upgrade review</li>
+<li><input disabled="" type="checkbox"> <strong>19</strong> · Structured logging — <code>pino</code> + OTel traceId/spanId context injection</li>
+</ul>
+<hr>
+<h2 id="item-detail">Item detail<a class="anchor" href="#item-detail" aria-hidden="true">#</a></h2>
+<p>Each item has: WHY it matters · WHAT to do (concrete steps).</p>
+<h3 id="02-git-pre-commit-hooks">02 · Git pre-commit hooks<a class="anchor" href="#02-git-pre-commit-hooks" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> Typecheck, lint, and knowledge-sync are skipped constantly. Broken main branch becomes normalized. Every skipped check creates a broken type or stale knowledge doc that someone else fixes later.<br><strong>What:</strong></p>
+<ol>
+<li>Add <code>simple-git-hooks</code> + <code>lint-staged</code> to root <code>package.json</code> dev deps</li>
+<li><code>pre-commit</code> hook: <code>pnpm typecheck &amp;&amp; pnpm lint</code></li>
+<li><code>pre-push</code> hook: <code>pnpm test</code> (tests are slow; push not commit)</li>
+<li><code>&quot;prepare&quot;: &quot;simple-git-hooks&quot;</code> in scripts so hooks install on <code>pnpm install</code></li>
+<li>Add CI step: <code>python3 .claude/skills/knowledge-sync/scripts/kb_lint.py</code> — gates PRs on stale KB</li>
+</ol>
+<h3 id="03-test-coverage-gate">03 · Test coverage gate<a class="anchor" href="#03-test-coverage-gate" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> Without a threshold, coverage degrades silently with every new feature. By the time it matters it&#39;s too late to recover cheaply.<br><strong>What:</strong></p>
+<ol>
+<li>Run <code>pnpm test --coverage</code> — note current % for both apps</li>
+<li>Set threshold 2–3% below current in each app&#39;s <code>vitest.config.ts</code> (passes immediately; sets the floor)</li>
+<li>Add <code>coverage: { reporter: [&#39;text&#39;, &#39;lcov&#39;] }</code> for CI artifacts</li>
+<li>Raise threshold by 5% every quarter as part of backlog grooming</li>
+</ol>
+<h3 id="04-error-boundary-audit">04 · Error boundary audit<a class="anchor" href="#04-error-boundary-audit" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> <code>useSuspenseQuery</code> requires an ancestor <code>ErrorBoundary</code>. Missing one = white screen of death when any query fails. Multiplies with every new route.<br><strong>What:</strong></p>
+<ol>
+<li>Check both apps&#39; <code>_shell.tsx</code> — verify <code>errorComponent</code> is set on the layout route (catches all child errors)</li>
+<li>Grep for <code>useSuspenseQuery</code> across <code>apps/*/src/routes/</code> — for any file that uses it, confirm an ancestor route has <code>errorComponent</code></li>
+<li>If the layout <code>_shell.tsx</code> already has it, mark done</li>
+<li>Add to <code>add-route</code> skill checklist: &quot;does this route or an ancestor have errorComponent?&quot;</li>
+</ol>
+<h3 id="05-bff-stub-drift">05 · BFF stub drift<a class="anchor" href="#05-bff-stub-drift" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> <code>*.mock.ts</code> stubs return fixed data when <code>ENABLE_BFF_STUBS=true</code>. If stub shape diverges from Zod schema, dev shows different data than production — silently.<br><strong>What:</strong></p>
+<ol>
+<li>Find all <code>*.mock.ts</code> in <code>packages/orpc/src/procedures/</code></li>
+<li>For each, add a Vitest test: <code>outputSchema.parse(mockData)</code> — must not throw</li>
+<li>This runs in CI; any schema change that isn&#39;t reflected in the stub fails immediately</li>
+</ol>
+<h3 id="11-bundle-size-gate">11 · Bundle size gate<a class="anchor" href="#11-bundle-size-gate" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> The architecture is correct for tree-shaking (no barrel files, <code>&quot;sideEffects&quot;: false</code>). But nothing prevents a bad import from doubling the client bundle silently.<br><strong>What:</strong></p>
+<ol>
+<li><code>pnpm build</code> → note current client chunk sizes</li>
+<li>Add <code>rollup-plugin-visualizer</code> to both apps&#39; <code>vite.config.ts</code> — generates <code>stats.html</code> build artifact</li>
+<li>Add <code>bundlesize</code> check in CI: set limits at current size + 20% (generous floor)</li>
+<li>Tighten limits quarterly</li>
+</ol>
+<h3 id="01-msw-mock-layer">01 · MSW mock layer<a class="anchor" href="#01-msw-mock-layer" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> Every new developer spends 1–2 days blocked on credentials before running the app. Can&#39;t work offline. Biggest onboarding force multiplier.<br><strong>What:</strong></p>
+<ol>
+<li>Install <code>msw@latest</code> at repo root (dev dep)</li>
+<li>Create <code>packages/orpc/src/mocks/&lt;domain&gt;.ts</code> — one per domain, handlers derived from output schemas</li>
+<li>Each app: <code>src/mocks/browser.ts</code> activates MSW when <code>VITE_ENABLE_MOCKS=true</code></li>
+<li>Add <code>VITE_ENABLE_MOCKS=true</code> as default in each app&#39;s <code>.env.example</code></li>
+<li>Vitest setup: same handlers for unit tests</li>
+<li>Target: <code>pnpm dev</code> works with zero credentials</li>
+</ol>
+<h3 id="06-e2e-test-suite">06 · E2E test suite<a class="anchor" href="#06-e2e-test-suite" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> No regression safety net. Every significant refactor is a leap of faith.<br><strong>What:</strong></p>
+<ol>
+<li><code>pnpm dlx playwright install chromium</code></li>
+<li>pxc-retail: vendor list loads → vendor detail page → one mutation (form save)</li>
+<li>tenant-management: tenant onboarding happy path → feature set creation</li>
+<li>CI: runs against MSW mock layer (item 01 prerequisite), not live dev env</li>
+<li>Use <code>playwright-cli</code> skill: <code>/playwright-cli</code> then describe each flow</li>
+</ol>
+<h3 id="07-accessibility-baseline">07 · Accessibility baseline<a class="anchor" href="#07-accessibility-baseline" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> WCAG AA is a B2B procurement requirement. Retrofitting is 5–10x more expensive than building correctly.<br><strong>What:</strong></p>
+<ol>
+<li>Install <code>@axe-core/playwright</code> — add one call per E2E test (item 06 prerequisite)</li>
+<li>Add <code>eslint-plugin-jsx-a11y</code> to root Oxlint config</li>
+<li>Priority fixes: keyboard navigation, focus management in dialogs, aria-labels on icon-only buttons</li>
+</ol>
+<h3 id="08-auth-local-dev">08 · Auth local dev<a class="anchor" href="#08-auth-local-dev" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> <code>pnpm dev</code> bypasses the real <code>auth-session</code> cookie path. Production auth bugs are invisible until users hit them.<br><strong>What:</strong></p>
+<ol>
+<li>Write integration tests for <code>authMiddleware</code> covering both cookie path and fallback path</li>
+<li>Medium term: Auth0 CLI local tenant so real session flow works on localhost</li>
+<li>E2E test for session expiry behavior</li>
+</ol>
+<h3 id="09-error-rate-alerting">09 · Error rate alerting<a class="anchor" href="#09-error-rate-alerting" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> Traces capture every error with trace ID. Nobody is alerted when error rate spikes. Discovery is reactive (support tickets).<br><strong>What:</strong></p>
+<ol>
+<li>In Grafana (from <code>docker-compose.observability.yml</code>): alert rule on <code>span.status = ERROR</code> rate &gt; threshold over 5 min</li>
+<li>Second alert on P99 latency</li>
+<li>Wire to Slack/PagerDuty via Grafana notification channels in <code>global-devops-infra</code></li>
+<li>Largely config, not code</li>
+</ol>
+<h3 id="10-storybook">10 · Storybook<a class="anchor" href="#10-storybook" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> No visual catalogue → developers don&#39;t know what components exist → build duplicates → design system drifts.<br><strong>What:</strong></p>
+<ol>
+<li>Add Storybook 8 to <code>packages/design-system/</code></li>
+<li>Stories for top 10 components: Button, DataTable, Input, Select, Dialog, Badge, Tabs, Skeleton, Toast, DataTable pagination</li>
+<li>Each story: default, all CVA variants, empty/loading/error states, dark mode</li>
+<li>Deploy to GitHub Pages on merge to main</li>
+</ol>
+<h3 id="12-design-token-audit">12 · Design token audit<a class="anchor" href="#12-design-token-audit" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> OKLch tokens are correct but app code may contain hardcoded Tailwind colors (<code>text-gray-500</code>, <code>bg-white</code>) that don&#39;t adapt to theme.<br><strong>What:</strong></p>
+<ol>
+<li>Grep <code>apps/*/src/components/</code> for <code>text-gray-</code>, <code>bg-white</code>, <code>bg-black</code>, <code>text-black</code></li>
+<li>Replace with semantic design system tokens (<code>text-foreground</code>, <code>bg-background</code>, etc.)</li>
+<li>Add Oxlint rule warning on non-semantic color utilities in app code</li>
+</ol>
+<h3 id="13-loveable-submodule">13 · Loveable submodule<a class="anchor" href="#13-loveable-submodule" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> Git submodule for a &quot;UX reference only&quot; source — never shipped — creates detached HEAD confusion and PR noise for every developer.<br><strong>What:</strong></p>
+<ol>
+<li>Decision: does the reference add enough value for submodule friction? If yes: document clearly as optional. If no: <code>git rm submodules/loveable</code>, replace with a link to the external repo in README.md.</li>
+<li>A link provides 95% of the reference value at zero workflow cost.</li>
+</ol>
+<h3 id="14-performance-monitoring">14 · Performance monitoring<a class="anchor" href="#14-performance-monitoring" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> OTel measures server spans. Core Web Vitals (LCP, INP, CLS) from real browsers are unmeasured. SSR doesn&#39;t guarantee good UX performance.<br><strong>What:</strong></p>
+<ol>
+<li>Add <code>web-vitals</code> to both apps</li>
+<li>Send vitals to OTel collector as custom span attributes — no new infra</li>
+<li>Add <code>@lhci/cli</code> to CI: Lighthouse check on built app for critical routes</li>
+</ol>
+<h3 id="15-dependency-health">15 · Dependency health<a class="anchor" href="#15-dependency-health" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> Running TS6 + Vite8 + React19 needs active maintenance. Falling behind means a &quot;big bang&quot; update that breaks everything at once.<br><strong>What:</strong></p>
+<ol>
+<li>Enable Dependabot: auto-merge patches, review required for minor/major</li>
+<li>Pin TS and Vite to exact versions (not ranges) in <code>package.json</code></li>
+<li>Monthly <code>pnpm outdated</code> review</li>
+<li>Document upgrade policy in <code>CONTRIBUTING.md</code></li>
+</ol>
+<h3 id="16-bff-server-side-caching">16 · BFF server-side caching<a class="anchor" href="#16-bff-server-side-caching" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> Every SSR page load hits upstream for every procedure. At scale, rate limits and latency become blockers.<br><strong>What:</strong></p>
+<ol>
+<li>Add Redis to the deployment stack</li>
+<li><code>cacheMiddleware</code> in oRPC builder: keyed on <code>procedureName + serializedInput</code>, configurable TTL per procedure</li>
+<li>Start with highest-volume reads: vendor list, product catalog</li>
+</ol>
+<h3 id="17-api-contract-tests">17 · API contract tests<a class="anchor" href="#17-api-contract-tests" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> Upstream API specs in <code>packages/orpc/specs/</code> are the source of truth. Nothing verifies the running upstream still matches them.<br><strong>What:</strong></p>
+<ol>
+<li>Nightly CI job: fetch current OpenAPI spec from each upstream&#39;s <code>/openapi</code>, diff against pinned spec</li>
+<li>Breaking changes → fail + Slack notification + PR to run <code>absorb-openapi-changes</code></li>
+<li>Tool: <code>openapi-diff</code> or Spectral</li>
+</ol>
+<h3 id="18-ts6vite8-ecosystem-risk">18 · TS6/Vite8 ecosystem risk<a class="anchor" href="#18-ts6vite8-ecosystem-risk" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> Stack is 6–12 months ahead of ecosystem median. Library compatibility surprises accumulate as <code>@ts-ignore</code> comments.<br><strong>What:</strong></p>
+<ol>
+<li>Track <code>@ts-ignore</code> / <code>@ts-expect-error</code> count — if growing, investigate</li>
+<li>Quarterly: test latest TS + Vite minor release in a branch before committing</li>
+<li>Brief ADR for each major version upgrade decision</li>
+</ol>
+<h3 id="19-structured-logging">19 · Structured logging<a class="anchor" href="#19-structured-logging" aria-hidden="true">#</a></h3>
+<p><strong>Why:</strong> <code>console.*</code> is fine now. Degrades when you need to query/filter/alert on server output.<br><strong>What:</strong></p>
+<ol>
+<li>Add <code>pino</code> as server logger when the need arises</li>
+<li>Wire OTel traceId/spanId into every log line automatically</li>
+<li>Replace <code>console.*</code> calls incrementally; don&#39;t do a big-bang refactor</li>
+</ol>
+<hr>
+<h2 id="done">Done<a class="anchor" href="#done" aria-hidden="true">#</a></h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>02</strong> · Git pre-commit hooks — 2026-10-15 by amol.naval — <code>simple-git-hooks</code> + <code>lint-staged</code> installed; pre-commit runs typecheck+lint, pre-push runs tests; CI <code>knowledge-gate</code> job added; both build jobs gate on it</li>
+</ul>
+<hr>
+<h2 id="session-log">Session log<a class="anchor" href="#session-log" aria-hidden="true">#</a></h2>
+<div class="table-wrap"><table><thead><tr><th>Date</th><th>Who</th><th>Work completed</th><th>Notes</th></tr></thead><tbody><tr><td>2026-10-15</td><td>amol.naval</td><td>Initial project setup: onboarding guide artifact, LOCAL-DEV-SETUP.md, ARCHITECTURE.md, TECH-EVALUATION.md, debt report artifact, ROADMAP.md</td><td>First session — project onboarding and evaluation</td></tr><tr><td>2026-10-15</td><td>amol.naval</td><td><strong>02</strong> Git pre-commit hooks: <code>simple-git-hooks</code> + <code>lint-staged</code> added to root package.json; pre-commit=typecheck+lint, pre-push=test; CI knowledge-gate job added, both build jobs gate on it</td><td></td></tr></tbody></table></div>
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>

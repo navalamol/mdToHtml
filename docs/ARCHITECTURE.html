@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARCHITECTURE</title>
+  <style>
+:root{
+  --bg:      #ffffff;
+  --bg2:     #f6f8fa;
+  --bgcode:  #f0f2f5;
+  --border:  #d8dee4;
+  --text:    #1f2328;
+  --muted:   #636c76;
+  --accent:  #0969da;
+  --bqbg:    #f0f7ff;
+  --bqbd:    #0969da;
+  --hbdr:    #d8dee4;
+  --shadow:  rgba(0,0,0,.08);
+  --r:8px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.75}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;gap:2rem}
+@media(min-width:1120px){
+  .layout{max-width:1280px;grid-template-columns:260px minmax(0,1fr);align-items:start;gap:3rem}
+  .toc{position:sticky;top:2rem}
+}
+
+/* page header */
+.page-header{border-bottom:2px solid var(--hbdr);padding-bottom:1.5rem;margin-bottom:2rem}
+.page-title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:700;margin-bottom:.3rem}
+.page-meta{color:var(--muted);font-size:.8rem}
+.page-meta code{font-family:var(--mono);background:var(--bgcode);padding:.1em .35em;border-radius:4px;font-size:.9em;border:1px solid var(--border)}
+
+/* typography */
+.content{min-width:0}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{margin-top:2rem;margin-bottom:.6rem;font-weight:600;line-height:1.3;position:relative}
+.content h1{font-size:2rem;padding-bottom:.4rem;border-bottom:2px solid var(--hbdr)}
+.content h2{font-size:1.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--hbdr)}
+.content h3{font-size:1.2rem}
+.content h4{font-size:1.05rem}
+.content h1:first-child,.content h2:first-child{margin-top:0}
+.anchor{opacity:0;text-decoration:none;color:var(--muted);font-size:.8em;margin-left:.4em;transition:opacity .15s}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:1}
+.content p{margin-bottom:1.1rem}
+.content a{color:var(--accent);text-decoration:none}
+.content a:hover{text-decoration:underline}
+.content strong{font-weight:600}
+.content code{font-family:var(--mono);font-size:.875em;background:var(--bgcode);padding:.15em .4em;border-radius:4px;color:#cf222e;border:1px solid var(--border)}
+
+/* code blocks */
+.code-block{position:relative;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);background:var(--bgcode);overflow:hidden}
+.code-lang{position:absolute;top:.4rem;left:.75rem;font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);pointer-events:none}
+.copy-btn{position:absolute;top:.4rem;right:.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:.65rem;padding:.15rem .55rem;cursor:pointer;font-family:var(--font);transition:color .15s,background .15s;z-index:1}
+.copy-btn:hover{color:var(--text);background:var(--border)}
+.copy-btn.ok{color:#1a7f37}
+.code-block pre{margin:0;padding:2.2rem 1rem .9rem;overflow-x:auto;font-size:.875rem;line-height:1.6}
+.code-block code{background:none;border:none;padding:0;color:inherit;font-size:inherit;border-radius:0}
+
+/* blockquote */
+.blockquote{margin:1.25rem 0;padding:.75rem 1.25rem;background:var(--bqbg);border-left:4px solid var(--bqbd);border-radius:0 var(--r) var(--r) 0;color:var(--muted);font-style:italic}
+.blockquote p{margin:0}
+
+/* lists */
+.content ul,.content ol{margin:0 0 1.1rem;padding-left:1.75rem}
+.content li{margin:.25rem 0}
+.content li>p{margin:.25rem 0}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:1.25rem 0;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px var(--shadow)}
+.content table{width:100%;border-collapse:collapse;font-size:.9rem}
+.content thead{background:var(--bg2)}
+.content th{padding:.65rem 1rem;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.content td{padding:.6rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+.content tr:last-child td{border-bottom:none}
+.content tbody tr:hover{background:var(--bg2)}
+
+/* images */
+.img-figure{margin:1.5rem 0;text-align:center}
+.img-figure img{max-width:100%;border-radius:var(--r);border:1px solid var(--border);box-shadow:0 2px 8px var(--shadow)}
+.img-figure figcaption{margin-top:.5rem;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* hr */
+.content hr{border:none;border-top:2px solid var(--hbdr);margin:2rem 0}
+
+/* TOC sidebar */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;font-size:.875rem}
+@media(max-width:1119px){.toc{order:-1}}
+.toc-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.toc-list,.toc-sub{list-style:none;padding:0}
+.toc-sub{padding-left:1rem;margin-top:.25rem}
+.toc-list li{margin:.3rem 0}
+.toc-list a{color:var(--muted);text-decoration:none;transition:color .15s;display:block;line-height:1.4}
+.toc-list a:hover,.toc-list a.on{color:var(--accent)}
+.toc-list a.on{font-weight:500}
+
+/* highlight.js */
+.hljs{background:transparent;color:#24292f}
+.hljs-keyword,.hljs-selector-tag{color:#cf222e;font-weight:500}
+.hljs-string,.hljs-attr{color:#0a3069}
+.hljs-title,.hljs-section,.hljs-name{color:#8250df;font-weight:600}
+.hljs-comment,.hljs-quote{color:#6e7781;font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol{color:#0550ae}
+.hljs-variable,.hljs-template-variable,.hljs-type,.hljs-built_in{color:#953800}
+.hljs-addition{color:#116329;background:#dafbe1}
+.hljs-deletion{color:#82071e;background:#ffebe9}
+.hljs-meta{color:#0550ae}
+.hljs-tag{color:#116329}
+.hljs-attribute{color:#0550ae}
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside><nav class="toc" aria-label="Table of contents"><p class="toc-title">Contents</p><ol class="toc-list"><li><a href="#architecture">Architecture</a></li><ol class="toc-sub"><li><a href="#overview">Overview</a></li><li><a href="#system-context">System context</a></li><li><a href="#repository-structure">Repository structure</a></li><ol class="toc-sub"><li><a href="#package-dependency-graph">Package dependency graph</a></li></ol><li><a href="#the-request-lifecycle">The request lifecycle</a></li><ol class="toc-sub"><li><a href="#client-side-data-fetch-after-initial-page-load">Client-side data fetch (after initial page load)</a></li><li><a href="#server-side-render-ssr-first-page-load">Server-side render (SSR, first page load)</a></li><li><a href="#error-path">Error path</a></li></ol><li><a href="#key-design-decisions">Key design decisions</a></li><ol class="toc-sub"><li><a href="#contract-first-api">Contract-first API</a></li><li><a href="#no-barrel-files">No barrel files</a></li><li><a href="#file-based-routing">File-based routing</a></li><li><a href="#ssr-with-isomorphic-client">SSR with isomorphic client</a></li><li><a href="#mandatory-i18n-enforced-at-compile-time">Mandatory i18n enforced at compile time</a></li><li><a href="#typed-error-keys">Typed error keys</a></li></ol><li><a href="#authentication-and-authorization">Authentication and authorization</a></li><ol class="toc-sub"><li><a href="#authentication">Authentication</a></li><li><a href="#authorization">Authorization</a></li></ol><li><a href="#data-flow-summary">Data flow summary</a></li><li><a href="#observability">Observability</a></li><li><a href="#testing">Testing</a></li></ol></nav></aside>
+    <main class="content">
+      <header class="page-header">
+        <h1 class="page-title">ARCHITECTURE</h1>
+        <p class="page-meta">From <code>ARCHITECTURE.md</code> &nbsp;·&nbsp; October 28, 2026</p>
+      </header>
+      <h1 id="architecture">Architecture<a class="anchor" href="#architecture" aria-hidden="true">#</a></h1>
+<p>This document describes the system structure, data flow, and key design decisions. For setup instructions, see <code>docs/LOCAL-DEV-SETUP.md</code>. For day-to-day conventions, see <code>ONBOARDING.md</code> and <code>CLAUDE.md</code>.</p>
+<hr>
+<h2 id="overview">Overview<a class="anchor" href="#overview" aria-hidden="true">#</a></h2>
+<p>pxc-retail is a monorepo containing two server-rendered React applications and a set of shared packages. The main app (<code>pxc-retail</code>) is a retail intelligence platform used by retailers to manage vendors, merchandise, promotions, and analytics. The secondary app (<code>tenant-management</code>) is an internal tool for onboarding new retail tenants and configuring their feature sets. Both apps are backed by a contract-first BFF (Backend for Frontend) layer that fronts upstream services, validates all inputs and outputs with Zod schemas, and ensures that errors never expose internal details to the client.</p>
+<hr>
+<h2 id="system-context">System context<a class="anchor" href="#system-context" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">                        ┌─────────────────────────────────────┐
+                        │          Upstream Services           │
+                        │  Vendor Service  │  MDM API          │
+                        │  CSL Entity      │  CSL Onboarding   │
+                        └──────────────────┬──────────────────┘
+                                           │  HTTP (unwrapped via unwrap())
+                        ┌──────────────────▼──────────────────┐
+                        │           @syndigo/orpc (BFF)        │
+                        │  Implements contracts, applies       │
+                        │  middleware stack, maps errors       │
+                        └──────────────────┬──────────────────┘
+                                           │  oRPC (JSON-RPC or direct)
+               ┌───────────────────────────┴──────────────────────────┐
+               │                                                       │
+  ┌────────────▼──────────────┐                  ┌────────────────────▼──────────┐
+  │      apps/pxc-retail      │                  │   apps/tenant-management      │
+  │  Retailers: merchandising,│                  │   Syndigo staff: tenant        │
+  │  vendor central, insights,│                  │   onboarding, feature sets,   │
+  │  system admin  (port 3000)│                  │   feature definitions (3001)  │
+  └───────────────────────────┘                  └───────────────────────────────┘</code></pre></div><p><strong>Who uses each app:</strong></p>
+<ul>
+<li><code>pxc-retail</code> — retail buyers, merchandisers, vendor managers, and system administrators at retailer organizations.</li>
+<li><code>tenant-management</code> — Syndigo internal teams provisioning new retail tenants and managing feature entitlements.</li>
+</ul>
+<hr>
+<h2 id="repository-structure">Repository structure<a class="anchor" href="#repository-structure" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">retail-pxc/
+├── apps/
+│   ├── pxc-retail/              # Main retail app
+│   │   ├── src/routes/          # File-based routes (path = URL)
+│   │   ├── src/lib/             # Navigation config, permissions binding
+│   │   ├── src/integrations/    # oRPC client, TanStack Query setup, i18n
+│   │   ├── src/locales/         # en, es, fr, de translation files
+│   │   ├── src/env/             # T3 Env-validated server + client env schemas
+│   │   └── src/components/      # App-specific UI components
+│   └── tenant-management/       # Admin/config app (same structure)
+│
+├── packages/
+│   ├── core-contracts/          # @repo/core-contracts
+│   │   ├── src/&lt;domain&gt;/contracts/   # oRPC contract definitions
+│   │   ├── src/schemas/              # Zod input/output schemas
+│   │   └── src/types/                # Inferred TypeScript types, ErrorKey union
+│   ├── orpc/                    # @syndigo/orpc
+│   │   ├── src/procedures/      # Procedure implementations
+│   │   ├── src/router.ts        # Router assembly
+│   │   ├── src/errors.ts        # throwError, mapUpstreamError, recordErrorOnSpan
+│   │   └── src/middleware/      # errorRecording, validationError, auth, span, apiClient
+│   ├── app-shell/               # @syndigo/app-shell
+│   │   ├── src/permissions/     # RBAC engine (logic, context factory, nav filter, route guard)
+│   │   ├── src/components/      # UnsavedChangesGuard, RouteErrorComponent base
+│   │   └── src/error-toast.ts   # getErrorToast, parseErrorPayload
+│   ├── design-system/           # @syndigo/design-system
+│   │   ├── src/components/      # Button, DataTable, Dialog, etc. (no barrel)
+│   │   └── src/globals.css      # OKLch color tokens, dark mode
+│   ├── telemetry/               # @syndigo/telemetry — OTel bootstrap, traces only
+│   └── typescript-config/       # Shared strict tsconfig bases
+│
+└── submodules/
+    └── loveable/                # Lovable-generated retail UI — UX reference, not shipped</code></pre></div><h3 id="package-dependency-graph">Package dependency graph<a class="anchor" href="#package-dependency-graph" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">apps/pxc-retail ──────────────────────────────────────────────────────────┐
+apps/tenant-management ────────────────────────────────────────────────────┤
+                                                                           │
+              ┌────────────────────────────────────────────────────────────┤
+              ▼                        ▼                         ▼         ▼
+   @syndigo/app-shell      @syndigo/design-system      @syndigo/orpc      ...
+              │                        │                         │
+              └────────────────────────┴─────────────────────────┘
+                                       │
+                              @repo/core-contracts
+                         (the single source of API types)</code></pre></div><p>All packages import from <code>@repo/core-contracts</code>; nothing below it imports upward.</p>
+<hr>
+<h2 id="the-request-lifecycle">The request lifecycle<a class="anchor" href="#the-request-lifecycle" aria-hidden="true">#</a></h2>
+<h3 id="client-side-data-fetch-after-initial-page-load">Client-side data fetch (after initial page load)<a class="anchor" href="#client-side-data-fetch-after-initial-page-load" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">React component
+  └─ useSuspenseQuery(orpc.vendor.list.queryOptions({ input: {} }))
+       └─ TanStack Query checks in-memory cache
+            ├─ HIT → returns cached data immediately
+            └─ MISS → HTTP POST to /rpc/vendorCentral.vendor.list
+                         └─ RPCHandler#handle (apps/pxc-retail/src/routes/rpc/$.ts)
+                              └─ errorRecordingMiddleware  ← outermost; records any escape on OTel span
+                                   └─ validationErrorMiddleware  ← rewraps Zod ValidationError
+                                        └─ authMiddleware  ← resolves user + permissions from auth-session cookie
+                                             └─ spanAttributesMiddleware  ← sets enduser.id, app.tenant_id on span
+                                                  └─ apiClientMiddleware  ← attaches context.api.* HTTP clients
+                                                       └─ procedure handler
+                                                            └─ unwrap(context.api.vendorService.list(...))
+                                                                 └─ upstream HTTP call → response
+                                                                      └─ Zod validation against output schema
+                                                                           └─ typed response returned to component</code></pre></div><h3 id="server-side-render-ssr-first-page-load">Server-side render (SSR, first page load)<a class="anchor" href="#server-side-render-ssr-first-page-load" aria-hidden="true">#</a></h3>
+<p>On the server, the isomorphic client bypasses HTTP and calls the router directly:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">TanStack Start server render
+  └─ useSuspenseQuery(orpc.vendor.list.queryOptions({ input: {} }))
+       └─ createRouterClient(router, { context: getOrpcContext() })
+            └─ calls procedure handler directly (no network hop)
+                 └─ same middleware stack applies
+                      └─ response hydrated into the page HTML</code></pre></div><p>This means the browser receives a fully-rendered page with data on the first load — no loading spinner, no waterfall.</p>
+<h3 id="error-path">Error path<a class="anchor" href="#error-path" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">procedure handler
+  └─ throwError({ code: &#x27;NOT_FOUND&#x27;, errorKey: &#x27;vendor.not_found&#x27; })
+       └─ constructs ORPCError { code, data: ErrorPayload { errorKey, traceId, spanId } }
+            └─ errorRecordingMiddleware catches, calls recordException on OTel span, re-throws
+                 └─ RPCHandler serializes to HTTP error response
+                      └─ client receives ORPCError
+                           ├─ mutation → MutationCache.onError → getErrorToast → toast.error(t($ =&gt; $.errors.vendor.not_found))
+                           └─ query/load → RouteErrorComponent branches on error.code</code></pre></div><hr>
+<h2 id="key-design-decisions">Key design decisions<a class="anchor" href="#key-design-decisions" aria-hidden="true">#</a></h2>
+<h3 id="contract-first-api">Contract-first API<a class="anchor" href="#contract-first-api" aria-hidden="true">#</a></h3>
+<p>Zod schemas and oRPC contract definitions live in <code>@repo/core-contracts</code> — the single source of truth for every API shape. The implementation in <code>@syndigo/orpc</code> calls <code>implement(contract)</code>, which means TypeScript enforces that the handler&#39;s input and output match the contract exactly. The app&#39;s client inherits those types automatically.</p>
+<p><strong>Why:</strong> Prevents the classic BFF drift — the server returns a shape that the client doesn&#39;t expect, causing runtime errors that TypeScript cannot catch. With contract-first, a shape mismatch is a build error.</p>
+<h3 id="no-barrel-files">No barrel files<a class="anchor" href="#no-barrel-files" aria-hidden="true">#</a></h3>
+<p>Every package declares granular subpath exports in its <code>package.json</code>. There is no <code>index.ts</code> that re-exports everything. Consumers import from <code>@syndigo/design-system/components/button</code>, not from <code>@syndigo/design-system</code>.</p>
+<p><strong>Why:</strong> <code>@syndigo/orpc</code> is declared <code>&quot;sideEffects&quot;: false</code>. A tree-shaker can only drop the server-side router graph from the browser bundle if the import graph is provably clean. A barrel file that re-exports both server and client code breaks this guarantee — the browser bundle would include server-only dependencies.</p>
+<h3 id="file-based-routing">File-based routing<a class="anchor" href="#file-based-routing" aria-hidden="true">#</a></h3>
+<p>Route files under <code>src/routes/</code> map directly to URLs. <code>_shell/</code> is a layout prefix, not a URL segment. Dynamic segments use <code>$</code> prefix (<code>$vendorId.tsx</code>). <code>routeTree.gen.ts</code> is auto-generated by TanStack Router and is never edited manually.</p>
+<p><strong>Why:</strong> Convention over configuration. Every route file is self-evident from the filesystem. The generated route tree gives fully typed <code>Link</code> components and <code>useNavigate</code> hooks — you cannot link to a route that doesn&#39;t exist.</p>
+<h3 id="ssr-with-isomorphic-client">SSR with isomorphic client<a class="anchor" href="#ssr-with-isomorphic-client" aria-hidden="true">#</a></h3>
+<p>The oRPC client (<code>src/integrations/orpc/client.ts</code>) uses <code>createIsomorphicFn()</code> to select the right implementation at runtime: direct router call on the server, HTTP over <code>/rpc</code> in the browser. TanStack Query&#39;s <code>useSuspenseQuery</code> works identically in both environments.</p>
+<p><strong>Why:</strong> The initial page load renders with real data from the server — no loading state, no content shift, better perceived performance. The SSR path also eliminates one HTTP round-trip per query on page load.</p>
+<h3 id="mandatory-i18n-enforced-at-compile-time">Mandatory i18n enforced at compile time<a class="anchor" href="#mandatory-i18n-enforced-at-compile-time" aria-hidden="true">#</a></h3>
+<p>Translation keys are typed selector callbacks (<code>t($ =&gt; $.vendor.title)</code>). The TypeScript compiler knows the shape of all four locale files and rejects any selector that references a missing key. Adding a new key requires updating all four locale files (<code>en</code>, <code>es</code>, <code>fr</code>, <code>de</code>) before the build will pass.</p>
+<p><strong>Why:</strong> i18n is usually treated as &quot;add later.&quot; In a four-language product, a missing key shows up as a raw key string in production. Making it a compile-time requirement eliminates that class of bug entirely.</p>
+<h3 id="typed-error-keys">Typed error keys<a class="anchor" href="#typed-error-keys" aria-hidden="true">#</a></h3>
+<p><code>ErrorKey</code> is a closed union of string literals in <code>@repo/core-contracts/types/error-key.ts</code>. <code>throwError({ errorKey })</code> accepts only a member of that union. Each member must have a corresponding <code>errors.&lt;key&gt;</code> entry in all four locale files.</p>
+<p><strong>Why:</strong> The same guarantee as i18n selectors, applied to error messages. Without this, a new error path can ship with no visible message in any language.</p>
+<hr>
+<h2 id="authentication-and-authorization">Authentication and authorization<a class="anchor" href="#authentication-and-authorization" aria-hidden="true">#</a></h2>
+<h3 id="authentication">Authentication<a class="anchor" href="#authentication" aria-hidden="true">#</a></h3>
+<p>The platform sets an <code>auth-session</code> cookie on the user&#39;s browser via an upstream identity service. The <code>authMiddleware</code> in the BFF reads that cookie on every authenticated request. In local development with <code>NODE_ENV=development</code>, the middleware falls back to a dev identity when no cookie is present — this is implicit and requires no configuration. When running the built server (<code>start:local</code>, which sets <code>NODE_ENV=production</code>), <code>ALLOW_DEV_FALLBACK_USER=true</code> must be set explicitly in <code>.env.local</code> to get the same behavior; without it, every request returns a 500.</p>
+<h3 id="authorization">Authorization<a class="anchor" href="#authorization" aria-hidden="true">#</a></h3>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">auth-session cookie
+  └─ authMiddleware resolves roles (string[]) from session
+       └─ resolveRolePermissions(roles, roleDefinitions) → permission strings
+            └─ resolvePermissions(permissions, ACTION_HIERARCHY) → expanded set
+                 └─ ReadonlySet&lt;string&gt; stored in PermissionsProvider React context
+                      └─ route beforeLoad: requireModuleAccess(permissions, &#x27;vendor-management&#x27;, &#x27;read&#x27;)
+                           ├─ has permission → route renders
+                           └─ missing → redirect({ to: &#x27;/no-access&#x27; })</code></pre></div><p>Action hierarchy: <code>admin</code> implies <code>[read, write, delete]</code>; <code>delete</code> implies <code>[read, write]</code>; <code>write</code> implies <code>[read]</code>. <code>hasModuleAccess(module)</code> checks <code>module:read</code>, which is true for any granted action.</p>
+<p>The permissions engine in <code>@syndigo/app-shell</code> is vocabulary-agnostic (plain string logic). Each app binds it to its own <code>Module</code>/<code>Action</code> union types in <code>apps/&lt;app&gt;/src/lib/permissions/index.ts</code>, adding compile-time safety at the boundary without duplicating the logic.</p>
+<hr>
+<h2 id="data-flow-summary">Data flow summary<a class="anchor" href="#data-flow-summary" aria-hidden="true">#</a></h2>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-plaintext">Upstream services (Vendor, MDM, CSL, Auth)
+    │
+    │  HTTP (via context.api.* clients, unwrapped with unwrap())
+    ▼
+@syndigo/orpc (BFF)
+    │  Middleware stack: error recording → validation → auth → span → apiClient → handler
+    │  Errors: throwError() → ORPCError with ErrorPayload { errorKey, traceId }
+    │
+    │  Direct call (server-side) or HTTP POST /rpc (client-side)
+    ▼
+Isomorphic client (apps/*/src/integrations/orpc/client.ts)
+    │  orpc.domain.proc.queryOptions() → TanStack Query
+    │  client.domain.proc({ input }) → raw RouterClient
+    ▼
+React components
+    │  useSuspenseQuery → data (typed by Zod output schema)
+    │  useMutation → MutationCache.onError → error toast
+    └─ RouteErrorComponent → error page (UNAUTHORIZED, NOT_FOUND, or generic)</code></pre></div><hr>
+<h2 id="observability">Observability<a class="anchor" href="#observability" aria-hidden="true">#</a></h2>
+<p>Traces only — no metrics, no structured logging. Server code uses <code>console.*</code> for any local output.</p>
+<p><code>@syndigo/telemetry</code> bootstraps the OpenTelemetry SDK in each app&#39;s <code>instrumentation.mjs</code>. The SDK only starts if <code>OTEL_EXPORTER_OTLP_ENDPOINT</code> or <code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code> is set. An unset endpoint means no exporter is registered — no connection errors, no retries against localhost.</p>
+<p><strong>Instrumentation only loads in the built server.</strong> <code>pnpm dev</code> does not produce traces. To see traces locally: start the LGTM stack, set the endpoint in <code>.env.local</code>, then run <code>pnpm build --filter=&lt;app&gt; &amp;&amp; pnpm --filter=&lt;app&gt; start:local</code>. Grafana is on port 3100.</p>
+<p>Each authenticated span carries <code>enduser.id</code> and <code>app.tenant_id</code> from <code>spanAttributesMiddleware</code>. Every escaping error is recorded once by <code>errorRecordingMiddleware</code> via <code>recordException</code> + <code>setStatus(ERROR)</code> with <code>error.code</code> and <code>error.key</code> attributes. The same <code>traceId</code> is returned to the client inside <code>ErrorPayload</code>, linking a support report directly to the span.</p>
+<p><code>OTEL_SDK_DISABLED=true</code> is the kill switch — disables the SDK entirely without a rebuild.</p>
+<hr>
+<h2 id="testing">Testing<a class="anchor" href="#testing" aria-hidden="true">#</a></h2>
+<p><strong>Unit and integration tests:</strong> Vitest, co-located with source files or in <code>__tests__/</code> directories. Run with <code>pnpm test</code> (all workspaces) or <code>pnpm test --filter=&lt;app&gt;</code>.</p>
+<p><strong>End-to-end:</strong> The <code>playwright-cli</code> skill is available for browser automation and test generation. No committed E2E test suite exists as of the current state of the repo — this is a known gap (see <code>docs/TECH-EVALUATION.md</code>).</p>
+<p><strong>Pre-commit verification:</strong></p>
+<div class="code-block"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><code class="hljs language-bash">pnpm typecheck &amp;&amp; pnpm lint &amp;&amp; pnpm <span class="hljs-built_in">test</span></code></pre></div><p>All three must pass before a PR is mergeable. The <code>typecheck</code> step is the strongest safety net — it validates contract types, locale keys, error keys, and route shapes in a single pass.</p>
+
+    </main>
+  </div>
+  <script>
+    /* Copy button */
+    function copyCode(btn) {
+      navigator.clipboard.writeText(btn.closest('.code-block').querySelector('pre').innerText)
+        .then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('ok');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+        });
+    }
+
+    /* Highlight active TOC link based on scroll position */
+    (function () {
+      const links = [...document.querySelectorAll('.toc-list a')];
+      if (!links.length) return;
+
+      const headings = [...document.querySelectorAll('.content h1[id], .content h2[id], .content h3[id]')];
+      if (!headings.length) return;
+
+      function onScroll() {
+        const scrollY = window.scrollY + 80; // offset for top margin
+        let active = headings[0];
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) active = h;
+        }
+        links.forEach(a => {
+          const match = a.getAttribute('href') === '#' + active.id;
+          a.classList.toggle('on', match);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // run once on load
+    })();
+  </script>
+</body>
+</html>
